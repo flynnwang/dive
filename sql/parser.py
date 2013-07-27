@@ -19,16 +19,15 @@ def table_expr(p):
 
 
 @pg.production("result-columns : result-column")
-def simple_result_column_group(p):
-    columns = ResultColumnGroup()
-    columns.append(p[0])
-    return columns
-
-
 @pg.production("result-columns : result-columns COMMA result-column")
-def multiple_result_column_group(p):
-    p[0].append(p[2])
-    return p[0]
+def result_column_group(p):
+    if len(p) == 1:
+        columns = ResultColumnGroup()
+        column = p[0]
+    else:
+        columns, _, column = p
+    columns.append(column)
+    return columns
 
 
 @pg.production("result-column : IDENTIFIER")
