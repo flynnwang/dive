@@ -2,10 +2,6 @@
 
 import rply
 
-SQL_KEYWORDS = ['select', 'from', 'where']
-
-IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
-
 
 class LexerGenerator(rply.LexerGenerator):
 
@@ -20,23 +16,33 @@ class LexerGenerator(rply.LexerGenerator):
 
 class LexerGeneratorBuilder(object):
 
-    def __init__(self, keywords):
-        self.keywords = keywords
+    SQL_KEYWORDS = ['select', 'from', 'where']
+    COMPARATORS = [('EQ', '=')]
+
+    IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
+    NUMBER = ("NUMBER", r"\d+")
 
     def register_keyword_tokens(self, lg):
-        for k in SQL_KEYWORDS:
-            lg.add(k.upper(), k)
+        for t in self.SQL_KEYWORDS:
+            lg.add(t.upper(), t)
+
+    def register_tokens(self, lg, tokens):
+        for t, p in tokens:
+            lg.add(t.upper(), p)
 
     def build(self):
         lg = LexerGenerator()
 
         self.register_keyword_tokens(lg)
+        self.register_tokens(lg, self.COMPARATORS)
+
         lg.add('COMMA', ',')
-        lg.add(*IDENTIFIER)
+        lg.add(*self.IDENTIFIER)
+        lg.add(*self.NUMBER)
         lg.ignore(r"\s+")
         return lg.tokens, lg.build()
 
-TOKENS, sql_lexer = LexerGeneratorBuilder(SQL_KEYWORDS).build()
+TOKENS, sql_lexer = LexerGeneratorBuilder().build()
 
 
 def lex(sql):

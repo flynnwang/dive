@@ -1,5 +1,7 @@
-- select hmultiple result columns
-
+- string comparation
+- add fabric file: test commands
+- split parser & models
+- comparator (causion on type: int)
 
 
 
@@ -8,3 +10,4 @@
 DONE
 ----
 
+- select hmultiple result columns
