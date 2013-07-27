@@ -26,7 +26,9 @@ def parse(sql):
     return sql_parser.parse(sql_lexer.lex(sql))
 
 class Node(object):
-    pass
+    
+    def visit(self, ctx):
+        pass
 
 class IdentifierNode(Node):
 
@@ -41,7 +43,7 @@ class IdentifierNode(Node):
     def value(self):
         return self.token.value
 
-    def __str__(self):
+    def __repr__(self):
         return "<IdentifierNode: %s>" % self.value
         
 class ResultColumn(IdentifierNode):
@@ -50,7 +52,6 @@ class ResultColumn(IdentifierNode):
 class TableName(IdentifierNode):
     pass
 
-
 class SelectCore(Node):
 
     def __init__(self, result_column, table_name):
@@ -58,6 +59,15 @@ class SelectCore(Node):
         self.result_column = result_column
         self.table_name = table_name
 
-    def __str__(self):
+    def __repr__(self):
         return "<SelectCore: SELECT %s FROM %s>" % (self.result_column, self.table_name)
     
+    def visit(self, ctx):
+        table = ctx.schema.find_table(self.table_name.value)
+        col_idx = table.index(self.result_column.value)
+
+        def _map_result(r):
+            return r[col_idx]
+
+        data = ctx.dpark.union([ctx.dpark.csvFile(p) for p in table.paths])
+        return data.map(_map_result).collect()
