@@ -179,7 +179,6 @@ class TableExpr(Node):
     def __init__(self, table_name, where_clause=None):
         self.table_name = table_name
         self.where_clause = where_clause
-        print self.where_clause
 
     def visit(self, ctx):
         if self.where_clause:
@@ -206,6 +205,6 @@ class SelectCore(Node):
 
         ctx.table = table
         ctx.data = ctx.dpark.union([ctx.dpark.csvFile(p) for p in table.paths])
-        #print self.table_expr, type(self.table_expr)
+        # print self.table_expr, type(self.table_expr)
         self.table_expr.visit(ctx)
         return ctx.data.map(_map_result).collect()

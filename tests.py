@@ -41,7 +41,7 @@ class DiveTests(unittest.TestCase):
         self.assertListEqual(["c"], res[0])
 
 
-class TestLexer(unittest.TestCase):
+class LexerTest(unittest.TestCase):
 
     def _lex(self, sql):
         return [i.getstr() for i in lex(sql)]
@@ -55,7 +55,7 @@ class TestLexer(unittest.TestCase):
         tokens = self._lex(SELECT_WHERE)
 
 
-class TestSqlParser(unittest.TestCase):
+class SqlParserText(unittest.TestCase):
 
     def test_simple_select(self):
         sc = parse(SIMPLE_SELECT)

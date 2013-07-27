@@ -1,5 +1,4 @@
-- string comparation
-- add fabric file: test commands
+- add fabric file: test commands, autopep8
 - split parser & models
 - comparator (causion on type: int)
 
@@ -9,5 +8,5 @@
 
 DONE
 ----
-
+- string comparation
 - select hmultiple result columns
