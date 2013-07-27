@@ -7,19 +7,30 @@ from .lexer import TOKENS, sql_lexer
 pg = ParserGenerator(TOKENS, cache_id="sql_parser")
 
 
-@pg.production("select-core : SELECT result-columns table-expr")
+@pg.production("select_core : SELECT result_columns table_expr")
 def select(p):
     _, result_column, table_name = p
     return SelectCore(result_column, table_name)
 
 
-@pg.production("table-expr : FROM table-name")
+@pg.production("table_expr : FROM table_name where_clause")
 def table_expr(p):
     return p[1]
 
 
-@pg.production("result-columns : result-column")
-@pg.production("result-columns : result-columns COMMA result-column")
+@pg.production("where_clause : ")
+@pg.production("where_clause : WHERE search_condition")
+def where_clause(p):
+    return None
+
+
+@pg.production("search_condition : ")
+def search_condition(p):
+    return None
+
+
+@pg.production("result_columns : result_column")
+@pg.production("result_columns : result_columns COMMA result_column")
 def result_column_group(p):
     if len(p) == 1:
         columns = ResultColumnGroup()
@@ -30,12 +41,12 @@ def result_column_group(p):
     return columns
 
 
-@pg.production("result-column : IDENTIFIER")
+@pg.production("result_column : IDENTIFIER")
 def result_column(p):
     return ResultColumn(p[0])
 
 
-@pg.production("table-name : IDENTIFIER")
+@pg.production("table_name : IDENTIFIER")
 def table_name(p):
     return TableName(p[0])
 

@@ -2,7 +2,7 @@
 
 import rply
 
-SQL_KEYWORDS = ['select', 'from']
+SQL_KEYWORDS = ['select', 'from', 'where']
 
 IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
 
