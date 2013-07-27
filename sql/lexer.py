@@ -6,6 +6,7 @@ SQL_KEYWORDS = ['select', 'from']
 
 IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
 
+
 class LexerGenerator(rply.LexerGenerator):
 
     def __init__(self):
@@ -16,11 +17,12 @@ class LexerGenerator(rply.LexerGenerator):
         self.tokens.append(name)
         super(LexerGenerator, self).add(name, pattern)
 
+
 class LexerGeneratorBuilder(object):
 
     def __init__(self, keywords):
         self.keywords = keywords
-   
+
     def register_keyword_tokens(self, lg):
         for k in SQL_KEYWORDS:
             lg.add(k.upper(), k)
@@ -35,6 +37,7 @@ class LexerGeneratorBuilder(object):
         return lg.tokens, lg.build()
 
 TOKENS, sql_lexer = LexerGeneratorBuilder(SQL_KEYWORDS).build()
+
 
 def lex(sql):
     stream = sql_lexer.lex(sql)

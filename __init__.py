@@ -3,6 +3,7 @@
 from dpark import DparkContext
 from sql.parser import parse
 
+
 class Table(object):
 
     def __init__(self, name, fields, paths):
@@ -13,6 +14,7 @@ class Table(object):
     def index(self, field):
         return self.fields.index(field)
 
+
 class Schema(object):
 
     def __init__(self, tables):
@@ -21,7 +23,7 @@ class Schema(object):
     def find_table(self, name):
         try:
             return self.table_dict[name]
-        except :
+        except:
             raise Exception("table not found: %s" % name)
 
 
@@ -34,4 +36,5 @@ class Query(object):
 
     def execute(self):
         select = parse(self.sql)
+        # pylint: disable=E1101
         return select.visit(self)

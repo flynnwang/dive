@@ -9,6 +9,7 @@ from sql.parser import parse
 
 SIMPLE_SELECT = "select name from user"
 
+
 class DiveTests(unittest.TestCase):
 
     def setUp(self):
@@ -25,6 +26,7 @@ class DiveTests(unittest.TestCase):
         user_names = [r[1] for r in self.lines]
         self.assertListEqual(user_names, res)
 
+
 class TestLexer(unittest.TestCase):
 
     def test_simple_select(self):
@@ -32,12 +34,15 @@ class TestLexer(unittest.TestCase):
         expected = SIMPLE_SELECT.split(' ')
         self.assertListEqual(expected, tokens)
 
+
 class TestSqlParser(unittest.TestCase):
 
     def test_simple_select(self):
         sc = parse(SIMPLE_SELECT)
+        # pylint: disable=E1101
         self.assertEqual("name", sc.result_column.value)
         self.assertEqual("user", sc.table_name.value)
+
 
 if __name__ == '__main__':
     unittest.main()
