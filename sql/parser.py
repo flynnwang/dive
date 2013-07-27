@@ -8,11 +8,24 @@ pg = ParserGenerator(TOKENS, cache_id="sql_parser")
 
 
 @pg.production("""select-core :
-        SELECT result-column
+        SELECT result-columns
         FROM table-name""")
 def select(p):
     _, result_column, _, join_source = p
     return SelectCore(result_column, join_source)
+
+
+@pg.production("result-columns : result-column")
+def simple_result_column_group(p):
+    columns = ResultColumnGroup()
+    columns.append(p[0])
+    return columns
+
+
+@pg.production("result-columns : result-columns COMMA result-column")
+def multiple_result_column_group(p):
+    p[0].append(p[2])
+    return p[0]
 
 
 @pg.production("result-column : IDENTIFIER")
@@ -58,27 +71,33 @@ class ResultColumn(IdentifierNode):
     pass
 
 
+class ResultColumnGroup(Node, list):
+
+    def __init__(self):
+        Node.__init__(self)
+
+
 class TableName(IdentifierNode):
     pass
 
 
 class SelectCore(Node):
 
-    def __init__(self, result_column, table_name):
+    def __init__(self, columns, table_name):
         Node.__init__(self)
-        self.result_column = result_column
+        self.columns = columns
         self.table_name = table_name
 
     def __repr__(self):
-        return "<SelectCore: SELECT %s FROM %s>" % (self.result_column,
+        return "<SelectCore: SELECT %s FROM %s>" % (self.columns,
                                                     self.table_name)
 
     def visit(self, ctx):
         table = ctx.schema.find_table(self.table_name.value)
-        col_idx = table.index(self.result_column.value)
+        column_indexes = [table.index(c.value) for c in self.columns]
 
         def _map_result(r):
-            return r[col_idx]
+            return [r[idx] for idx in column_indexes]
 
         data = ctx.dpark.union([ctx.dpark.csvFile(p) for p in table.paths])
         return data.map(_map_result).collect()
