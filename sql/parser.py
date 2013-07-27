@@ -7,12 +7,15 @@ from .lexer import TOKENS, sql_lexer
 pg = ParserGenerator(TOKENS, cache_id="sql_parser")
 
 
-@pg.production("""select-core :
-        SELECT result-columns
-        FROM table-name""")
+@pg.production("select-core : SELECT result-columns table-expr")
 def select(p):
-    _, result_column, _, join_source = p
-    return SelectCore(result_column, join_source)
+    _, result_column, table_name = p
+    return SelectCore(result_column, table_name)
+
+
+@pg.production("table-expr : FROM table-name")
+def table_expr(p):
+    return p[1]
 
 
 @pg.production("result-columns : result-column")
