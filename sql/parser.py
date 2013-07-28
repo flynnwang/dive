@@ -7,18 +7,19 @@ from productions.select import select_core
 from productions.empty import empty
 
 
-def build_parser():
-    pg = ParserGenerator(TOKENS, cache_id="sql_parser")
-
-    # select-statmanet
+def select_productions(pg):
     select_core(pg)
-
     empty(pg)
+    return pg
 
+
+def build(productions):
+    pg = ParserGenerator(TOKENS, cache_id="sql_parser")
+    productions(pg)
     return pg.build()
 
 
-sql_parser = build_parser()
+sql_parser = build(select_productions)
 
 
 def parse(sql):
