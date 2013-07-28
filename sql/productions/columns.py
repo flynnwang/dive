@@ -4,7 +4,6 @@ from . import Node, IdentifierNode
 
 
 def result_columns(pg):
-
     @pg.production("result_columns : result_column")
     @pg.production("result_columns : result_columns COMMA result_column")
     def result_column_group(p):
@@ -19,6 +18,8 @@ def result_columns(pg):
     @pg.production("result_column : IDENTIFIER")
     def result_column(p):
         return ResultColumn(p[0])
+
+    return pg
 
 
 class ResultColumn(IdentifierNode):

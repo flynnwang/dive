@@ -21,7 +21,7 @@ def select_core(pg):
     def table_name(p):
         return TableName(p[0])
 
-    where.where_clause(pg)
+    return where.where_clause(pg)
 
 
 class SelectCore(Node):

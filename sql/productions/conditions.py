@@ -26,6 +26,8 @@ def search_condition(pg):
     def comp_op(p):
         return EqualOperator()
 
+    return pg
+
 
 class Predicate(Node):
     pass

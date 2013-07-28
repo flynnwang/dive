@@ -1,18 +1,23 @@
 TODO
 ----
-- split productions
-
+- more comparator (>, >=, <, <=, like)
 
 - add data type to table definition
-- comparator (causion on type: int)
+- add map process for value coercion
+- group by
+- having
 
 
 - add parser error handler
+? split production & its models
 
 
 
 DONE
 ----
+- [R] emtpy -> empty-where ?
+
+- split productions into modules
 - add fabric file: test commands, autopep8
 - string comparation
 - select hmultiple result columns

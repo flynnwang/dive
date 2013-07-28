@@ -31,11 +31,7 @@ class WhereClauseTest(DiveTestBase):
         assert ['where', 'id', '=', '3'] == tokens
 
     def test_parse_search_condition(self):
-        def _productions(pg):
-            where_clause(pg)
-            empty(pg)
-
-        parser = build(_productions)
+        parser = build(lambda pg: where_clause(pg))
         where = parser.parse(sql_lexer.lex(self.sql))
         expr = where.search_condition
 
