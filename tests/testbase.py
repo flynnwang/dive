@@ -20,14 +20,10 @@ class DiveTestBase(unittest.TestCase):
         table = Table('user', ('id', 'name', 'age'), [users_file_path])
         self.schema = Schema([table])
         with open(users_file_path, 'r') as f:
-            self.lines = [l for l in csv.reader(f)]
-
-    def test_should_return_each_word_as_a_token(self):
-        expected = self.sql.split(' ')
-        tokens = [i.getstr() for i in lex(self.sql)]
-
-        assert expected, tokens
+            self.rows = [l for l in csv.reader(f)]
 
     def _execute_query(self, sql):
         return Query(sql, self.schema).execute()
 
+    def _tokenize(self, s):
+        return [i.getstr() for i in lex(s)]

@@ -4,16 +4,8 @@
 from fabric.api import local
 
 
-def test_lexer():
-    local("py.test -sv tests/tests.py -k LexerTest")
-
-
-def test_parser():
-    local("py.test -sv tests/tests.py -k SqlParserText")
-
-
-def tests():
-    local("py.test -v tests/tests.py")
+def test():
+    local("py.test -v tests/*.py")
 
 
 def run_pep8():
