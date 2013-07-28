@@ -2,9 +2,9 @@
 
 import unittest
 import csv
-from . import Table, Schema, Query
-from sql.lexer import lex
-from sql.parser import parse
+from dive import Table, Schema, Query
+from dive.sql.lexer import lex
+from dive.sql.parser import parse
 
 # TODO: bad to share this, may be broken more tests
 SIMPLE_SELECT = "select name from user"

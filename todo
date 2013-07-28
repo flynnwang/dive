@@ -1,5 +1,8 @@
-- add fabric file: test commands, autopep8
-- split parser & models
+TODO
+----
+- split productions & models
+
+- add data type to table definition
 - comparator (causion on type: int)
 
 
@@ -8,5 +11,6 @@
 
 DONE
 ----
+- add fabric file: test commands, autopep8
 - string comparation
 - select hmultiple result columns
