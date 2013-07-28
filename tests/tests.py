@@ -3,7 +3,6 @@
 import unittest
 import csv
 from dive import Table, Schema, Query
-from dive.sql.lexer import lex
 from dive.sql.parser import parse
 
 # TODO: bad to share this, may be broken more tests
@@ -20,15 +19,8 @@ class DiveTests(unittest.TestCase):
         with open('users.csv', 'r') as f:
             self.lines = [l for l in csv.reader(f)]
 
-    def _run_query(self, sql):
+    def execute_query(self, sql):
         return Query(sql, self.schema).execute()
-
-    def test_simple_select(self):
-        res = self._run_query(SIMPLE_SELECT)
-        self.assertEqual(len(self.lines), len(res))
-
-        user_names = [[r[1]] for r in self.lines]
-        self.assertListEqual(user_names, res)
 
     def test_select_with_multiple_columns(self):
         res = self._run_query(SELECT_WITH_MULTIPLE_COLUMNS)
@@ -46,23 +38,12 @@ class LexerTest(unittest.TestCase):
     def _lex(self, sql):
         return [i.getstr() for i in lex(sql)]
 
-    def test_simple_select(self):
-        tokens = self._lex(SIMPLE_SELECT)
-        expected = SIMPLE_SELECT.split(' ')
-        self.assertListEqual(expected, tokens)
-
     def test_select_where(self):
         tokens = self._lex(SELECT_WHERE)
 
 
 class SqlParserText(unittest.TestCase):
 
-    def test_simple_select(self):
-        sc = parse(SIMPLE_SELECT)
-        # pylint: disable=E1101
-        self.assertEqual(1, len(sc.columns))
-        self.assertEqual("name", sc.columns[0].value)
-        self.assertEqual("user", sc.table_expr.table_name.value)
 
     def test_simple_search_condition(self):
         s = parse(SELECT_WHERE)
