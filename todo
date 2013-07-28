@@ -1,6 +1,7 @@
 TODO
 ----
-- split productions & models
+- split productions
+
 
 - add data type to table definition
 - comparator (causion on type: int)
