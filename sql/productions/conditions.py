@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from . import Node, IdentifierNode
+from comparator import comparator
 
 
 def search_condition(pg):
@@ -26,25 +27,7 @@ def search_condition(pg):
     def row_value_designator_as_string(p):
         return String(p[0])
 
-    @pg.production("comp_op : EQ")
-    def eq(p):
-        return EqualOperator()
-
-    @pg.production("comp_op : LESS_THAN")
-    def less_than(p):
-        return LessThanOperator()
-
-    @pg.production("comp_op : LESS_THAN_OR_EQUAL")
-    def less_than_or_equal(p):
-        return LessThanOrEqualOperator()
-
-    @pg.production("comp_op : GREATER_THAN_OR_EQUAL")
-    def greater_than_or_equal(p):
-        return GreaterThanOrEqualOperator()
-
-    @pg.production("comp_op : GREATER_THAN")
-    def greater_than(p):
-        return GreaterThanOperator()
+    comparator(pg)
 
     return pg
 
@@ -63,42 +46,6 @@ class BooleanExpr(Predicate):
     def visit(self, ctx):
         idx = ctx.table.index(self.left.value)
         ctx.data = ctx.data.filter(lambda r: self.op(r[idx], self.right.value))
-
-
-class Comparator(Node):
-
-    def __call__(self):
-        pass
-
-
-class EqualOperator(Comparator):
-
-    def __call__(self, left, right):
-        return left == right
-
-
-class LessThanOperator(Comparator):
-
-    def __call__(self, left, right):
-        return left < right
-
-
-class LessThanOrEqualOperator(Comparator):
-
-    def __call__(self, left, right):
-        return left <= right
-
-
-class GreaterThanOrEqualOperator(Comparator):
-
-    def __call__(self, left, right):
-        return left >= right
-
-
-class GreaterThanOperator(Comparator):
-
-    def __call__(self, left, right):
-        return left > right
 
 
 class Number(Node):

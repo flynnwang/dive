@@ -1,8 +1,9 @@
 TODO
 ----
+- add data type to table definition
+
 - comparator: like
 
-- add data type to table definition
 - add map process for value coercion
 - group by
 - having
