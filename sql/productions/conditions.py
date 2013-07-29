@@ -34,6 +34,10 @@ def search_condition(pg):
     def less_than(p):
         return LessThanOperator()
 
+    @pg.production("comp_op : LESS_THAN_OR_EQUAL")
+    def less_than_or_equal(p):
+        return LessThanOrEqualOperator()
+
     return pg
 
 
@@ -69,6 +73,12 @@ class LessThanOperator(Comparator):
 
     def __call__(self, left, right):
         return left < right
+
+
+class LessThanOrEqualOperator(Comparator):
+
+    def __call__(self, left, right):
+        return left <= right
 
 
 class Number(Node):
