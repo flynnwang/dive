@@ -28,3 +28,14 @@ class LessThanOrEqualCompTest(DiveTestBase):
         res = self._execute_query(self.sql)
 
         assert expected == res
+
+
+class GreaterThanOrEqualCompTest(DiveTestBase):
+
+    sql = 'select id, name, age from user where name >= "y"'
+
+    def test_should_find_user_witn_name_y_or_after(self):
+        expected = [r for r in self.rows if r[1] >= 'y']
+        res = self._execute_query(self.sql)
+
+        assert expected == res
