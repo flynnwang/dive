@@ -1,12 +1,15 @@
 TODO
 ----
-- more comparator (>, >=, <, <=, like)
+- string support
+- comparator: <, <=, >, >=
+- comparator: like
 
 - add data type to table definition
 - add map process for value coercion
 - group by
 - having
 
+- float number support
 
 - add parser error handler
 ? split production & its models

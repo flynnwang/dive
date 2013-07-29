@@ -12,7 +12,7 @@ class DiveTestBase(unittest.TestCase):
 
     @property
     def sql(self):
-        """ sub class provide sql detail"""
+        """ sub class provide sql"""
         return ""
 
     def setUp(self):

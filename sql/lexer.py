@@ -30,16 +30,23 @@ class LexerGeneratorBuilder(object):
         for t, p in tokens:
             lg.add(t.upper(), p)
 
+    def register_string_rules(self, lg):
+        STRING_PTNS = [r'".*"', r"'.*'"]
+        for p in STRING_PTNS:
+            lg.add("STRING", p)
+
     def build(self):
         lg = LexerGenerator()
 
         self.register_keyword_tokens(lg)
         self.register_tokens(lg, self.COMPARATORS)
+        self.register_string_rules(lg)
 
         lg.add('COMMA', ',')
         lg.add(*self.IDENTIFIER)
         lg.add(*self.NUMBER)
         lg.ignore(r"\s+")
+
         return lg.tokens, lg.build()
 
 TOKENS, sql_lexer = LexerGeneratorBuilder().build()

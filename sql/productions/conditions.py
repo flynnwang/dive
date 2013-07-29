@@ -19,8 +19,12 @@ def search_condition(pg):
         return RowValueDesignator(p[0])
 
     @pg.production("row_value_designator : NUMBER")
-    def row_value_designator(p):
+    def row_value_designator_as_number(p):
         return Number(p[0])
+
+    @pg.production("row_value_designator : STRING")
+    def row_value_designator_as_string(p):
+        return String(p[0])
 
     @pg.production("comp_op : EQ")
     def comp_op(p):
@@ -62,6 +66,14 @@ class Number(Node):
     def __init__(self, token):
         self.token = token
         self.value = token.value
+
+
+class String(Node):
+    # TODO: create a token node type
+
+    def __init__(self, token):
+        self.token = token
+        self.value = token.value[1:-1]
 
 
 class RowValueDesignator(IdentifierNode):
