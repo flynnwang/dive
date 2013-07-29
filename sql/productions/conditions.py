@@ -42,6 +42,10 @@ def search_condition(pg):
     def greater_than_or_equal(p):
         return GreaterThanOrEqualOperator()
 
+    @pg.production("comp_op : GREATER_THAN")
+    def greater_than(p):
+        return GreaterThanOperator()
+
     return pg
 
 
@@ -89,6 +93,12 @@ class GreaterThanOrEqualOperator(Comparator):
 
     def __call__(self, left, right):
         return left >= right
+
+
+class GreaterThanOperator(Comparator):
+
+    def __call__(self, left, right):
+        return left > right
 
 
 class Number(Node):

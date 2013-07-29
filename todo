@@ -1,6 +1,5 @@
 TODO
 ----
-- comparator: <, <=, >, >=
 - comparator: like
 
 - add data type to table definition
@@ -17,6 +16,7 @@ TODO
 
 DONE
 ----
+- comparator: <, <=, >, >=
 - string support
 
 - [R] emtpy -> empty-where ?
