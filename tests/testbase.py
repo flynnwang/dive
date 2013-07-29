@@ -31,7 +31,8 @@ class DiveTestBase(unittest.TestCase):
             self.rows = [[int(l[0]), l[1], int(l[2])] for l in csv.reader(f)]
 
     def _execute_query(self, sql):
-        return Query(sql, self.schema).execute()
+        tb = Query(sql, self.schema).execute()
+        return tb.fetch()
 
     def _tokenize(self, s):
         return [i.getstr() for i in lex(s)]

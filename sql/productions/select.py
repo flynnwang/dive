@@ -39,19 +39,12 @@ class SelectCore(Node):
         ctx.table = ctx.schema.find_table(self.table_expr.table_name.value)
         column_indexes = [ctx.table.index(c.value) for c in self.columns]
 
-        def coercion(r):
-            return [conv(r[i]) for i, conv 
-                    in enumerate(ctx.table.fields.values())]
-
         def _map_result(r):
             return [r[idx] for idx in column_indexes]
 
-        ctx.rdd = ctx.dpark\
-                     .union([ctx.dpark.csvFile(p) for p in ctx.table.paths])\
-                     .map(coercion)
-
+        ctx.rdd = ctx.table.rdd(ctx.dpark)
         self.table_expr.visit(ctx)
-        return ctx.rdd.map(_map_result).collect()
+        return ctx.rdd.map(_map_result)
 
 
 class TableExpr(Node):

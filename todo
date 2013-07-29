@@ -1,6 +1,5 @@
 TODO
 ----
-- Node.visit() should return new table (for subquery)
 
 - * support
 - comparator: like
@@ -20,6 +19,7 @@ JOIN related:
 
 DONE
 ----
+- Query.execute() should return a new table (for subquery)
 - add data type to table definition
 - add map process for value coercion
 - comparator: <, <=, >, >=
