@@ -27,8 +27,12 @@ def search_condition(pg):
         return String(p[0])
 
     @pg.production("comp_op : EQ")
-    def comp_op(p):
+    def eq(p):
         return EqualOperator()
+
+    @pg.production("comp_op : LESS_THAN")
+    def less_than(p):
+        return LessThanOperator()
 
     return pg
 
@@ -59,6 +63,12 @@ class EqualOperator(Comparator):
 
     def __call__(self, left, right):
         return left == right
+
+
+class LessThanOperator(Comparator):
+
+    def __call__(self, left, right):
+        return left < right
 
 
 class Number(Node):

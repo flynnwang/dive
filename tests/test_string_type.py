@@ -14,7 +14,7 @@ class StringEqualCompTest(DiveTestBase):
 
         assert expected == tokens[-1]
 
-    def test_should_find_user_witn_name_before_c(self):
+    def test_should_find_user_witn_name_c(self):
         expected = [r for r in self.rows if r[1] == 'c']
         res = self._execute_query(self.sql)
 

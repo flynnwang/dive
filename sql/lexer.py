@@ -17,7 +17,7 @@ class LexerGenerator(rply.LexerGenerator):
 class LexerGeneratorBuilder(object):
 
     SQL_KEYWORDS = ['select', 'from', 'where']
-    COMPARATORS = [('EQ', '=')]
+    COMPARATORS = [('EQ', '='), ('LESS_THAN', '<')]
 
     IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
     NUMBER = ("NUMBER", r"\d+")
