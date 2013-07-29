@@ -8,6 +8,14 @@ from dive import Table, Schema, Query
 from dive.sql.lexer import lex
 
 
+class UserTable(Table):
+
+    def __init__(self, paths):
+        name = "user"
+        fields = [("id", int), ("name", str), ("age", int)]
+        Table.__init__(self, name, fields, paths)
+
+
 class DiveTestBase(unittest.TestCase):
 
     @property
@@ -17,10 +25,10 @@ class DiveTestBase(unittest.TestCase):
 
     def setUp(self):
         users_file_path = join(dirname(abspath(__file__)), 'users.csv')
-        table = Table('user', ('id', 'name', 'age'), [users_file_path])
+        table = UserTable([users_file_path])
         self.schema = Schema([table])
         with open(users_file_path, 'r') as f:
-            self.rows = [l for l in csv.reader(f)]
+            self.rows = [[int(l[0]), l[1], int(l[2])] for l in csv.reader(f)]
 
     def _execute_query(self, sql):
         return Query(sql, self.schema).execute()

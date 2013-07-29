@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 
-from dpark import DparkContext
+from dpark import DparkContext, optParser
 from sql.parser import parse
+from collections import OrderedDict
+
+optParser.add_option("-s")   # "option used for py.test"
+optParser.add_option("-x")
 
 
 class Table(object):
 
     def __init__(self, name, fields, paths):
         self.name = name
-        self.fields = fields
+        self.fields = OrderedDict(fields)
         self.paths = paths
 
     def index(self, field):
-        return self.fields.index(field)
+        return self.fields.keys().index(field)
 
 
 class Schema(object):

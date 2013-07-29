@@ -5,7 +5,7 @@ from fabric.api import local
 
 
 def test():
-    local("py.test tests/*.py")
+    local("py.test -x tests/*.py")
 
 
 def run_pep8():

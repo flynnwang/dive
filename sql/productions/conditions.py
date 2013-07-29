@@ -45,14 +45,18 @@ class BooleanExpr(Predicate):
 
     def visit(self, ctx):
         idx = ctx.table.index(self.left.value)
-        ctx.data = ctx.data.filter(lambda r: self.op(r[idx], self.right.value))
+
+        def check(r):
+            return self.op(r[idx], self.right.value)
+
+        ctx.rdd = ctx.rdd.filter(check)
 
 
 class Number(Node):
 
     def __init__(self, token):
         self.token = token
-        self.value = token.value
+        self.value = int(token.value)
 
 
 class String(Node):

@@ -1,10 +1,11 @@
 TODO
 ----
-- add data type to table definition
+- Node.visit() should return new table (for subquery)
 
+- * support
 - comparator: like
+- multiple conditions support
 
-- add map process for value coercion
 - group by
 - having
 
@@ -14,9 +15,13 @@ TODO
 ? split production & its models
 
 
+JOIN related:
+- multiple table support
 
 DONE
 ----
+- add data type to table definition
+- add map process for value coercion
 - comparator: <, <=, >, >=
 - string support
 

@@ -14,7 +14,7 @@ class SelectWhereTest(DiveTestBase):
         return "select name from user where id = 3"
 
     def test_should_find_user_with_that_id(self):
-        row = [r for r in self.rows if r[0] == '3'][0]
+        row = [r for r in self.rows if r[0] == 3][0]
         res = self._execute_query(self.sql)
 
         assert 1 == len(res)
@@ -33,7 +33,8 @@ class WhereClauseTest(DiveTestBase):
     def test_parse_search_condition(self):
         parser = build(lambda pg: where_clause(pg))
         where = parser.parse(sql_lexer.lex(self.sql))
+        # pylint: disable=E1101
         expr = where.search_condition
 
         assert "id" == expr.left.value
-        assert "3" == expr.right.value
+        assert 3 == expr.right.value

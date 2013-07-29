@@ -14,7 +14,7 @@ def select_core(pg):
     columns.result_columns(pg)
 
     @pg.production("table_expr : FROM table_name where_clause")
-    def _(p):
+    def table_expr(p):
         return TableExpr(p[1], p[2])
 
     @pg.production("table_name : IDENTIFIER")
@@ -36,17 +36,22 @@ class SelectCore(Node):
                                                     self.table_expr)
 
     def visit(self, ctx):
-        table = ctx.schema.find_table(self.table_expr.table_name.value)
-        column_indexes = [table.index(c.value) for c in self.columns]
+        ctx.table = ctx.schema.find_table(self.table_expr.table_name.value)
+        column_indexes = [ctx.table.index(c.value) for c in self.columns]
+
+        def coercion(r):
+            return [conv(r[i]) for i, conv 
+                    in enumerate(ctx.table.fields.values())]
 
         def _map_result(r):
             return [r[idx] for idx in column_indexes]
 
-        ctx.table = table
-        ctx.data = ctx.dpark.union([ctx.dpark.csvFile(p) for p in table.paths])
-        # print self.table_expr, type(self.table_expr)
+        ctx.rdd = ctx.dpark\
+                     .union([ctx.dpark.csvFile(p) for p in ctx.table.paths])\
+                     .map(coercion)
+
         self.table_expr.visit(ctx)
-        return ctx.data.map(_map_result).collect()
+        return ctx.rdd.map(_map_result).collect()
 
 
 class TableExpr(Node):
