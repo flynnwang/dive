@@ -19,3 +19,14 @@ class StringEqualCompTest(DiveTestBase):
         res = self._execute_query(self.sql)
 
         assert expected == res
+
+
+class SingleQuoteStringCompTest(DiveTestBase):
+
+    sql = "select id , name , age from user where name = ' test '"
+
+    def test_tokenize_should_parse_string(self):
+        tokens = self._tokenize(self.sql)
+        expected = "' test '"
+
+        assert expected == tokens[-1]
