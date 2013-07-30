@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
+import pytest
 from os.path import dirname, abspath, join
 import unittest
 import csv
@@ -36,3 +36,16 @@ class DiveTestBase(unittest.TestCase):
 
     def _tokenize(self, s):
         return [i.getstr() for i in lex(s)]
+
+
+class SelectTestBase(DiveTestBase):
+
+    sql = "select id, name, age from user"
+
+    def expected_select_result(self):
+        return self.rows
+
+    def test_should_return_expected_results(self):
+        expected = self.expected_select_result()
+        res = self._execute_query(self.sql)
+        assert expected == res

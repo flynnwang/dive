@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import operator as op
+import re
 
 
 def comparator(pg):
@@ -24,5 +25,12 @@ def comparator(pg):
     @pg.production("comp_op : GREATER_THAN_OR_EQUAL")
     def greater_than_or_equal(p):
         return op.ge
+
+    @pg.production("comp_op : LIKE")
+    def like(p):
+        def match(x, y):
+            # TODO pre compile re
+            return re.match(y, x)
+        return match
 
     return pg

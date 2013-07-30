@@ -1,10 +1,9 @@
 TODO
 ----
+- comparator: like
 
-- multiple conditions: and
 - multiple conditions: not
 - paren support
-- comparator: like
 - * support
 
 - group by
@@ -20,6 +19,7 @@ TODO
 
 - folder structure: syntax + ast
 I better __repr__ support (for debug)
+I case insensitive
 
 
 JOIN related:
@@ -28,6 +28,7 @@ JOIN related:
 
 DONE
 ----
+- multiple conditions: and
 - multiple conditions: or
 
 - Query.execute() should return a new table (for subquery)

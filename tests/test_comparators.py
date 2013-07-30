@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from testbase import DiveTestBase
+from testbase import DiveTestBase, SelectTestBase
 
 
 class LessThanCompTest(DiveTestBase):
@@ -54,3 +54,11 @@ class GreaterThanCompTest(DiveTestBase):
         res = self._execute_query(self.sql)
 
         assert expected == res
+
+
+class LikeCompTest(SelectTestBase):
+
+    sql = 'select id, name, age from user where name like "[a-c]"'
+
+    def expected_select_result(self):
+        return [r for r in self.rows if 'a' <= r[1] <= 'c']
