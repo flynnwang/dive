@@ -26,7 +26,7 @@ class WhereClauseTest(DiveTestBase):
     sql = "where id = 3"
 
     def test_tokenize_where_clause(self):
-        tokens = self._tokenize('where id = 3')
+        tokens = self._tokenize(self.sql)
 
         assert ['where', 'id', '=', '3'] == tokens
 
@@ -34,7 +34,26 @@ class WhereClauseTest(DiveTestBase):
         parser = build(lambda pg: where_clause(pg))
         where = parser.parse(sql_lexer.lex(self.sql))
         # pylint: disable=E1101
-        expr = where.search_condition
+        term = where.search_condition.term
 
-        assert "id" == expr.left.value
-        assert 3 == expr.right.value
+        assert "id" == term.left.value
+        assert 3 == term.right.value
+
+
+class MultiAndWhereTest(DiveTestBase):
+
+    sql = "where id >= 1 and id <= 3"
+
+    def test_tokenize_conditions(self):
+        tokens = self._tokenize(self.sql)
+
+        assert ['where', 'id', '>=', '1', 'and', 'id', '<=', '3'] == tokens
+
+    #def test_parse_search_condition(self):
+        #parser = build(lambda pg: where_clause(pg))
+        #where = parser.parse(sql_lexer.lex(self.sql))
+        ## pylint: disable=E1101
+        #expr = where.search_condition
+
+        #assert "id" == expr.left.value
+        #assert 3 == expr.right.value

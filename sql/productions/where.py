@@ -29,4 +29,5 @@ class WhereClause(Clause):
         self.search_condition = search_condition
 
     def visit(self, ctx):
-        self.search_condition.visit(ctx)
+        _filter = self.search_condition.visit(ctx)
+        ctx.rdd = ctx.rdd.filter(_filter)

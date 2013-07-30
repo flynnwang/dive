@@ -5,15 +5,22 @@ from comparator import comparator
 
 
 def search_condition(pg):
-    @pg.production("search_condition : ")
-    @pg.production("search_condition : boolean_expr")
+    @pg.production("search_condition : boolean_term")
     def _(p):
-        return p[0]
+        if len(p) == 1:
+            term, more = p[0], None
+        else:
+            term, more = p[0], p[2]
+        return SearchCondition(term, more)
 
-    @pg.production("""boolean_expr :
+    #@pg.production("search_condition : search_condition OR boolean_term")
+    #def multiple_boolean_term(p):
+        #return p[0]
+
+    @pg.production("""boolean_term :
             row_value_designator comp_op row_value_designator""")
-    def boolean_expr(p):
-        return BooleanExpr(*p)
+    def boolean_term(p):
+        return BooleanTerm(*p)
 
     @pg.production("row_value_designator : IDENTIFIER")
     def row_value_designator(p):
@@ -32,11 +39,25 @@ def search_condition(pg):
     return pg
 
 
-class Predicate(Node):
-    pass
+class SearchCondition(Node):
 
+    def __init__(self, term, more=None):
+        self.term = term
+        self.more = more
 
-class BooleanExpr(Predicate):
+    def visit(self, ctx):
+        c = self.term.visit(ctx)
+        if self.more is None:
+            return c
+        
+        # the OR logic
+        c2 = self.more.visit(ctx)
+        def _filter(r):
+            return c(r) or c2(r)
+        return _filter
+        
+
+class BooleanTerm(Node):
 
     def __init__(self, left, op, right):
         self.left = left
@@ -48,8 +69,7 @@ class BooleanExpr(Predicate):
 
         def check(r):
             return self.op(r[idx], self.right.value)
-
-        ctx.rdd = ctx.rdd.filter(check)
+        return check
 
 
 class Number(Node):
