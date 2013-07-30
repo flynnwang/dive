@@ -14,10 +14,15 @@ def search_condition(pg):
             more, term = p[0], p[2]
         return SearchCondition(term, more)
 
-    @pg.production("""boolean_term :
-            row_value_designator comp_op row_value_designator""")
+    @pg.production("boolean_term : boolean_factor")
+    @pg.production("boolean_term : boolean_term AND boolean_factor")
     def boolean_term(p):
-        return BooleanTerm(*p)
+        return BooleanTerm(p)
+
+    @pg.production("""boolean_factor :
+            row_value_designator comp_op row_value_designator""")
+    def boolean_factor(p):
+        return BooleanFactor(*p)
 
     @pg.production("row_value_designator : IDENTIFIER")
     def row_value_designator(p):
@@ -37,6 +42,7 @@ def search_condition(pg):
 
 
 class SearchCondition(Node):
+    """ OR logic """
 
     def __init__(self, term, more=None):
         self.term = term
@@ -46,17 +52,25 @@ class SearchCondition(Node):
         c = self.term.visit(ctx)
         if self.more is None:
             return c
-        
-        # the OR logic
         c2 = self.more.visit(ctx)
+        return lambda r: c(r) or c2(r)
 
-        def _filter(r):
-            return c(r) or c2(r)
-
-        return _filter
-        
 
 class BooleanTerm(Node):
+    """ AND logic """
+
+    def __init__(self, p):
+        self.factor, self.more = (p[0], None) if len(p) == 1 else (p[2], p[0])
+
+    def visit(self, ctx):
+        c = self.factor.visit(ctx)
+        if self.more is None:
+            return c
+        c2 = self.more.visit(ctx)
+        return lambda r: c(r) and c2(r)
+        
+
+class BooleanFactor(Node):
 
     def __init__(self, left, op, right):
         self.left = left
