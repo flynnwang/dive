@@ -1,6 +1,5 @@
 TODO
 ----
-- multiple conditions: or
 
 - multiple conditions: and
 - multiple conditions: not
@@ -20,6 +19,7 @@ TODO
 ? split production & its models
 
 - folder structure: syntax + ast
+I better __repr__ support (for debug)
 
 
 JOIN related:
@@ -28,6 +28,8 @@ JOIN related:
 
 DONE
 ----
+- multiple conditions: or
+
 - Query.execute() should return a new table (for subquery)
 - add data type to table definition
 - add map process for value coercion

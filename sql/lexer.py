@@ -19,7 +19,7 @@ class LexerGeneratorBuilder(object):
     SQL_KEYWORDS = ['select', 'from', 'where']
     COMPARATORS = [('EQUAL', '='), ('LESS_THAN_OR_EQUAL', '<='),
                    ('LESS_THAN', '<'), ('GREATER_THAN_OR_EQUAL', '>='),
-                   ('GREATER_THAN', '>')]
+                   ('GREATER_THAN', '>'), ('OR', 'or')]
 
     IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
     NUMBER = ("NUMBER", r"\d+")

@@ -6,16 +6,13 @@ from comparator import comparator
 
 def search_condition(pg):
     @pg.production("search_condition : boolean_term")
+    @pg.production("search_condition : search_condition OR boolean_term")
     def _(p):
         if len(p) == 1:
             term, more = p[0], None
         else:
-            term, more = p[0], p[2]
+            more, term = p[0], p[2]
         return SearchCondition(term, more)
-
-    #@pg.production("search_condition : search_condition OR boolean_term")
-    #def multiple_boolean_term(p):
-        #return p[0]
 
     @pg.production("""boolean_term :
             row_value_designator comp_op row_value_designator""")
@@ -52,8 +49,10 @@ class SearchCondition(Node):
         
         # the OR logic
         c2 = self.more.visit(ctx)
+
         def _filter(r):
             return c(r) or c2(r)
+
         return _filter
         
 
