@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from testbase import DiveTestBase
+from testbase import DiveTestBase, SelectTestBase
 from dive.sql.parser import build
 from dive.sql.lexer import TOKENS, sql_lexer
 from dive.sql.productions.where import where_clause
@@ -33,7 +33,7 @@ class WhereClauseTest(DiveTestBase):
         parser = build(lambda pg: where_clause(pg))
         where = parser.parse(sql_lexer.lex(self.sql))
         # pylint: disable=E1101
-        factor = where.search_condition.term.factor
+        factor = where.search_condition.term.factor.predicate
 
         assert "id" == factor.left.value
         assert 3 == factor.right.value
@@ -52,12 +52,12 @@ class MultiOrWhereTest(DiveTestBase):
         parser = build(lambda pg: where_clause(pg))
         where = parser.parse(sql_lexer.lex(self.sql))
         # pylint: disable=E1101
-        right_factor = where.search_condition.term.factor
+        right_factor = where.search_condition.term.factor.predicate
 
         assert "id" == right_factor.left.value
         assert 3 == right_factor.right.value
 
-        left_factor = where.search_condition.more.term.factor
+        left_factor = where.search_condition.more.term.factor.predicate
         assert "id" == left_factor.left.value
         assert 1 == left_factor.right.value
 
@@ -97,12 +97,9 @@ class SelectAndThenOrTest(DiveTestBase):
         assert rows == res
 
 
-class SelectOrThenAndTest(DiveTestBase):
+class SelectNotTest(SelectTestBase):
 
-    sql = "select id, name, age from user where id >= 20 or id >=1 and id <= 3"
+    sql = "select id, name, age from user where not id >= 3"
 
-    def test_shoud_find_user_with_id_satisfiy_conditions(self):
-        rows = [r for r in self.rows if 1 <= r[0] <= 3 or r[0] >= 20]
-        res = self._execute_query(self.sql)
-
-        assert rows == res
+    def expected_select_result(self):
+        return [r for r in self.rows if not r[0] >= 3]

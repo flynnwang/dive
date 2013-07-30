@@ -20,7 +20,7 @@ class LexerGeneratorBuilder(object):
     COMPARATORS = [('EQUAL', '='), ('LESS_THAN_OR_EQUAL', '<='),
                    ('LESS_THAN', '<'), ('GREATER_THAN_OR_EQUAL', '>='),
                    ('GREATER_THAN', '>'), ('OR', 'or'), ('AND', 'and'),
-                   ('LIKE', 'like')]
+                   ('LIKE', 'like'), ('NOT', 'not')]
 
     IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
     NUMBER = ("NUMBER", r"\d+")

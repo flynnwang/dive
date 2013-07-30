@@ -1,10 +1,13 @@
 TODO
 ----
-- comparator: like
 
-- multiple conditions: not
-- paren support
+I case insensitive
+R folder structure: syntax + ast
+I better __repr__ support (for debug)
+R refactor tests
+
 - * support
+- paren support
 
 - group by
 - having
@@ -17,9 +20,6 @@ TODO
 - add parser error handler
 ? split production & its models
 
-- folder structure: syntax + ast
-I better __repr__ support (for debug)
-I case insensitive
 
 
 JOIN related:
@@ -28,6 +28,8 @@ JOIN related:
 
 DONE
 ----
+- multiple conditions: not
+- comparator: like
 - multiple conditions: and
 - multiple conditions: or
 

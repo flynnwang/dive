@@ -19,10 +19,15 @@ def search_condition(pg):
     def boolean_term(p):
         return BooleanTerm(p)
 
-    @pg.production("""boolean_factor :
-            row_value_designator comp_op row_value_designator""")
+    @pg.production("boolean_factor : boolean_primary")
+    @pg.production("boolean_factor : NOT boolean_primary")
     def boolean_factor(p):
-        return BooleanFactor(*p)
+        return BooleanFactor(p)
+
+    @pg.production("""boolean_primary :
+            row_value_designator comp_op row_value_designator""")
+    def boolean_primary(p):
+        return BooleanPrimary(*p)
 
     @pg.production("row_value_designator : IDENTIFIER")
     def row_value_designator(p):
@@ -70,7 +75,7 @@ class BooleanTerm(Node):
         return lambda r: c(r) and c2(r)
         
 
-class BooleanFactor(Node):
+class BooleanPrimary(Node):
 
     def __init__(self, left, op, right):
         self.left = left
@@ -83,6 +88,19 @@ class BooleanFactor(Node):
         def check(r):
             return self.op(r[idx], self.right.value)
         return check
+
+
+class BooleanFactor(object):
+
+    def __init__(self, p):
+        self.predicate, self.not_ = (p[0], False) if len(p) == 1\
+            else (p[1], True)
+
+    def visit(self, ctx):
+        c = self.predicate.visit(ctx)
+        if self.not_:
+            return lambda r: not c(r)
+        return c
 
 
 class Number(Node):
