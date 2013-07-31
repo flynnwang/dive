@@ -33,7 +33,6 @@ class Table(object):
                         in enumerate(self.fields.values())]
             self._rdd = dpark.union([dpark.csvFile(p) for p in self.paths])\
                              .map(coercion)
-
         return self._rdd
 
 
@@ -63,6 +62,6 @@ class Query(object):
 
         name = str(uuid.uuid4())
         # TODO: rename column name for multiple table?
-        fields = [(c.value, self.table.fields[c.value])
+        fields = [(c.name, self.table.fields[c.name])
                   for c in select.columns]
         return Table(name, fields, rdd=rdd)

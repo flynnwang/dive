@@ -1,36 +1,48 @@
 # -*- coding: utf-8 -*-
 
-import operator as op
 import re
+import operator as op
+from node import TokenNode
 
 
-def comparator(pg):
-    
-    @pg.production("comp_op : EQUAL")
-    def equal(p):
-        return op.eq
+class Comparator(TokenNode):
 
-    @pg.production("comp_op : LESS_THAN")
-    def less_than(p):
-        return op.lt
+    def __call__(self, x, y):
+        raise Exception("NOT IMPLEMENTED")
+       
 
-    @pg.production("comp_op : LESS_THAN_OR_EQUAL")
-    def less_than_or_equal(p):
-        return op.le
+class Equal(Comparator):
 
-    @pg.production("comp_op : GREATER_THAN")
-    def greater_than(p):
-        return op.gt
+    def __call__(self, x, y):
+        return op.eq(x, y)
 
-    @pg.production("comp_op : GREATER_THAN_OR_EQUAL")
-    def greater_than_or_equal(p):
-        return op.ge
 
-    @pg.production("comp_op : LIKE")
-    def like(p):
-        def match(x, y):
-            # TODO pre compile re
-            return re.match(y, x)
-        return match
+class LessThan(Comparator):
 
-    return pg
+    def __call__(self, x, y):
+        return op.lt(x, y)
+
+
+class LessThanOrEqual(Comparator):
+
+    def __call__(self, x, y):
+        return op.le(x, y)
+        
+
+class GreaterThan(Comparator):
+
+    def __call__(self, x, y):
+        return op.gt(x, y)
+       
+
+class GreaterThanOrEqual(Comparator):
+
+    def __call__(self, x, y):
+        return op.ge(x, y)
+        
+
+class LikeComparator(Comparator):
+
+    def __call__(self, x, y):
+        # TODO pre compile re
+        return re.match(y, x)

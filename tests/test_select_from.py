@@ -26,5 +26,5 @@ class SelectFromTest(DiveTestBase):
         s = parse(self.sql)
         # pylint: disable=E1101
         self.assertEqual(1, len(s.columns))
-        self.assertEqual("name", s.columns[0].value)
-        self.assertEqual("user", s.table_expr.table_name.value)
+        self.assertEqual("name", s.columns[0].name)
+        self.assertEqual("user", s.table_expr.table_name.name)

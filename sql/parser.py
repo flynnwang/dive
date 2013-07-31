@@ -3,16 +3,17 @@
 from rply import ParserGenerator
 
 from lexer import TOKENS, sql_lexer
-from syntax.select import select_core
+from syntax import productions
 
 
-def build(syntax):
+def build():
     pg = ParserGenerator(TOKENS, cache_id="sql_parser")
-    syntax(pg)
+    for prod, cls in productions:
+        pg.production(prod)(cls.parse)
     return pg.build()
 
 
-sql_parser = build(lambda pg: select_core(pg))
+sql_parser = build()
 
 
 def parse(sql):

@@ -1,31 +1,26 @@
 # -*- coding: utf-8 -*-
 
-from . import Node
-import conditions
-
-
-def where_clause(pg):
-    @pg.production("where_clause : WHERE search_condition")
-    @pg.production("where_clause : empty_where_clause")
-    def where_clause(p):
-        return p[0] is not None and WhereClause(p[1])
-
-    conditions.search_condition(pg)
-
-    @pg.production("empty_where_clause : ")
-    def empty(p):
-        return None
-
-    return pg
+from node import Node
 
 
 class Clause(Node):
     pass
 
 
+class EmptyClause(Clause):
+    pass
+
+
 class WhereClause(Clause):
 
-    def __init__(self, search_condition):
+    @classmethod
+    def parse(cls, prods):
+        if isinstance(prods[0], EmptyClause):
+            return prods[0]
+        return cls(prods, prods[1])
+
+    def __init__(self, p, search_condition):
+        Node.__init__(self, p)
         self.search_condition = search_condition
 
     def visit(self, ctx):

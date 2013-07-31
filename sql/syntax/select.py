@@ -1,33 +1,17 @@
 # -*- coding: utf-8 -*-
 
-from . import Node, IdentifierNode
-import where
-import columns
-
-
-def select_core(pg):
-    @pg.production("select_core : SELECT result_columns table_expr")
-    def _(p):
-        _, result_column, table_expr = p
-        return SelectCore(result_column, table_expr)
-
-    columns.result_columns(pg)
-
-    @pg.production("table_expr : FROM table_name where_clause")
-    def table_expr(p):
-        return TableExpr(p[1], p[2])
-
-    @pg.production("table_name : IDENTIFIER")
-    def table_name(p):
-        return TableName(p[0])
-
-    return where.where_clause(pg)
+from node import Node, TokenNode
 
 
 class SelectCore(Node):
 
-    def __init__(self, columns, table_expr):
-        Node.__init__(self)
+    @classmethod
+    def parse(cls, prods):
+        _, result_column, table_expr = prods
+        return cls(prods, result_column, table_expr)
+
+    def __init__(self, p, columns, table_expr):
+        Node.__init__(self, p)
         self.columns = columns
         self.table_expr = table_expr
 
@@ -36,8 +20,8 @@ class SelectCore(Node):
                                                     self.table_expr)
 
     def visit(self, ctx):
-        ctx.table = ctx.schema.find_table(self.table_expr.table_name.value)
-        column_indexes = [ctx.table.index(c.value) for c in self.columns]
+        ctx.table = ctx.schema.find_table(self.table_expr.table_name.name)
+        column_indexes = [ctx.table.index(c.name) for c in self.columns]
 
         def _map_result(r):
             return [r[idx] for idx in column_indexes]
@@ -49,7 +33,12 @@ class SelectCore(Node):
 
 class TableExpr(Node):
 
-    def __init__(self, table_name, where_clause=None):
+    @classmethod
+    def parse(cls, p):
+        return TableExpr(p, p[1], p[2])
+
+    def __init__(self, p, table_name, where_clause=None):
+        Node.__init__(self, p)
         self.table_name = table_name
         self.where_clause = where_clause
 
@@ -58,5 +47,5 @@ class TableExpr(Node):
             self.where_clause.visit(ctx)
 
 
-class TableName(IdentifierNode):
+class TableName(TokenNode):
     pass
