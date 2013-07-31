@@ -3,7 +3,7 @@
 from testbase import DiveTestBase, SelectTestBase
 from dive.sql.parser import build
 from dive.sql.lexer import TOKENS, sql_lexer
-from dive.sql.productions.where import where_clause
+from dive.sql.syntax.where import where_clause
 
 
 class SelectWhereTest(DiveTestBase):

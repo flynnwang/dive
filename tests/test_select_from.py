@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from testbase import DiveTestBase
+from testbase import DiveTestBase, SelectTestBase
 from dive.sql.parser import parse
 
 
@@ -24,6 +24,7 @@ class SelectFromTest(DiveTestBase):
 
     def test_should_parse_one_column_and_table(self):
         s = parse(self.sql)
+        # pylint: disable=E1101
         self.assertEqual(1, len(s.columns))
         self.assertEqual("name", s.columns[0].value)
         self.assertEqual("user", s.table_expr.table_name.value)

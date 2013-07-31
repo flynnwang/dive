@@ -1,10 +1,12 @@
 TODO
 ----
 
-I case insensitive
 R folder structure: syntax + ast
+I add doc for syntax
+
 I better __repr__ support (for debug)
 R refactor tests
+
 
 - * support
 - paren support
