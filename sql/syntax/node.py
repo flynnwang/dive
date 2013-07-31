@@ -13,6 +13,10 @@ class Node(object):
     def visit(self, ctx):
         pass
 
+    def __repr__(self):
+        return ("<%s: childnodes(%s): %s>" % 
+               (self.__class__.__name__, len(self._prods), str(self._prods)))
+
 
 class TokenNode(Node):
 
