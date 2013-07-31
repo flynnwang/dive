@@ -18,11 +18,7 @@ class TokenNode(Node):
 
     @classmethod
     def parse(cls, prods):
-        try:
-            return cls(prods, prods[0])
-        except Exception, e:
-            print cls
-            raise e
+        return cls(prods, prods[0])
 
     def __init__(self, prods, token):
         Node.__init__(self, prods)
@@ -30,7 +26,11 @@ class TokenNode(Node):
 
     @property
     def name(self):
+        return self._token.name
+
+    @property
+    def value(self):
         return self._token.value
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.name)
+        return "<%s: %s>" % (self.__class__.__name__, self.value)

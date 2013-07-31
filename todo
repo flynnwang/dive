@@ -1,11 +1,7 @@
 TODO
 ----
 
-R folder structure: syntax + ast
-I add doc for syntax
-
 I better __repr__ support (for debug)
-R refactor tests
 
 
 - * support
@@ -30,6 +26,9 @@ JOIN related:
 
 DONE
 ----
+R refactor tests
+R folder structure: syntax
+
 - multiple conditions: not
 - comparator: like
 - multiple conditions: and

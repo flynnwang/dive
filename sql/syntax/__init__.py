@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+    based on: http://www.andrew.cmu.edu/user/shadow/sql/sql3bnf.sep93.txt
+"""
 
 from select import SelectCore, TableExpr, TableName
 from columns import ResultColumnGroup, ResultColumn

@@ -62,6 +62,6 @@ class Query(object):
 
         name = str(uuid.uuid4())
         # TODO: rename column name for multiple table?
-        fields = [(c.name, self.table.fields[c.name])
+        fields = [(c.value, self.table.fields[c.value])
                   for c in select.columns]
         return Table(name, fields, rdd=rdd)

@@ -55,7 +55,7 @@ class BooleanPrimary(Node):
         self.right = right
 
     def visit(self, ctx):
-        idx = ctx.table.index(self.left.name)
+        idx = ctx.table.index(self.left.value)
 
         def check(r):
             return self.op(r[idx], self.right.value)
@@ -81,14 +81,22 @@ class Number(TokenNode):
 
     def __init__(self, p, token):
         TokenNode.__init__(self, p, token)
-        self.value = int(token.value)
+        self._val = int(token.value)
+
+    @property
+    def value(self):
+        return self._val
 
 
 class String(TokenNode):
 
     def __init__(self, p, token):
         TokenNode.__init__(self, p, token)
-        self.value = token.value[1:-1]
+        self._val = token.value[1:-1]
+
+    @property
+    def value(self):
+        return self._val
 
 
 class RowValueDesignator(TokenNode):

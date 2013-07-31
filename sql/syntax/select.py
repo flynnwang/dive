@@ -20,8 +20,8 @@ class SelectCore(Node):
                                                     self.table_expr)
 
     def visit(self, ctx):
-        ctx.table = ctx.schema.find_table(self.table_expr.table_name.name)
-        column_indexes = [ctx.table.index(c.name) for c in self.columns]
+        ctx.table = ctx.schema.find_table(self.table_expr.table_name.value)
+        column_indexes = [ctx.table.index(c.value) for c in self.columns]
 
         def _map_result(r):
             return [r[idx] for idx in column_indexes]
