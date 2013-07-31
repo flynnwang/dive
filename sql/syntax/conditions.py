@@ -101,3 +101,7 @@ class String(TokenNode):
 
 class RowValueDesignator(TokenNode):
     pass
+
+
+class Asterisk(TokenNode):
+    pass

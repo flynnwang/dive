@@ -6,16 +6,20 @@
 import comparator
 from select import SelectCore, TableExpr, TableName, SelectList, Column
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
-                        BooleanPrimary, RowValueDesignator, Number, String)
+                        BooleanPrimary, RowValueDesignator, Number, String,
+                        Asterisk)
 from where import WhereClause, EmptyClause
 
 
 productions = [
     ("select_core : SELECT select_list table_expr", SelectCore),
 
+    ("select_list : asterisk", SelectList),
     ("select_list : column", SelectList),
     ("select_list : select_list COMMA column", SelectList),
     ("column : IDENTIFIER", Column),
+
+    ("asterisk : ASTERISK", Asterisk),
 
     ("table_expr : FROM table_name where_clause", TableExpr),
     ("table_name : IDENTIFIER", TableName),
@@ -43,5 +47,4 @@ productions = [
     ("comp_op : GREATER_THAN", comparator.GreaterThan),
     ("comp_op : GREATER_THAN_OR_EQUAL", comparator.GreaterThanOrEqual),
     ("comp_op : LIKE", comparator.LikeComparator),
-
 ]

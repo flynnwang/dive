@@ -4,7 +4,6 @@ import pytest
 from testbase import SelectTestBase
 
 
-@pytest.skip
 class SelectMultiAndWhereTest(SelectTestBase):
     sql = "select * from user"
 

@@ -11,14 +11,14 @@ optParser.add_option("-x")
 
 class Table(object):
 
-    def __init__(self, name, fields, paths=[], rdd=None):
+    def __init__(self, name, columns, paths=[], rdd=None):
         self.name = name
-        self.fields = OrderedDict(fields)
+        self.columns = OrderedDict(columns)
         self.paths = paths
         self._rdd = rdd
 
     def index(self, field):
-        return self.fields.keys().index(field)
+        return self.columns.keys().index(field)
 
     def fetch(self, dpark=None):
         return self._rdd.collect() if self.rdd(dpark) else None
@@ -30,7 +30,7 @@ class Table(object):
         if dpark:
             def coercion(r):
                 return [conv(r[i]) for i, conv 
-                        in enumerate(self.fields.values())]
+                        in enumerate(self.columns.values())]
             self._rdd = dpark.union([dpark.csvFile(p) for p in self.paths])\
                              .map(coercion)
         return self._rdd
@@ -62,6 +62,5 @@ class Query(object):
 
         name = str(uuid.uuid4())
         # TODO: rename column name for multiple table?
-        fields = [(c.value, self.table.fields[c.value])
-                  for c in select.columns]
-        return Table(name, fields, rdd=rdd)
+        columns = select.select_list.columns(self.table)
+        return Table(name, columns, rdd=rdd)

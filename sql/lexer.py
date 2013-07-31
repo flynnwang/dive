@@ -17,10 +17,10 @@ class LexerGenerator(rply.LexerGenerator):
 class LexerGeneratorBuilder(object):
 
     SQL_KEYWORDS = ['select', 'from', 'where']
-    COMPARATORS = [('EQUAL', '='), ('LESS_THAN_OR_EQUAL', '<='),
-                   ('LESS_THAN', '<'), ('GREATER_THAN_OR_EQUAL', '>='),
-                   ('GREATER_THAN', '>'), ('OR', 'or'), ('AND', 'and'),
-                   ('LIKE', 'like'), ('NOT', 'not')]
+    TOKENS = [('EQUAL', '='), ('LESS_THAN_OR_EQUAL', '<='),
+              ('LESS_THAN', '<'), ('GREATER_THAN_OR_EQUAL', '>='),
+              ('GREATER_THAN', '>'), ('OR', 'or'), ('AND', 'and'), 
+              ('LIKE', 'like'), ('NOT', 'not'), ('ASTERISK', '[*]')]
 
     IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
     NUMBER = ("NUMBER", r"\d+")
@@ -42,7 +42,7 @@ class LexerGeneratorBuilder(object):
         lg = LexerGenerator()
 
         self.register_keyword_tokens(lg)
-        self.register_tokens(lg, self.COMPARATORS)
+        self.register_tokens(lg, self.TOKENS)
         self.register_string_rules(lg)
 
         lg.add('COMMA', ',')
