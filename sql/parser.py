@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from rply import ParserGenerator
-
 from lexer import TOKENS, sql_lexer
 from syntax import productions
 

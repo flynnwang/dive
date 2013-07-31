@@ -8,7 +8,7 @@ from select import SelectCore, TableExpr, TableName, SelectList, Column
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String,
                         Asterisk)
-from where import WhereClause, EmptyClause
+from clauses import WhereClause, EmptyClause
 
 
 productions = [
