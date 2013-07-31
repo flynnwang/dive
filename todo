@@ -1,9 +1,5 @@
 TODO
 ----
-
-I better __repr__ support (for debug)
-
-
 - * support
 - paren support
 
@@ -26,6 +22,7 @@ JOIN related:
 
 DONE
 ----
+I better __repr__ support (for debug)
 R refactor tests
 R folder structure: syntax
 

@@ -3,20 +3,19 @@
     based on: http://www.andrew.cmu.edu/user/shadow/sql/sql3bnf.sep93.txt
 """
 
-from select import SelectCore, TableExpr, TableName
-from columns import ResultColumnGroup, ResultColumn
 import comparator
+from select import SelectCore, TableExpr, TableName, SelectList, Column
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String)
 from where import WhereClause, EmptyClause
 
 
 productions = [
-    ("select_core : SELECT result_columns table_expr", SelectCore),
+    ("select_core : SELECT select_list table_expr", SelectCore),
 
-    ("result_columns : result_column", ResultColumnGroup),
-    ("result_columns : result_columns COMMA result_column", ResultColumnGroup),
-    ("result_column : IDENTIFIER", ResultColumn),
+    ("select_list : column", SelectList),
+    ("select_list : select_list COMMA column", SelectList),
+    ("column : IDENTIFIER", Column),
 
     ("table_expr : FROM table_name where_clause", TableExpr),
     ("table_name : IDENTIFIER", TableName),

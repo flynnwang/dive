@@ -14,7 +14,7 @@ class Node(object):
         pass
 
     def __repr__(self):
-        return ("<%s: childnodes(%s): %s>" % 
+        return ("<%s: child(ren)(%s): %s>" % 
                (self.__class__.__name__, len(self._prods), str(self._prods)))
 
 

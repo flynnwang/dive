@@ -31,6 +31,26 @@ class SelectCore(Node):
         return ctx.rdd.map(_map_result)
 
 
+class Column(TokenNode):
+
+    @classmethod
+    def parse(cls, p):
+        return Column(p, p[0])
+
+
+class SelectList(Node, list):
+
+    @classmethod
+    def parse(cls, p):
+        if len(p) == 1:
+            columns = SelectList(p)
+            column = p[0]
+        else:
+            columns, _, column = p
+        columns.append(column)
+        return columns
+
+
 class TableExpr(Node):
 
     @classmethod
