@@ -20,7 +20,8 @@ class LexerGeneratorBuilder(object):
     TOKENS = [('EQUAL', '='), ('LESS_THAN_OR_EQUAL', '<='),
               ('LESS_THAN', '<'), ('GREATER_THAN_OR_EQUAL', '>='),
               ('GREATER_THAN', '>'), ('OR', 'or'), ('AND', 'and'), 
-              ('LIKE', 'like'), ('NOT', 'not'), ('ASTERISK', '[*]')]
+              ('LIKE', 'like'), ('NOT', 'not'), ('ASTERISK', '[*]'),
+              ('LEFT_PAREN', '\('), ('RIGHT_PAREN', '\)')]
 
     IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
     NUMBER = ("NUMBER", r"\d+")

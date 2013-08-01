@@ -11,29 +11,20 @@ optParser.add_option("-x")
 
 class Table(object):
 
-    def __init__(self, name, columns, paths=[], rdd=None):
+    def __init__(self, name, columns, paths=[]):
         self.name = name
         self.columns = OrderedDict(columns)
         self.paths = paths
-        self._rdd = rdd
 
     def index(self, field):
         return self.columns.keys().index(field)
 
-    def fetch(self, dpark=None):
-        return self._rdd.collect() if self.rdd(dpark) else None
-
     def rdd(self, dpark):
-        if self._rdd:
-            return self._rdd
-
-        if dpark:
-            def coercion(r):
-                return [conv(r[i]) for i, conv 
-                        in enumerate(self.columns.values())]
-            self._rdd = dpark.union([dpark.csvFile(p) for p in self.paths])\
-                             .map(coercion)
-        return self._rdd
+        def coercion(r):
+            return [conv(r[i]) for i, conv 
+                    in enumerate(self.columns.values())]
+        return dpark.union([dpark.csvFile(p) for p in self.paths])\
+                         .map(coercion)
 
 
 class Schema(object):
@@ -60,7 +51,16 @@ class Query(object):
         # pylint: disable=E1101
         rdd = select.visit(self)
 
+        # TODO: Query return RowSet
+        return self.fetch(select, rdd)
+
+    def fetch(self, select, rdd):
         name = str(uuid.uuid4())
-        # TODO: rename column name for multiple table?
+        # pylint: disable=E1101
         columns = select.select_list.columns(self.table)
-        return Table(name, columns, rdd=rdd)
+
+        if select.select_list.has_aggregate_function:
+            # only one function
+            func = select.select_list[0]
+            return [func(self), ]
+        return rdd.collect()

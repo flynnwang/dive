@@ -2,6 +2,7 @@
 
 from node import Node, TokenNode
 from conditions import Asterisk
+from functions import AttributeFunction
 
 
 class SelectCore(Node):
@@ -29,7 +30,9 @@ class SelectCore(Node):
 
         ctx.rdd = ctx.table.rdd(ctx.dpark)
         self.table_expr.visit(ctx)
-        return ctx.rdd.map(_map_result)
+
+        if not self.select_list.has_aggregate_function:
+            return ctx.rdd.map(_map_result)
 
 
 class Column(TokenNode):
@@ -67,6 +70,10 @@ class SelectList(Node, list):
             return tb.columns.copy()
         return [(c.value, tb.columns[c.value])
                 for c in self if c.value in tb.columns]
+
+    @property
+    def has_aggregate_function(self):
+        return any([True for c in self if isinstance(c, AttributeFunction)])
 
 
 class TableExpr(Node):

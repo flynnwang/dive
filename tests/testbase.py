@@ -23,16 +23,16 @@ class DiveTestBase(unittest.TestCase):
         """ sub class provide sql"""
         return ""
 
+    test_file_path = join(dirname(abspath(__file__)), 'users.csv')
+
     def setUp(self):
-        users_file_path = join(dirname(abspath(__file__)), 'users.csv')
-        table = UserTable([users_file_path])
+        table = UserTable([self.test_file_path])
         self.schema = Schema([table])
-        with open(users_file_path, 'r') as f:
+        with open(self.test_file_path, 'r') as f:
             self.rows = [[int(l[0]), l[1], int(l[2])] for l in csv.reader(f)]
 
     def _execute_query(self, sql):
-        tb = Query(sql, self.schema).execute()
-        return tb.fetch()
+        return Query(sql, self.schema).execute()
 
     def _tokenize(self, s):
         return [i.getstr() for i in lex(s)]

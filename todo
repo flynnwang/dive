@@ -1,26 +1,33 @@
 TODO
 ----
+
 - group by
+- select_list => column, count(column)
 
 - having
 - paren support
-
 - table alias
 - field alias
-
 - float number support
-
 - add parser error handler
-? split production & its models
 
+- limit x
+- order by
 
+- agg func: sum
+- agg func: avg
 
 JOIN related:
 - multiple table support
 
+R different return value of visit()
+
+
 
 DONE
 ----
+- agg func: count, select_list => count(column)
+
 - * support
 I better __repr__ support (for debug)
 R refactor tests

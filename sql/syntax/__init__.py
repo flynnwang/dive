@@ -9,6 +9,7 @@ from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String,
                         Asterisk)
 from clauses import WhereClause, EmptyClause
+from functions import AttributeFunction
 
 
 productions = [
@@ -17,9 +18,15 @@ productions = [
     ("select_list : asterisk", SelectList),
     ("select_list : column", SelectList),
     ("select_list : select_list COMMA column", SelectList),
-    ("column : IDENTIFIER", Column),
+    ("select_list : attribute_function", SelectList),
 
     ("asterisk : ASTERISK", Asterisk),
+
+    # TODO: rename column -> value expression
+    ("column : IDENTIFIER", Column),
+
+    ('attribute_function : IDENTIFIER LEFT_PAREN column RIGHT_PAREN',
+        AttributeFunction),
 
     ("table_expr : FROM table_name where_clause", TableExpr),
     ("table_name : IDENTIFIER", TableName),
