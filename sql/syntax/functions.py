@@ -18,12 +18,26 @@ class AttributeFunction(TokenNode):
         return funcs[func](prods, prods[0], prods[2])
 
 
-class CountFunction(AttributeFunction):
+class AggregateFunction(AttributeFunction):
 
-    def __call__(self, ctx):
-        tb = ctx.table
-        return ctx.rdd.map(lambda r: r[tb.index(self.column.value)]).count()
- 
+    def create(self, v):
+        raise Exception("No implememtation exception")
+
+    def merge(self, v1, v2):
+        raise Exception("No implememtation exception")
+
+    #def result(self, v):
+        #raise Exception("No implememtation exception")
+
+
+class CountFunction(AggregateFunction):
+
+    def create(self, v):
+        return v is not None and 1 or 0
+
+    def merge(self, v1, v2):
+        return v1 + v2
+
 
 funcs = {
     'count': CountFunction,

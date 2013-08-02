@@ -24,7 +24,7 @@ class Table(object):
             return [conv(r[i]) for i, conv 
                     in enumerate(self.columns.values())]
         return dpark.union([dpark.csvFile(p) for p in self.paths])\
-                         .map(coercion)
+                    .map(coercion)
 
 
 class Schema(object):
@@ -50,17 +50,10 @@ class Query(object):
         select = parse(self.sql)
         # pylint: disable=E1101
         rdd = select.visit(self)
+        return self._fetch(select, rdd)
 
-        # TODO: Query return RowSet
-        return self.fetch(select, rdd)
-
-    def fetch(self, select, rdd):
-        name = str(uuid.uuid4())
+    def _fetch(self, select, rdd):
+        #name = str(uuid.uuid4())
         # pylint: disable=E1101
-        columns = select.select_list.columns(self.table)
-
-        if select.select_list.has_aggregate_function:
-            # only one function
-            func = select.select_list[0]
-            return [func(self), ]
+        #columns = select.select_list.columns(self.table)
         return rdd.collect()

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from dpark.dependency import Aggregator
 from node import Node, TokenNode
 from conditions import Asterisk
 from functions import AttributeFunction
@@ -33,6 +34,27 @@ class SelectCore(Node):
 
         if not self.select_list.has_aggregate_function:
             return ctx.rdd.map(_map_result)
+
+        # group by & agg function
+        # current only one function with empty group
+        tb = ctx.table
+        func = self.select_list[0]
+        col = func.column.value
+
+        def createCombiner(r):
+            v = r[tb.index(col)]
+            return [func.create(v)]
+
+        def mergeValue(c, v):
+            return mergeCombiner(c, createCombiner(v))
+
+        def mergeCombiner(c1, c2):
+            # for each funcs do func.merge(c1[i], c2[i]) => mc[]
+            return [func.merge(c1[0], c2[0])]
+        agg = Aggregator(createCombiner, mergeValue, mergeCombiner)
+        return ctx.rdd.map(lambda r: (None, r))\
+                  .combineByKey(agg)\
+                  .map(lambda (_, r): r)
 
 
 class Column(TokenNode):

@@ -9,7 +9,7 @@ class CountFuncTest(SelectTestBase):
     sql = "select count(id) from user"
 
     def expected_select_result(self):
-        return [len(self.rows), ]
+        return [[len(self.rows), ]]
 
     def test_parse_count_function(self):
         select = parse(self.sql)
