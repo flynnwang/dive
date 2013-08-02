@@ -14,7 +14,7 @@ class CountFuncTest(SelectTestBase):
     def test_parse_count_function(self):
         select = parse(self.sql)
         # pylint: disable=E1101
-        func_name = select.select_list[0].value
+        func_name = select.select_list.selected[0].value
         assert func_name == 'count' 
 
 

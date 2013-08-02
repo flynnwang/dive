@@ -4,10 +4,10 @@
 """
 
 import comparator
-from select import SelectCore, TableExpr, TableName, SelectList, Column
+from select import (SelectCore, TableExpr, TableName, SelectList, Column,
+                    SelectSubList, Asterisk)
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
-                        BooleanPrimary, RowValueDesignator, Number, String,
-                        Asterisk)
+                        BooleanPrimary, RowValueDesignator, Number, String)
 from clauses import WhereClause, EmptyClause
 from functions import AttributeFunction
 
@@ -16,9 +16,11 @@ productions = [
     ("select_core : SELECT select_list table_expr", SelectCore),
 
     ("select_list : asterisk", SelectList),
-    ("select_list : column", SelectList),
-    ("select_list : select_list COMMA column", SelectList),
-    ("select_list : attribute_function", SelectList),
+    ("select_list : select_sublist", SelectList),
+
+    ("select_sublist : column", SelectSubList),
+    ("select_sublist : attribute_function", SelectSubList),
+    ("select_sublist : select_sublist COMMA select_sublist", SelectSubList),
 
     ("asterisk : ASTERISK", Asterisk),
 

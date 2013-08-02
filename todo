@@ -1,8 +1,9 @@
 TODO
 ----
+- select_list => column, count(column)
 
 - group by
-- select_list => column, count(column)
+- select_list => func(c1), func(c2)
 
 - having
 - paren support

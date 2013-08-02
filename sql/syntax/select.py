@@ -2,7 +2,6 @@
 
 from dpark.dependency import Aggregator
 from node import Node, TokenNode
-from conditions import Asterisk
 from functions import AttributeFunction
 
 
@@ -38,7 +37,7 @@ class SelectCore(Node):
         # group by & agg function
         # current only one function with empty group
         tb = ctx.table
-        func = self.select_list[0]
+        func = self.select_list.selected[0]
         col = func.column.value
 
         def create_combiner(r):
@@ -68,38 +67,74 @@ class Column(TokenNode):
         return Column(p, p[0])
 
 
-class SelectList(Node, list):
+class Selectable(object):
+
+    @property
+    def has_aggregate_function(self):
+        return False
+
+    def column_indexes(self, tb):
+        pass
+
+    def columns(self, tb):
+        pass
+
+
+class SelectList(Node, Selectable):
 
     @classmethod
     def parse(cls, p):
-        if len(p) == 1:
-            select_list = SelectList(p)
-            column = p[0]
-        else:
-            select_list, _, column = p
-        select_list.append(column)
-        return select_list
+        return SelectList(p, p[0])
+
+    def __init__(self, prods, selected):
+        Node.__init__(self, prods)
+        self.selected = selected
+
+    def column_indexes(self, tb):
+        return self.selected.column_indexes(tb)
+
+    def columns(self, tb):
+        return self.selected.columns(tb)
 
     @property
-    def is_select_all(self):
-        return len(self) == 1 and isinstance(self[0], Asterisk)
+    def has_aggregate_function(self):
+        return self.selected.has_aggregate_function
+
+
+class Asterisk(Node, Selectable):
 
     def column_indexes(self, tb):
         # TODO: multi-table support
-        if self.is_select_all:
-            return range(len(tb.columns))
-        return [tb.index(c.value) for c in self]
+        return range(len(tb.columns))
 
     def columns(self, tb):
-        """ (name, convter) """
-        if self.is_select_all:
-            return tb.columns.copy()
-        return [(c.value, tb.columns[c.value])
-                for c in self if c.value in tb.columns]
+        return tb.columns.copy()
+
+
+class SelectSubList(Node, Selectable, list):
+
+    @classmethod
+    def parse(cls, p):
+        sublist = SelectSubList(p)
+        if len(p) == 1:
+            column = p[0]
+            sublist.append(column)
+        else:
+            for c in p:
+                if isinstance(c, SelectSubList):
+                    sublist += c
+        return sublist
 
     @property
     def has_aggregate_function(self):
         return any([True for c in self if isinstance(c, AttributeFunction)])
+
+    def column_indexes(self, tb):
+        return [tb.index(c.value) for c in self]
+
+    def columns(self, tb):
+        return [(c.value, tb.columns[c.value])
+                for c in self if c.value in tb.columns]
 
 
 class TableExpr(Node):

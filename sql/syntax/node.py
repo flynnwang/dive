@@ -3,6 +3,7 @@
 
 class Node(object):
 
+    # TODO remove prods
     def __init__(self, prods):
         self._prods = prods
 
