@@ -21,13 +21,13 @@ class AttributeFunction(TokenNode):
 class AggregateFunction(AttributeFunction):
 
     def create(self, v):
-        raise Exception("No implememtation exception")
+        return v
 
     def merge(self, v1, v2):
-        raise Exception("No implememtation exception")
+        return v1
 
     def result(self, v):
-        raise Exception("No implememtation exception")
+        return v
 
 
 class CountFunction(AggregateFunction):

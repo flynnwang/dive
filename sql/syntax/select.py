@@ -2,7 +2,7 @@
 
 from dpark.dependency import Aggregator
 from node import Node, TokenNode
-from functions import AttributeFunction
+from functions import AttributeFunction, AggregateFunction
 from itertools import izip
 
 
@@ -37,7 +37,6 @@ class SelectCore(Node):
             return ctx.rdd.map(_map_result)
 
         # group by & agg function
-        # current only one function with empty group
         tb = ctx.table
         selected = self.select_list.selected
 
@@ -60,11 +59,19 @@ class SelectCore(Node):
                   .map(make_result)
 
 
-class Column(TokenNode):
+class Column(AggregateFunction):
+
+    def __init__(self, prods, token):
+        Node.__init__(self, prods)
+        self._token = token
 
     @classmethod
     def parse(cls, p):
         return Column(p, p[0])
+
+    @property
+    def column(self):
+        return self._token
 
 
 class Selectable(object):
@@ -127,7 +134,7 @@ class SelectSubList(Node, Selectable, list):
 
     @property
     def has_aggregate_function(self):
-        return any([True for c in self if isinstance(c, AttributeFunction)])
+        return not all([isinstance(c, Column) for c in self])
 
     def column_indexes(self, tb):
         return [tb.index(c.value) for c in self]

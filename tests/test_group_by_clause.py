@@ -39,6 +39,13 @@ class CountAndSumFuncTest(SelectTestBase):
         return [[len(self.rows), sum(r[0] for r in self.rows)]]
 
 
+class ColumnCountFuncTest(SelectTestBase):
+    sql = "select id, count(id) from user"
+
+    def expected_select_result(self):
+        return [[self.rows[0][0], len(self.rows)]]
+
+
 #class SimpleGroupByTest(SelectTestBase):
     #sql = "select count(id) from user group by name"
 
