@@ -39,8 +39,18 @@ class CountFunction(AggregateFunction):
         return v1 + v2
 
 
+class SumFunction(AggregateFunction):
+
+    def create(self, v):
+        return v
+
+    def merge(self, v1, v2):
+        return v1 + v2
+
+
 funcs = {
     'count': CountFunction,
+    'sum': SumFunction
 }
 
 
