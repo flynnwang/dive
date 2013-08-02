@@ -41,20 +41,24 @@ class SelectCore(Node):
         func = self.select_list[0]
         col = func.column.value
 
-        def createCombiner(r):
+        def create_combiner(r):
             v = r[tb.index(col)]
             return [func.create(v)]
 
-        def mergeValue(c, v):
-            return mergeCombiner(c, createCombiner(v))
+        def merge_value(c, v):
+            return merge_combiner(c, create_combiner(v))
 
-        def mergeCombiner(c1, c2):
+        def merge_combiner(c1, c2):
             # for each funcs do func.merge(c1[i], c2[i]) => mc[]
             return [func.merge(c1[0], c2[0])]
-        agg = Aggregator(createCombiner, mergeValue, mergeCombiner)
+
+        def make_result((k, r)):
+            return [func.result(r[0])]
+
+        agg = Aggregator(create_combiner, merge_value, merge_combiner)
         return ctx.rdd.map(lambda r: (None, r))\
                   .combineByKey(agg)\
-                  .map(lambda (_, r): r)
+                  .map(make_result)
 
 
 class Column(TokenNode):

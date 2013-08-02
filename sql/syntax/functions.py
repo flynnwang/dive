@@ -26,8 +26,8 @@ class AggregateFunction(AttributeFunction):
     def merge(self, v1, v2):
         raise Exception("No implememtation exception")
 
-    #def result(self, v):
-        #raise Exception("No implememtation exception")
+    def result(self, v):
+        raise Exception("No implememtation exception")
 
 
 class CountFunction(AggregateFunction):
@@ -38,6 +38,9 @@ class CountFunction(AggregateFunction):
     def merge(self, v1, v2):
         return v1 + v2
 
+    def result(self, v):
+        return v
+
 
 class SumFunction(AggregateFunction):
 
@@ -47,10 +50,27 @@ class SumFunction(AggregateFunction):
     def merge(self, v1, v2):
         return v1 + v2
 
+    def result(self, v):
+        return v
+
+
+class AverageFunction(AggregateFunction):
+
+    def create(self, v):
+        return (1, v)
+
+    def merge(self, (c1, s1), (c2, s2)):
+        return (c1+c2, s1+s2)
+
+    def result(self, v):
+        cnt, sum = v
+        return float(sum) / cnt
+
 
 funcs = {
     'count': CountFunction,
-    'sum': SumFunction
+    'sum': SumFunction,
+    'avg': AverageFunction,
 }
 
 
