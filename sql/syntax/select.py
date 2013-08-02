@@ -3,6 +3,8 @@
 from dpark.dependency import Aggregator
 from node import Node, TokenNode
 from functions import AttributeFunction
+from itertools import izip
+
 
 
 class SelectCore(Node):
@@ -37,22 +39,20 @@ class SelectCore(Node):
         # group by & agg function
         # current only one function with empty group
         tb = ctx.table
-        func = self.select_list.selected[0]
-        col = func.column.value
+        selected = self.select_list.selected
 
         def create_combiner(r):
-            v = r[tb.index(col)]
-            return [func.create(v)]
+            return [f.create(r[tb.index(f.column.value)])
+                    for f, v in izip(selected, r)]
 
         def merge_value(c, v):
             return merge_combiner(c, create_combiner(v))
 
         def merge_combiner(c1, c2):
-            # for each funcs do func.merge(c1[i], c2[i]) => mc[]
-            return [func.merge(c1[0], c2[0])]
+            return [f.merge(v1, v2) for f, v1, v2 in izip(selected, c1, c2)]
 
         def make_result((k, r)):
-            return [func.result(r[0])]
+            return [f.result(v) for f, v in izip(selected, r)]
 
         agg = Aggregator(create_combiner, merge_value, merge_combiner)
         return ctx.rdd.map(lambda r: (None, r))\

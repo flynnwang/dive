@@ -31,6 +31,14 @@ class AvgFuncTest(SelectTestBase):
     def expected_select_result(self):
         return [[float(sum(r[2] for r in self.rows))/len(self.rows)]]
 
+
+class CountAndSumFuncTest(SelectTestBase):
+    sql = "select count(age), sum(id) from user"
+
+    def expected_select_result(self):
+        return [[len(self.rows), sum(r[0] for r in self.rows)]]
+
+
 #class SimpleGroupByTest(SelectTestBase):
     #sql = "select count(id) from user group by name"
 
