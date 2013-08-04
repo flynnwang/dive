@@ -12,10 +12,9 @@ class SearchCondition(Node):
             term, more = p[0], None
         else:
             more, term = p[0], p[2]
-        return SearchCondition(p, term, more)
+        return SearchCondition(term, more)
 
-    def __init__(self, p, term, more=None):
-        Node.__init__(self, p)
+    def __init__(self, term, more=None):
         self.term = term
         self.more = more
 
@@ -31,7 +30,6 @@ class BooleanTerm(Node):
     """ AND logic """
 
     def __init__(self, p):
-        Node.__init__(self, p)
         self.factor, self.more = (p[0], None) if len(p) == 1 else (p[2], p[0])
 
     def visit(self, ctx):
@@ -46,10 +44,9 @@ class BooleanPrimary(Node):
 
     @classmethod
     def parse(cls, prods):
-        return cls(prods, *prods)
+        return cls(*prods)
 
-    def __init__(self, p, left, op, right):
-        Node.__init__(self, p)
+    def __init__(self, left, op, right):
         self.left = left
         self.op = op
         self.right = right
@@ -66,7 +63,6 @@ class BooleanFactor(Node):
     """ NOT """
 
     def __init__(self, p):
-        Node.__init__(self, p)
         self.predicate, self.not_ = (p[0], False) if len(p) == 1\
             else (p[1], True)
 
@@ -79,8 +75,8 @@ class BooleanFactor(Node):
 
 class Number(TokenNode):
 
-    def __init__(self, p, token):
-        TokenNode.__init__(self, p, token)
+    def __init__(self, token):
+        TokenNode.__init__(self, token)
         self._val = int(token.value)
 
     @property
@@ -90,8 +86,8 @@ class Number(TokenNode):
 
 class String(TokenNode):
 
-    def __init__(self, p, token):
-        TokenNode.__init__(self, p, token)
+    def __init__(self, token):
+        TokenNode.__init__(self, token)
         self._val = token.value[1:-1]
 
     @property

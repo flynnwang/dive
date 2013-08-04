@@ -1,9 +1,6 @@
 TODO
 ----
-- select_list => column, count(column)
-
 - group by
-- select_list => func(c1), func(c2)
 
 - having
 - paren support
@@ -27,6 +24,9 @@ R different return value of visit()
 
 DONE
 ----
+- select_list => column, count(column)
+- select_list => func(c1), func(c2)
+
 - agg func: count, select_list => count(column)
 
 - * support

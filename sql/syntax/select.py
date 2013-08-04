@@ -6,16 +6,14 @@ from functions import AttributeFunction, AggregateFunction
 from itertools import izip
 
 
-
 class SelectCore(Node):
 
     @classmethod
     def parse(cls, prods):
         _, result_column, table_expr = prods
-        return cls(prods, result_column, table_expr)
+        return cls(result_column, table_expr)
 
-    def __init__(self, p, select_list, table_expr):
-        Node.__init__(self, p)
+    def __init__(self, select_list, table_expr):
         self.select_list = select_list
         self.table_expr = table_expr
 
@@ -61,13 +59,12 @@ class SelectCore(Node):
 
 class Column(AggregateFunction):
 
-    def __init__(self, prods, token):
-        Node.__init__(self, prods)
-        self._token = token
-
     @classmethod
     def parse(cls, p):
-        return Column(p, p[0])
+        return Column(p[0])
+
+    def __init__(self, token):
+        self._token = token
 
     @property
     def column(self):
@@ -91,10 +88,9 @@ class SelectList(Node, Selectable):
 
     @classmethod
     def parse(cls, p):
-        return SelectList(p, p[0])
+        return SelectList(p[0])
 
-    def __init__(self, prods, selected):
-        Node.__init__(self, prods)
+    def __init__(self, selected):
         self.selected = selected
 
     def column_indexes(self, tb):
@@ -108,7 +104,7 @@ class SelectList(Node, Selectable):
         return self.selected.has_aggregate_function
 
 
-class Asterisk(Node, Selectable):
+class Asterisk(TokenNode, Selectable):
 
     def column_indexes(self, tb):
         # TODO: multi-table support
@@ -122,7 +118,7 @@ class SelectSubList(Node, Selectable, list):
 
     @classmethod
     def parse(cls, p):
-        sublist = SelectSubList(p)
+        sublist = SelectSubList()
         if len(p) == 1:
             column = p[0]
             sublist.append(column)
@@ -148,10 +144,9 @@ class TableExpr(Node):
 
     @classmethod
     def parse(cls, p):
-        return TableExpr(p, p[1], p[2])
+        return TableExpr(p[1], p[2])
 
-    def __init__(self, p, table_name, where_clause=None):
-        Node.__init__(self, p)
+    def __init__(self, table_name, where_clause=None):
         self.table_name = table_name
         self.where_clause = where_clause
 

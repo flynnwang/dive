@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from node import TokenNode
+from node import Node
 
 
-class AttributeFunction(TokenNode):
+class AttributeFunction(Node):
 
-    def __init__(self, prods, token, column):
-        TokenNode.__init__(self, prods, token)
+    def __init__(self, token, column):
         self._token = token
         self.column = column
 
@@ -15,7 +14,11 @@ class AttributeFunction(TokenNode):
         func = prods[0].value
         if func not in funcs:
             raise Exception("No attibute function found: %s" % func)
-        return funcs[func](prods, prods[0], prods[2])
+        return funcs[func](prods[0], prods[2])
+
+    @property
+    def value(self):
+        return self._token.value
 
 
 class AggregateFunction(AttributeFunction):

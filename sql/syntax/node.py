@@ -3,10 +3,6 @@
 
 class Node(object):
 
-    # TODO remove prods
-    def __init__(self, prods):
-        self._prods = prods
-
     @classmethod
     def parse(cls, prods):
         return cls(prods)
@@ -15,18 +11,16 @@ class Node(object):
         pass
 
     def __repr__(self):
-        return ("<%s: child(ren)(%s): %s>" % 
-               (self.__class__.__name__, len(self._prods), str(self._prods)))
+        return "<%s>" % self.__class__.__name__
 
 
 class TokenNode(Node):
 
     @classmethod
     def parse(cls, prods):
-        return cls(prods, prods[0])
+        return cls(prods[0])
 
-    def __init__(self, prods, token):
-        Node.__init__(self, prods)
+    def __init__(self, token):
         self._token = token
 
     @property

@@ -8,7 +8,10 @@ class Clause(Node):
 
 
 class EmptyClause(Clause):
-    pass
+
+    @classmethod
+    def parse(cls, prods):
+        return EmptyClause()
 
 
 class WhereClause(Clause):
@@ -17,10 +20,9 @@ class WhereClause(Clause):
     def parse(cls, prods):
         if isinstance(prods[0], EmptyClause):
             return prods[0]
-        return cls(prods, prods[1])
+        return cls(prods[1])
 
-    def __init__(self, p, search_condition):
-        Node.__init__(self, p)
+    def __init__(self, search_condition):
         self.search_condition = search_condition
 
     def visit(self, ctx):
