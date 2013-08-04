@@ -4,7 +4,7 @@
 """
 
 import comparator
-from select import (SelectCore, TableExpr, TableName, SelectList, Column,
+from select import (SelectStatement, TableExpr, TableName, SelectList, Column,
                     SelectSubList, Asterisk)
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String)
@@ -13,7 +13,7 @@ from functions import AttributeFunction
 
 
 productions = [
-    ("select_core : SELECT select_list table_expr", SelectCore),
+    ("select_stat : SELECT select_list table_expr", SelectStatement),
 
     ("select_list : asterisk", SelectList),
     ("select_list : select_sublist", SelectList),

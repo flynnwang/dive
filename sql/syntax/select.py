@@ -6,7 +6,7 @@ from functions import AttributeFunction, AggregateFunction
 from itertools import izip
 
 
-class SelectCore(Node):
+class SelectStatement(Node):
 
     @classmethod
     def parse(cls, prods):

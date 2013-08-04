@@ -2,33 +2,35 @@ TODO
 ----
 - group by multiple columns
 - group by without aggregate func func
-
 - having
-- paren support
+- limit x
+- order by
+
 - table alias
 - field alias
 - float number support
 - add parser error handler
 
-- limit x
-- order by
 
-- agg func: sum
-- agg func: avg
 
 JOIN related:
 - multiple table support
 
+R remove table expr
 R different return value of visit()
 
 
 
 DONE
 ----
+R select core -> selete statments (rename)
 - simple group by
+
 - select_list => column, count(column)
 - select_list => func(c1), func(c2)
 
+- agg func: sum
+- agg func: avg
 - agg func: count, select_list => count(column)
 
 - * support
