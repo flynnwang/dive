@@ -4,7 +4,7 @@
 """
 
 import comparator
-from select import (SelectStatement, TableExpr, TableName, SelectList, Column,
+from select import (SelectStatement, TableName, SelectList, Column,
                     SelectSubList, Asterisk)
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String)
@@ -13,7 +13,9 @@ from functions import AttributeFunction
 
 
 productions = [
-    ("select_stat : SELECT select_list table_expr", SelectStatement),
+    ("""select_stat : SELECT select_list
+                      FROM table_name where_clause groupby_clause""",
+        SelectStatement),
 
     ("select_list : asterisk", SelectList),
     ("select_list : select_sublist", SelectList),
@@ -30,7 +32,6 @@ productions = [
     ('attribute_function : IDENTIFIER LEFT_PAREN column RIGHT_PAREN',
         AttributeFunction),
 
-    ("table_expr : FROM table_name where_clause groupby_clause", TableExpr),
     ("table_name : IDENTIFIER", TableName),
 
     ("where_clause : WHERE search_condition", WhereClause),

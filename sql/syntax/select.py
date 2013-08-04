@@ -9,32 +9,33 @@ from itertools import izip
 class SelectStatement(Node):
 
     @classmethod
-    def parse(cls, prods):
-        _, result_column, table_expr = prods
-        return cls(result_column, table_expr)
+    def parse(cls, p):
+        return cls(p[1], p[3], p[4], p[5])
 
-    def __init__(self, select_list, table_expr):
+    def __init__(self,  select_list, table_name, where_clause, groupby_clause):
         self.select_list = select_list
-        self.table_expr = table_expr
+        self.table_name = table_name
+        self.where_clause = where_clause
+        self.groupby_clause = groupby_clause
 
     def __repr__(self):
         return "<SelectCore: SELECT %s FROM %s>" % (self.select_list,
-                                                    self.table_expr)
+                                                    self.table_name)
 
     def visit(self, ctx):
-        ctx.table = ctx.schema.find_table(self.table_expr.table_name.value)
+        ctx.table = ctx.schema.find_table(self.table_name.value)
 
         def _map_result(r):
             return [r[idx] for idx in
                     self.select_list.column_indexes(ctx.table)]
 
         ctx.rdd = ctx.table.rdd(ctx.dpark)
-        self.table_expr.where_clause.visit(ctx)
+        self.where_clause.visit(ctx)
 
         if not self.select_list.has_aggregate_function:
             return ctx.rdd.map(_map_result)
 
-        self.table_expr.groupby_clause.visit(ctx)
+        self.groupby_clause.visit(ctx)
 
         # group by & agg function
         tb = ctx.table
@@ -138,18 +139,6 @@ class SelectSubList(Node, Selectable, list):
     def columns(self, tb):
         return [(c.value, tb.columns[c.value])
                 for c in self if c.value in tb.columns]
-
-
-class TableExpr(Node):
-
-    @classmethod
-    def parse(cls, p):
-        return TableExpr(p[1], p[2], p[3])
-
-    def __init__(self, table_name, where_clause, groupby_clause):
-        self.table_name = table_name
-        self.where_clause = where_clause
-        self.groupby_clause = groupby_clause
 
 
 class TableName(TokenNode):

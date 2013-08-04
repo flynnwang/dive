@@ -17,7 +17,7 @@ class SelectWhereTest(DiveTestBase):
     def test_parse_search_condition(self):
         select = parse(self.sql)
         # pylint: disable=E1101
-        factor = select.table_expr.where_clause\
+        factor = select.where_clause\
                        .search_condition.term.factor.predicate
 
         assert "id" == factor.left.value
@@ -33,7 +33,7 @@ class SelectMultiOrWhereTest(SelectTestBase):
     def test_parse_search_condition(self):
         select = parse(self.sql)
         # pylint: disable=E1101
-        search_condition = select.table_expr.where_clause.search_condition
+        search_condition = select.where_clause.search_condition
         right_factor = search_condition.term.factor.predicate
         assert "id" == right_factor.left.value
         assert 25 == right_factor.right.value
