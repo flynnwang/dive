@@ -29,10 +29,12 @@ class SelectCore(Node):
                     self.select_list.column_indexes(ctx.table)]
 
         ctx.rdd = ctx.table.rdd(ctx.dpark)
-        self.table_expr.visit(ctx)
+        self.table_expr.where_clause.visit(ctx)
 
         if not self.select_list.has_aggregate_function:
             return ctx.rdd.map(_map_result)
+
+        self.table_expr.groupby_clause.visit(ctx)
 
         # group by & agg function
         tb = ctx.table
@@ -52,9 +54,7 @@ class SelectCore(Node):
             return [f.result(v) for f, v in izip(selected, r)]
 
         agg = Aggregator(create_combiner, merge_value, merge_combiner)
-        return ctx.rdd.map(lambda r: (None, r))\
-                  .combineByKey(agg)\
-                  .map(make_result)
+        return ctx.rdd.combineByKey(agg).map(make_result).sort()
 
 
 class Column(AggregateFunction):
@@ -144,15 +144,12 @@ class TableExpr(Node):
 
     @classmethod
     def parse(cls, p):
-        return TableExpr(p[1], p[2])
+        return TableExpr(p[1], p[2], p[3])
 
-    def __init__(self, table_name, where_clause=None):
+    def __init__(self, table_name, where_clause, groupby_clause):
         self.table_name = table_name
         self.where_clause = where_clause
-
-    def visit(self, ctx):
-        if self.where_clause:
-            self.where_clause.visit(ctx)
+        self.groupby_clause = groupby_clause
 
 
 class TableName(TokenNode):

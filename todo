@@ -1,6 +1,7 @@
 TODO
 ----
-- group by
+- group by multiple columns
+- group by without aggregate func func
 
 - having
 - paren support
@@ -24,6 +25,7 @@ R different return value of visit()
 
 DONE
 ----
+- simple group by
 - select_list => column, count(column)
 - select_list => func(c1), func(c2)
 

@@ -8,7 +8,7 @@ from select import (SelectCore, TableExpr, TableName, SelectList, Column,
                     SelectSubList, Asterisk)
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String)
-from clauses import WhereClause, EmptyClause
+from clauses import WhereClause, EmptyClause, EmptyGroupbyClause, GroupByClause
 from functions import AttributeFunction
 
 
@@ -30,12 +30,16 @@ productions = [
     ('attribute_function : IDENTIFIER LEFT_PAREN column RIGHT_PAREN',
         AttributeFunction),
 
-    ("table_expr : FROM table_name where_clause", TableExpr),
+    ("table_expr : FROM table_name where_clause groupby_clause", TableExpr),
     ("table_name : IDENTIFIER", TableName),
 
     ("where_clause : WHERE search_condition", WhereClause),
     ("where_clause : empty_where_clause", WhereClause),
     ("empty_where_clause : ", EmptyClause),
+
+    ("groupby_clause : GROUP BY column", GroupByClause),
+    ("groupby_clause : empty_groupby_clause", GroupByClause),
+    ("empty_groupby_clause : ", EmptyGroupbyClause),
 
     ("search_condition : boolean_term", SearchCondition),
     ("search_condition : search_condition OR boolean_term", SearchCondition),

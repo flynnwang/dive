@@ -46,8 +46,9 @@ class ColumnCountFuncTest(SelectTestBase):
         return [[self.rows[0][0], len(self.rows)]]
 
 
-#class SimpleGroupByTest(SelectTestBase):
-    #sql = "select count(id) from user group by name"
+class SimpleGroupByTest(SelectTestBase):
+    sql = "select name, count(id) from user group by name"
 
-    #def expected_select_result(self):
-        #return [len(list(g)) for _, g in groupby([r[1] for r in self.rows])]
+    def expected_select_result(self):
+        return [[x, len(list(g))] for x, g in
+                groupby([r[1] for r in self.rows])]

@@ -11,8 +11,14 @@ class EmptyClause(Clause):
 
     @classmethod
     def parse(cls, prods):
-        return EmptyClause()
+        return cls()
 
+
+class EmptyGroupbyClause(EmptyClause):
+
+    def visit(self, ctx):
+        ctx.rdd = ctx.rdd.map(lambda r: (None, r))
+    
 
 class WhereClause(Clause):
 
@@ -28,3 +34,22 @@ class WhereClause(Clause):
     def visit(self, ctx):
         _filter = self.search_condition.visit(ctx)
         ctx.rdd = ctx.rdd.filter(_filter)
+
+
+class GroupByClause(Clause):
+
+    @classmethod
+    def parse(cls, prods):
+        if isinstance(prods[0], EmptyClause):
+            return prods[0]
+        return cls(prods[2])    # group by column
+
+    def __init__(self, column):
+        self.column = column
+
+    def visit(self, ctx):
+        tb = ctx.table
+
+        def _group_by(r):
+            return (r[tb.index(self.column.value)], r)
+        ctx.rdd = ctx.rdd.map(_group_by)
