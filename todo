@@ -1,8 +1,9 @@
 TODO
 ----
-- having
 - limit x
 - order by
+
+- having with function result support (search condition bind to table)
 
 - table alias
 - field alias
@@ -20,6 +21,7 @@ R different return value of visit()
 
 DONE
 ----
+- simple having support
 - group by without aggregate func func
 - group by multiple columns
 

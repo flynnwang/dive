@@ -2,7 +2,7 @@
 
 from dpark.dependency import Aggregator
 from node import Node, TokenNode
-from clauses import GroupByClause
+from clauses import GroupByClause, WhereClause
 from functions import AttributeFunction, AggregateFunction
 from itertools import izip
 
@@ -11,13 +11,15 @@ class SelectStatement(Node):
 
     @classmethod
     def parse(cls, p):
-        return cls(p[1], p[3], p[4], p[5])
+        return cls(p[1], *p[3:])
 
-    def __init__(self,  select_list, table_name, where_clause, groupby_clause):
+    def __init__(self,  select_list, table_name, where_clause,
+                 groupby_clause, having_clause):
         self.select_list = select_list
         self.table_name = table_name
         self.where_clause = where_clause
         self.groupby_clause = groupby_clause
+        self.having_clause = having_clause
 
     def __repr__(self):
         return "<SelectCore: SELECT %s FROM %s>" % (self.select_list,
@@ -57,7 +59,12 @@ class SelectStatement(Node):
             return [f.result(v) for f, v in izip(selected, r)]
 
         agg = Aggregator(create_combiner, merge_value, merge_combiner)
-        return ctx.rdd.combineByKey(agg).map(make_result).sort()
+        ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result).sort()
+
+        if isinstance(self.having_clause, WhereClause):
+            self.having_clause.visit(ctx)
+
+        return ctx.rdd
 
 
 class Column(AggregateFunction):

@@ -15,7 +15,8 @@ from functions import AttributeFunction
 
 productions = [
     ("""select_stat : SELECT select_list
-                      FROM table_name where_clause groupby_clause""",
+                      FROM table_name where_clause
+                      groupby_clause having_clause""",
         SelectStatement),
 
     ("select_list : asterisk", SelectList),
@@ -45,6 +46,10 @@ productions = [
     ("grouping_column_list : column", GroupingColumnList),
     ("groupby_clause : empty_groupby_clause", GroupByClause),
     ("empty_groupby_clause : ", EmptyGroupbyClause),
+
+    ("having_clause : HAVING search_condition", WhereClause),
+    ("having_clause : empty_having_clasue ", WhereClause),
+    ("empty_having_clasue : ", EmptyClause),
 
     ("search_condition : boolean_term", SearchCondition),
     ("search_condition : search_condition OR boolean_term", SearchCondition),
