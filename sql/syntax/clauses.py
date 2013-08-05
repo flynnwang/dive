@@ -67,3 +67,7 @@ class GroupingColumnList(Node, list):
             columns, c = p[0], p[2]
         columns.append(c)
         return columns
+
+
+class HavingClause(WhereClause):
+    pass

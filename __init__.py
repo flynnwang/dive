@@ -11,18 +11,18 @@ optParser.add_option("-x")
 
 class Table(object):
 
-    def __init__(self, name, columns, paths=[], rdd=None):
+    def __init__(self, name, columns, paths=[], query=None):
         self.name = name
         self.columns = OrderedDict(columns)
         self.paths = paths
-        self._rdd = rdd
+        self.query = query
 
     def index(self, field):
         return self.columns.keys().index(field)
 
     def rdd(self, dpark=None):
-        if self._rdd:
-            return self._rdd
+        if self.query:
+            return self.query.rdd
 
         def coercion(r):
             return [conv(r[i]) for i, conv 
@@ -49,13 +49,17 @@ class Query(object):
         self.sql = sql
         self.schema = schema
         self.dpark = DparkContext()
+        self.rdd = None
 
     def execute(self):
-        select = parse(self.sql)
         # pylint: disable=E1101
-        rdd = select.visit(self)
+        select = parse(self.sql)
+        self.table = self.schema.find_table(select.table_name.value) 
 
         name = str(uuid.uuid4())
         columns = select.select_list.columns(self.table)
-        result_table = Table(name, columns, rdd=rdd)
-        return result_table
+        self.result_table = Table(name, columns, query=self)
+
+        select.visit(self)
+
+        return self.result_table

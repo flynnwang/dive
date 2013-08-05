@@ -7,8 +7,16 @@ class Node(object):
     def parse(cls, prods):
         return cls(prods)
 
+    @classmethod
+    def production(cls, tokens):
+        node = cls.parse(tokens)
+        for t in tokens:
+            if isinstance(t, Node):
+                t.parent = node
+        return node
+
     def __init__(self, prods=None):
-        pass
+        self.parent = None
 
     def visit(self, ctx):
         pass

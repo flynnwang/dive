@@ -8,7 +8,7 @@ from syntax import productions
 def build():
     pg = ParserGenerator(TOKENS, cache_id="sql_parser")
     for prod, cls in productions:
-        pg.production(prod)(cls.parse)
+        pg.production(prod)(cls.production)
     return pg.build()
 
 

@@ -9,7 +9,7 @@ from select import (SelectStatement, TableName, SelectList, Column,
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String)
 from clauses import (WhereClause, EmptyClause, EmptyGroupbyClause,
-                     GroupByClause, GroupingColumnList)
+                     GroupByClause, GroupingColumnList, HavingClause)
 from functions import AttributeFunction
 
 
@@ -47,8 +47,8 @@ productions = [
     ("groupby_clause : empty_groupby_clause", GroupByClause),
     ("empty_groupby_clause : ", EmptyGroupbyClause),
 
-    ("having_clause : HAVING search_condition", WhereClause),
-    ("having_clause : empty_having_clasue ", WhereClause),
+    ("having_clause : HAVING search_condition", HavingClause),
+    ("having_clause : empty_having_clasue ", HavingClause),
     ("empty_having_clasue : ", EmptyClause),
 
     ("search_condition : boolean_term", SearchCondition),

@@ -20,6 +20,10 @@ class AttributeFunction(Node):
     def value(self):
         return self._token.value
 
+    @property
+    def name(self):
+        return "%s(%s)" % (self._token.value, self.column.value)
+
 
 class AggregateFunction(AttributeFunction):
 

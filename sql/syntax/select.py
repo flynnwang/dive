@@ -26,7 +26,6 @@ class SelectStatement(Node):
                                                     self.table_name)
 
     def visit(self, ctx):
-        ctx.table = ctx.schema.find_table(self.table_name.value)
 
         def _map_result(r):
             return [r[idx] for idx in
@@ -37,7 +36,8 @@ class SelectStatement(Node):
 
         if not (self.select_list.has_aggregate_function or
                 isinstance(self.groupby_clause, GroupByClause)):
-            return ctx.rdd.map(_map_result)
+            ctx.rdd = ctx.rdd.map(_map_result)
+            return
 
         self.groupby_clause.visit(ctx)
 
@@ -79,6 +79,10 @@ class Column(AggregateFunction):
     @property
     def column(self):
         return self._token
+
+    @property
+    def name(self):
+        return self._token.value
 
 
 class Selectable(object):
@@ -146,8 +150,11 @@ class SelectSubList(Node, Selectable, list):
         return [tb.index(c.value) for c in self]
 
     def columns(self, tb):
-        return [(c.value, tb.columns[c.value])
-                for c in self if c.value in tb.columns]
+        # TODO: assume aggrerate function return value as it is
+        _type = lambda x: x
+        return [(c.name, (tb.columns[c.name] 
+                if c.value in tb.columns else _type))
+                for c in self]
 
 
 class TableName(TokenNode):

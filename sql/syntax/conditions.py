@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from node import Node, TokenNode
+from clauses import WhereClause, HavingClause
 
 
 class SearchCondition(Node):
@@ -51,8 +52,18 @@ class BooleanPrimary(Node):
         self.op = op
         self.right = right
 
+    def _get_table_by_clause(self, ctx):
+        node = self
+        while True:
+            node = node.parent
+            if isinstance(node, HavingClause):
+                return ctx.result_table
+            elif isinstance(node, WhereClause):
+                return ctx.table
+
     def visit(self, ctx):
-        idx = ctx.table.index(self.left.value)
+        tb = self._get_table_by_clause(ctx)
+        idx = tb.index(self.left.value)
 
         def check(r):
             return self.op(r[idx], self.right.value)
