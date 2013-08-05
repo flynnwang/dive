@@ -52,3 +52,11 @@ class SimpleGroupByTest(SelectTestBase):
     def expected_select_result(self):
         return [[x, len(list(g))] for x, g in
                 groupby([r[1] for r in self.rows])]
+
+
+class GroupByMultipleColumnsTest(SelectTestBase):
+    sql = "select id, name, count(id) from user group by id, name"
+
+    def expected_select_result(self):
+        return [[x[0], x[1], len(list(g))] for x, g in
+                groupby(self.rows, lambda x: (x[0], x[1]))]

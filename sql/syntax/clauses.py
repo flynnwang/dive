@@ -42,14 +42,28 @@ class GroupByClause(Clause):
     def parse(cls, prods):
         if isinstance(prods[0], EmptyClause):
             return prods[0]
-        return cls(prods[2])    # group by column
+        return cls(prods[2])    # group by columns
 
-    def __init__(self, column):
-        self.column = column
+    def __init__(self, columns):
+        self.columns = columns
 
     def visit(self, ctx):
         tb = ctx.table
 
         def _group_by(r):
-            return (r[tb.index(self.column.value)], r)
+            grouping = [r[tb.index(c.value)] for c in self.columns]
+            return (tuple(grouping), r)
         ctx.rdd = ctx.rdd.map(_group_by)
+
+
+class GroupingColumnList(Node, list):
+
+    @classmethod
+    def parse(cls, p):
+        if len(p) == 1:
+            columns = GroupingColumnList()
+            c = p[0]
+        else:
+            columns, c = p[0], p[2]
+        columns.append(c)
+        return columns

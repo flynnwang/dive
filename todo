@@ -1,6 +1,5 @@
 TODO
 ----
-- group by multiple columns
 - group by without aggregate func func
 - having
 - limit x
@@ -16,13 +15,15 @@ TODO
 JOIN related:
 - multiple table support
 
-R remove table expr
 R different return value of visit()
 
 
 
 DONE
 ----
+- group by multiple columns
+
+R remove table expr
 R select core -> selete statments (rename)
 - simple group by
 

@@ -7,6 +7,9 @@ class Node(object):
     def parse(cls, prods):
         return cls(prods)
 
+    def __init__(self, prods=None):
+        pass
+
     def visit(self, ctx):
         pass
 

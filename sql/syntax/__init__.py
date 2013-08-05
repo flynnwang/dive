@@ -8,7 +8,8 @@ from select import (SelectStatement, TableName, SelectList, Column,
                     SelectSubList, Asterisk)
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String)
-from clauses import WhereClause, EmptyClause, EmptyGroupbyClause, GroupByClause
+from clauses import (WhereClause, EmptyClause, EmptyGroupbyClause,
+                     GroupByClause, GroupingColumnList)
 from functions import AttributeFunction
 
 
@@ -38,7 +39,10 @@ productions = [
     ("where_clause : empty_where_clause", WhereClause),
     ("empty_where_clause : ", EmptyClause),
 
-    ("groupby_clause : GROUP BY column", GroupByClause),
+    ("groupby_clause : GROUP BY grouping_column_list", GroupByClause),
+    ("grouping_column_list : grouping_column_list COMMA column",
+        GroupingColumnList),
+    ("grouping_column_list : column", GroupingColumnList),
     ("groupby_clause : empty_groupby_clause", GroupByClause),
     ("empty_groupby_clause : ", EmptyGroupbyClause),
 
