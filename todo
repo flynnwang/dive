@@ -1,6 +1,5 @@
 TODO
 ----
-- group by without aggregate func func
 - having
 - limit x
 - order by
@@ -21,6 +20,7 @@ R different return value of visit()
 
 DONE
 ----
+- group by without aggregate func func
 - group by multiple columns
 
 R remove table expr

@@ -2,6 +2,7 @@
 
 from dpark.dependency import Aggregator
 from node import Node, TokenNode
+from clauses import GroupByClause
 from functions import AttributeFunction, AggregateFunction
 from itertools import izip
 
@@ -32,7 +33,8 @@ class SelectStatement(Node):
         ctx.rdd = ctx.table.rdd(ctx.dpark)
         self.where_clause.visit(ctx)
 
-        if not self.select_list.has_aggregate_function:
+        if not (self.select_list.has_aggregate_function or
+                isinstance(self.groupby_clause, GroupByClause)):
             return ctx.rdd.map(_map_result)
 
         self.groupby_clause.visit(ctx)

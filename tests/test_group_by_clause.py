@@ -60,3 +60,15 @@ class GroupByMultipleColumnsTest(SelectTestBase):
     def expected_select_result(self):
         return [[x[0], x[1], len(list(g))] for x, g in
                 groupby(self.rows, lambda x: (x[0], x[1]))]
+
+
+class GroupByWithoutAggFuncTest(SelectTestBase):
+
+    sql = "select id, name from user group by id"
+
+    def expected_select_result(self):
+        result = []
+        for _, g in groupby(self.rows, lambda x: x[0]):
+            it = g.next()
+            result.append([it[0], it[1]])
+        return result
