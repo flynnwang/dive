@@ -2,6 +2,7 @@
 
 from node import Node
 from functools import total_ordering
+from itertools import izip
 
 
 class Clause(Node):
@@ -62,7 +63,7 @@ class GroupingColumnList(Node, list):
     @classmethod
     def parse(cls, p):
         if len(p) == 1:
-            columns = GroupingColumnList()
+            columns = cls()
             c = p[0]
         else:
             columns, c = p[0], p[2]
@@ -80,16 +81,14 @@ class OrderByClause(Clause):
     def parse(cls, tokens):
         if isinstance(tokens[0], EmptyOrderByClause):
             return tokens[0]
-        return cls(tokens[2], tokens[3])    # orderby by columns ordering
+        return cls(tokens[2])    # orderby by columns ordering
 
-    def __init__(self, columns, orderby):
-        self.columns = columns
-        self.orderby = orderby
+    def __init__(self, sort_spec):
+        self.sort_spec = sort_spec
 
     def visit(self, ctx):
         tb = ctx.result_table
-        columns = self.columns
-        orderby = self.orderby
+        sort_spec = self.sort_spec
 
         @total_ordering
         class Ordered(object):
@@ -97,15 +96,20 @@ class OrderByClause(Clause):
             def __init__(self, r):
                 self.r = r
 
-            def __lt__(self, other):
-                result = self.key < other.key
-                if orderby.desc:
-                    result = not result
-                return result
+            def __le__(self, other):
+                for u, v, spec in izip(self.keys, other.keys, sort_spec):
+                    result = cmp(u, v)
+                    if result == 0:
+                        continue
+                    if spec.desc:
+                        result = -result
+                    return result < 0
+                return True
 
             @property
-            def key(self):
-                return [self.r[tb.index(c.value)] for c in columns]
+            def keys(self):
+                return (self.r[tb.index(spec.column.value)]
+                        for spec in sort_spec)
 
         ctx.rdd = ctx.rdd.map(lambda r: Ordered(r))\
                      .sort().map(lambda o: o.r)
@@ -125,9 +129,10 @@ class OrderingSpec(Node):
 
     @classmethod
     def parse(cls, tokens):
-        if len(tokens) == 1 and tokens[0].value == 'desc':
-            return cls(desc=True)
-        return cls(desc=False)
+        if len(tokens) == 2 and tokens[1].value == 'desc':
+            return cls(tokens[0], desc=True)
+        return cls(tokens[0])
 
-    def __init__(self, desc=False):
+    def __init__(self, column, desc=False):
+        self.column = column
         self.desc = desc

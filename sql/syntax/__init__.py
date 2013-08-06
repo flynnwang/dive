@@ -57,16 +57,15 @@ productions = [
     ("empty_having_clasue : ", EmptyClause),
 
     ("""orderby_clause :
-        ORDER BY sort_specification_list ordering_specification""", 
-        OrderByClause),
+        ORDER BY sort_specification_list""", OrderByClause),
     ("orderby_clause : empty_orderby_clasue ", OrderByClause),
     ("empty_orderby_clasue : ", EmptyOrderByClause),
+    ("sort_specification_list : ordering_specification", SortSepcList),
     ("""sort_specification_list :
-        sort_specification_list COMMA column""", SortSepcList),
-    ("sort_specification_list : column", SortSepcList),
-    ("ordering_specification : DESC", OrderingSpec),
-    ("ordering_specification : ASC", OrderingSpec),
-    ("ordering_specification : ", OrderingSpec),
+        sort_specification_list COMMA ordering_specification""", SortSepcList),
+    ("ordering_specification : column", OrderingSpec),
+    ("ordering_specification : column ASC", OrderingSpec),
+    ("ordering_specification : column DESC", OrderingSpec),
 
     ("search_condition : boolean_term", SearchCondition),
     ("search_condition : search_condition OR boolean_term", SearchCondition),

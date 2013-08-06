@@ -20,7 +20,7 @@ class SingleColumnAscOrderingTest(SelectTestBase):
 
 
 class MultiColumnsDescOrderingTest(SelectTestBase):
-    sql = "select * from user order by id, name desc"
+    sql = "select * from user order by id desc, name asc"
 
     def expected_select_result(self):
         self.rows.sort(key=lambda r: (r[0], r[1]), reverse=True)
