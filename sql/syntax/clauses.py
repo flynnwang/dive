@@ -136,3 +136,17 @@ class OrderingSpec(Node):
     def __init__(self, column, desc=False):
         self.column = column
         self.desc = desc
+
+
+class LimitClause(Clause):
+
+    @classmethod
+    def parse(cls, tokens):
+        if len(tokens) == 2:
+            return cls(int(tokens[1].value))
+
+    def __init__(self, limit):
+        self.limit = limit
+
+    def visit(self, ctx):
+        ctx.rdd = ctx.rdd.take(self.limit)

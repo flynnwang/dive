@@ -30,6 +30,13 @@ class Table(object):
         return dpark.union([dpark.csvFile(p) for p in self.paths])\
                     .map(coercion)
 
+    def collect(self):
+        rdd = self.query.rdd
+        limit_clause = self.query.select.limit_clause
+        if limit_clause:
+            return rdd.take(limit_clause.limit)
+        return rdd.collect()
+
 
 class Schema(object):
 
@@ -53,13 +60,13 @@ class Query(object):
 
     def execute(self):
         # pylint: disable=E1101
-        select = parse(self.sql)
-        self.table = self.schema.find_table(select.table_name.value) 
+        self.select = parse(self.sql)
+        self.table = self.schema.find_table(self.select.table_name.value) 
 
         name = str(uuid.uuid4())
-        columns = select.select_list.columns(self.table)
+        columns = self.select.select_list.columns(self.table)
         self.result_table = Table(name, columns, query=self)
 
-        select.visit(self)
+        self.select.visit(self)
 
         return self.result_table

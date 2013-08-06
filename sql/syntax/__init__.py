@@ -11,35 +11,30 @@ from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
 from clauses import (WhereClause, EmptyGroupbyClause,
                      GroupByClause, GroupingColumnList, HavingClause,
                      OrderByClause, SortSepcList, OrderingSpec,
-                     EmptyOrderByClause)
+                     EmptyOrderByClause, LimitClause)
 from functions import AttributeFunction
 
 
 productions = [
     ("""select_stat : SELECT select_list
-                      FROM table_name 
-                      where_clause
-                      groupby_clause 
-                      having_clause
-                      orderby_clause""",
+                      FROM table_name where_clause
+                      groupby_clause having_clause
+                      orderby_clause
+                      limit_clause""",
         SelectStatement),
 
     ("select_list : asterisk", SelectList),
     ("select_list : select_sublist", SelectList),
-
     ("select_sublist : column", SelectSubList),
     ("select_sublist : attribute_function", SelectSubList),
     ("select_sublist : select_sublist COMMA select_sublist", SelectSubList),
 
     ("asterisk : ASTERISK", Asterisk),
-
     # TODO: rename column -> value expression
     ("column : IDENTIFIER", Column),
-
+    ("table_name : IDENTIFIER", TableName),
     ('attribute_function : IDENTIFIER LEFT_PAREN column RIGHT_PAREN',
         AttributeFunction),
-
-    ("table_name : IDENTIFIER", TableName),
 
     ("where_clause : WHERE search_condition", WhereClause),
     ("where_clause : ", WhereClause),
@@ -64,6 +59,9 @@ productions = [
     ("ordering_specification : column", OrderingSpec),
     ("ordering_specification : column ASC", OrderingSpec),
     ("ordering_specification : column DESC", OrderingSpec),
+
+    ("limit_clause : LIMIT NUMBER", LimitClause),
+    ("limit_clause : ", LimitClause),
 
     ("search_condition : boolean_term", SearchCondition),
     ("search_condition : search_condition OR boolean_term", SearchCondition),

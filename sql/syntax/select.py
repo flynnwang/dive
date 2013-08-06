@@ -14,13 +14,14 @@ class SelectStatement(Node):
         return cls(p[1], *p[3:])
 
     def __init__(self,  select_list, table_name, where_clause,
-                 groupby_clause, having_clause, orderby_clause):
+                 groupby_clause, having_clause, orderby_clause, limit_clause):
         self.select_list = select_list
         self.table_name = table_name
         self.where_clause = where_clause
         self.groupby_clause = groupby_clause
         self.having_clause = having_clause
         self.orderby_clause = orderby_clause
+        self.limit_clause = limit_clause
 
     def __repr__(self):
         return "<SelectCore: SELECT %s FROM %s>" % (self.select_list,

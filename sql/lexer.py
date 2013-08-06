@@ -24,7 +24,7 @@ class LexerGeneratorBuilder(object):
               ('LIKE', 'like'), ('NOT', 'not'), ('ASTERISK', '[*]'),
               ('LEFT_PAREN', '\('), ('RIGHT_PAREN', '\)'),
               ('GROUP', 'group'), ('BY', 'by'), ('HAVING', 'having'),
-              ('DESC', 'desc'), ('ASC', 'asc')]
+              ('DESC', 'desc'), ('ASC', 'asc'), ('LIMIT', 'limit')]
 
     IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
     NUMBER = ("NUMBER", r"\d+")
