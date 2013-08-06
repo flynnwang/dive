@@ -8,7 +8,7 @@ from select import (SelectStatement, TableName, SelectList, Column,
                     SelectSubList, Asterisk)
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String)
-from clauses import (WhereClause, EmptyClause, EmptyGroupbyClause,
+from clauses import (WhereClause, EmptyGroupbyClause,
                      GroupByClause, GroupingColumnList, HavingClause,
                      OrderByClause, SortSepcList, OrderingSpec,
                      EmptyOrderByClause)
@@ -42,8 +42,7 @@ productions = [
     ("table_name : IDENTIFIER", TableName),
 
     ("where_clause : WHERE search_condition", WhereClause),
-    ("where_clause : empty_where_clause", WhereClause),
-    ("empty_where_clause : ", EmptyClause),
+    ("where_clause : ", WhereClause),
 
     ("groupby_clause : GROUP BY grouping_column_list", GroupByClause),
     ("grouping_column_list : grouping_column_list COMMA column",
@@ -53,8 +52,7 @@ productions = [
     ("empty_groupby_clause : ", EmptyGroupbyClause),
 
     ("having_clause : HAVING search_condition", HavingClause),
-    ("having_clause : empty_having_clasue ", HavingClause),
-    ("empty_having_clasue : ", EmptyClause),
+    ("having_clause : ", HavingClause),
 
     ("""orderby_clause :
         ORDER BY sort_specification_list""", OrderByClause),

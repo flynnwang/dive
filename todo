@@ -1,7 +1,5 @@
 TODO
 ----
-F per key order by DESC | ASC (__lt__, etc.)
-
 F limit x
 
 
@@ -18,6 +16,7 @@ R different return value of visit()
 
 DONE
 ----
+F per key order by DESC | ASC (__lt__, etc.)
 F row class ordering
 - order by
 

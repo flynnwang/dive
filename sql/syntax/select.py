@@ -33,7 +33,8 @@ class SelectStatement(Node):
                     self.select_list.column_indexes(ctx.table)]
 
         ctx.rdd = ctx.table.rdd(ctx.dpark)
-        self.where_clause.visit(ctx)
+        if self.where_clause:
+            self.where_clause.visit(ctx)
 
         if not (self.select_list.has_aggregate_function or
                 isinstance(self.groupby_clause, GroupByClause)):
@@ -61,7 +62,8 @@ class SelectStatement(Node):
             agg = Aggregator(create_combiner, merge_value, merge_combiner)
             ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result)
 
-            self.having_clause.visit(ctx)
+            if self.having_clause:
+                self.having_clause.visit(ctx)
 
         self.orderby_clause.visit(ctx)
         return ctx.rdd
