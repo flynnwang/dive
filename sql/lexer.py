@@ -19,10 +19,12 @@ class LexerGeneratorBuilder(object):
     SQL_KEYWORDS = ['select', 'from', 'where']
     TOKENS = [('EQUAL', '='), ('LESS_THAN_OR_EQUAL', '<='),
               ('LESS_THAN', '<'), ('GREATER_THAN_OR_EQUAL', '>='),
-              ('GREATER_THAN', '>'), ('OR', 'or'), ('AND', 'and'), 
+              ('GREATER_THAN', '>'), ('ORDER', 'order'),
+              ('OR', 'or'), ('AND', 'and'), 
               ('LIKE', 'like'), ('NOT', 'not'), ('ASTERISK', '[*]'),
               ('LEFT_PAREN', '\('), ('RIGHT_PAREN', '\)'),
-              ('GROUP', 'group'), ('BY', 'by'), ('HAVING', 'having')]
+              ('GROUP', 'group'), ('BY', 'by'), ('HAVING', 'having'),
+              ('DESC', 'desc'), ('ASC', 'asc')]
 
     IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
     NUMBER = ("NUMBER", r"\d+")

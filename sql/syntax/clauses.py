@@ -71,3 +71,45 @@ class GroupingColumnList(Node, list):
 
 class HavingClause(WhereClause):
     pass
+
+
+class OrderByClause(Clause):
+
+    @classmethod
+    def parse(cls, tokens):
+        if isinstance(tokens[0], EmptyOrderByClause):
+            return tokens[0]
+        return cls(tokens[2], tokens[3])    # orderby by columns ordering
+
+    def __init__(self, columns, orderby):
+        self.columns = columns
+        self.orderby = orderby
+
+    def visit(self, ctx):
+        tb = ctx.result_table
+
+        def _order_by(r):
+            return [r[tb.index(c.value)] for c in self.columns]
+        ctx.rdd = ctx.rdd.sort(_order_by, reverse=self.orderby.desc)
+
+
+class EmptyOrderByClause(EmptyClause):
+
+    def visit(self, ctx):
+        ctx.rdd = ctx.rdd.sort()
+
+
+class SortSepcList(GroupingColumnList):
+    pass
+
+
+class OrderingSpec(Node):
+
+    @classmethod
+    def parse(cls, tokens):
+        if len(tokens) == 1 and tokens[0].value == 'desc':
+            return cls(desc=True)
+        return cls(desc=False)
+
+    def __init__(self, desc=False):
+        self.desc = desc

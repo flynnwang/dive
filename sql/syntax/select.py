@@ -14,12 +14,13 @@ class SelectStatement(Node):
         return cls(p[1], *p[3:])
 
     def __init__(self,  select_list, table_name, where_clause,
-                 groupby_clause, having_clause):
+                 groupby_clause, having_clause, orderby_clause):
         self.select_list = select_list
         self.table_name = table_name
         self.where_clause = where_clause
         self.groupby_clause = groupby_clause
         self.having_clause = having_clause
+        self.orderby_clause = orderby_clause
 
     def __repr__(self):
         return "<SelectCore: SELECT %s FROM %s>" % (self.select_list,
@@ -37,33 +38,32 @@ class SelectStatement(Node):
         if not (self.select_list.has_aggregate_function or
                 isinstance(self.groupby_clause, GroupByClause)):
             ctx.rdd = ctx.rdd.map(_map_result)
-            return
+        else:
+            self.groupby_clause.visit(ctx)
 
-        self.groupby_clause.visit(ctx)
+            tb = ctx.table
+            selected = self.select_list.selected
 
-        # group by & agg function
-        tb = ctx.table
-        selected = self.select_list.selected
+            def create_combiner(r):
+                return [f.create(r[tb.index(f.column.value)])
+                        for f, v in izip(selected, r)]
 
-        def create_combiner(r):
-            return [f.create(r[tb.index(f.column.value)])
-                    for f, v in izip(selected, r)]
+            def merge_value(c, v):
+                return merge_combiner(c, create_combiner(v))
 
-        def merge_value(c, v):
-            return merge_combiner(c, create_combiner(v))
+            def merge_combiner(c1, c2):
+                return [f.merge(v1, v2)
+                        for f, v1, v2 in izip(selected, c1, c2)]
 
-        def merge_combiner(c1, c2):
-            return [f.merge(v1, v2) for f, v1, v2 in izip(selected, c1, c2)]
+            def make_result((k, r)):
+                return [f.result(v) for f, v in izip(selected, r)]
 
-        def make_result((k, r)):
-            return [f.result(v) for f, v in izip(selected, r)]
+            agg = Aggregator(create_combiner, merge_value, merge_combiner)
+            ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result)
 
-        agg = Aggregator(create_combiner, merge_value, merge_combiner)
-        ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result).sort()
-
-        if isinstance(self.having_clause, WhereClause):
             self.having_clause.visit(ctx)
 
+        self.orderby_clause.visit(ctx)
         return ctx.rdd
 
 
@@ -150,7 +150,6 @@ class SelectSubList(Node, Selectable, list):
         return [tb.index(c.value) for c in self]
 
     def columns(self, tb):
-        # TODO: assume aggrerate function return value as it is
         _type = lambda x: x
         return [(c.name, (tb.columns[c.name] 
                 if c.value in tb.columns else _type))

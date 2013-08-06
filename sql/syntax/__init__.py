@@ -9,14 +9,19 @@ from select import (SelectStatement, TableName, SelectList, Column,
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator, Number, String)
 from clauses import (WhereClause, EmptyClause, EmptyGroupbyClause,
-                     GroupByClause, GroupingColumnList, HavingClause)
+                     GroupByClause, GroupingColumnList, HavingClause,
+                     OrderByClause, SortSepcList, OrderingSpec,
+                     EmptyOrderByClause)
 from functions import AttributeFunction
 
 
 productions = [
     ("""select_stat : SELECT select_list
-                      FROM table_name where_clause
-                      groupby_clause having_clause""",
+                      FROM table_name 
+                      where_clause
+                      groupby_clause 
+                      having_clause
+                      orderby_clause""",
         SelectStatement),
 
     ("select_list : asterisk", SelectList),
@@ -50,6 +55,18 @@ productions = [
     ("having_clause : HAVING search_condition", HavingClause),
     ("having_clause : empty_having_clasue ", HavingClause),
     ("empty_having_clasue : ", EmptyClause),
+
+    ("""orderby_clause :
+        ORDER BY sort_specification_list ordering_specification""", 
+        OrderByClause),
+    ("orderby_clause : empty_orderby_clasue ", OrderByClause),
+    ("empty_orderby_clasue : ", EmptyOrderByClause),
+    ("""sort_specification_list :
+        sort_specification_list COMMA column""", SortSepcList),
+    ("sort_specification_list : column", SortSepcList),
+    ("ordering_specification : DESC", OrderingSpec),
+    ("ordering_specification : ASC", OrderingSpec),
+    ("ordering_specification : ", OrderingSpec),
 
     ("search_condition : boolean_term", SearchCondition),
     ("search_condition : search_condition OR boolean_term", SearchCondition),
