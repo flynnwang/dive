@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from node import Node
+from functools import total_ordering
 
 
 class Clause(Node):
@@ -87,10 +88,27 @@ class OrderByClause(Clause):
 
     def visit(self, ctx):
         tb = ctx.result_table
+        columns = self.columns
+        orderby = self.orderby
 
-        def _order_by(r):
-            return [r[tb.index(c.value)] for c in self.columns]
-        ctx.rdd = ctx.rdd.sort(_order_by, reverse=self.orderby.desc)
+        @total_ordering
+        class Ordered(object):
+
+            def __init__(self, r):
+                self.r = r
+
+            def __lt__(self, other):
+                result = self.key < other.key
+                if orderby.desc:
+                    result = not result
+                return result
+
+            @property
+            def key(self):
+                return [self.r[tb.index(c.value)] for c in columns]
+
+        ctx.rdd = ctx.rdd.map(lambda r: Ordered(r))\
+                     .sort().map(lambda o: o.r)
 
 
 class EmptyOrderByClause(EmptyClause):

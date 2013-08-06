@@ -1,9 +1,9 @@
 TODO
 ----
-- limit x
-- order by
+F row class ordering
+F limit x
+F per key order by DESC | ASC (__lt__, etc.)
 
-- having with function result support (search condition bind to table)
 
 - table alias
 - field alias
@@ -11,16 +11,16 @@ TODO
 - add parser error handler
 
 
-
 JOIN related:
 - multiple table support
 
 R different return value of visit()
 
-
-
 DONE
 ----
+- order by
+
+- having with function result support (search condition bind to table)
 - simple having support
 - group by without aggregate func func
 - group by multiple columns
