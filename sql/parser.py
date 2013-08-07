@@ -8,7 +8,13 @@ from syntax import productions
 def build():
     pg = ParserGenerator(TOKENS, cache_id="sql_parser")
     for prod, cls in productions:
-        pg.production(prod)(cls.production)
+        prod = prod.split(':', 1)
+        name = prod[0].strip()
+        exnteds = [p.strip() for p in prod[1].split('|')]
+
+        for p in exnteds:
+            production = "%s : %s" % (name, p)
+            pg.production(production)(cls.production)
     return pg.build()
 
 

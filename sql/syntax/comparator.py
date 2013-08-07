@@ -7,6 +7,11 @@ from node import TokenNode
 
 class Comparator(TokenNode):
 
+    @classmethod
+    def parse(cls, tokens):
+        tk = tokens[0]
+        return COMPARATORS[tk.value](tk)
+
     def __call__(self, x, y):
         raise Exception("NOT IMPLEMENTED")
        
@@ -46,3 +51,12 @@ class LikeComparator(Comparator):
     def __call__(self, x, y):
         # TODO pre compile re
         return re.match(y, x)
+
+COMPARATORS = {
+    '=': Equal,
+    '<': LessThan,
+    '<=': LessThanOrEqual,
+    '>': GreaterThan,
+    '>=': GreaterThanOrEqual,
+    'like': LikeComparator,
+}

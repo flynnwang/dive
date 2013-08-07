@@ -1,9 +1,16 @@
 TODO
 ----
-F column alias
+R auto link production -> class
 
-- table alias
+- date support
+- datetime support
 - float number support
+
+F INTO OUTFILE '/path/to/file.csv'
+- paren support in search condition
+
+F column alias
+- table alias
 - add parser error handler
 
 
@@ -14,6 +21,8 @@ R different return value of visit()
 
 DONE
 ----
+R better grammer definition: | for multiple productions
+
 F limit x
 F per key order by DESC | ASC (__lt__, etc.)
 F row class ordering

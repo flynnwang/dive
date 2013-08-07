@@ -107,4 +107,14 @@ class String(TokenNode):
 
 
 class RowValueDesignator(TokenNode):
-    pass
+
+    @classmethod
+    def parse(cls, tokens):
+        tk = tokens[0]
+        return tk.name in DESIGNATORS and DESIGNATORS[tk.name](tk) or cls(tk)
+
+
+DESIGNATORS = {
+    'STRING': String,
+    'NUMBER': Number,
+}
