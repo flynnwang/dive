@@ -1,5 +1,7 @@
 TODO
 ----
+R grammer of sql BNF: string => productions
+
 R auto link production -> class
 
 - date support
