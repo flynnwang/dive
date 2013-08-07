@@ -16,21 +16,18 @@ class LexerGenerator(rply.LexerGenerator):
 
 class LexerGeneratorBuilder(object):
 
-    SQL_KEYWORDS = ['select', 'from', 'where']
+    KEYWORDS = ['select', 'from', 'where', 'like', 'having', 'order', 'not',
+                'and', 'or', 'group', 'by', 'desc', 'asc', 'limit']
     TOKENS = [('EQUAL', '='), ('LESS_THAN_OR_EQUAL', '<='),
               ('LESS_THAN', '<'), ('GREATER_THAN_OR_EQUAL', '>='),
-              ('GREATER_THAN', '>'), ('ORDER', 'order'),
-              ('OR', 'or'), ('AND', 'and'), 
-              ('LIKE', 'like'), ('NOT', 'not'), ('ASTERISK', '[*]'),
-              ('LEFT_PAREN', '\('), ('RIGHT_PAREN', '\)'),
-              ('GROUP', 'group'), ('BY', 'by'), ('HAVING', 'having'),
-              ('DESC', 'desc'), ('ASC', 'asc'), ('LIMIT', 'limit')]
+              ('GREATER_THAN', '>'), ('ASTERISK', '[*]'),
+              ('LEFT_PAREN', '\('), ('RIGHT_PAREN', '\)')]
 
     IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
     NUMBER = ("NUMBER", r"\d+")
 
     def register_keyword_tokens(self, lg):
-        for t in self.SQL_KEYWORDS:
+        for t in self.KEYWORDS:
             lg.add(t.upper(), t)
 
     def register_tokens(self, lg, tokens):
@@ -59,8 +56,8 @@ class LexerGeneratorBuilder(object):
 TOKENS, sql_lexer = LexerGeneratorBuilder().build()
 
 
-def lex(sql):
-    stream = sql_lexer.lex(sql)
+def lex(sql, lexer=sql_lexer):
+    stream = lexer.lex(sql)
     while True:
         t = next(stream)
         if not t:

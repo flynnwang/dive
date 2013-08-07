@@ -32,6 +32,7 @@ class TokenNode(Node):
         return cls(prods[0])
 
     def __init__(self, token):
+        super(TokenNode, self).__init__()
         self._token = token
 
     @property
@@ -44,3 +45,19 @@ class TokenNode(Node):
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.value)
+
+
+class NodeList(Node, list):
+
+    @classmethod
+    def parse(cls, tokens):
+        nodes = cls()
+        if len(tokens) == 1:
+            nodes, it = cls(), tokens[0]
+        else:
+            nodes, it = tokens[0], tokens[2]
+        nodes.append(it)
+        return nodes
+
+    def __init__(self):
+        super(NodeList, self).__init__()

@@ -2,7 +2,7 @@
 
 from rply import ParserGenerator
 from lexer import TOKENS, sql_lexer
-from syntax import productions
+from syntax.productions import productions
 
 
 def build():
