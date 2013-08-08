@@ -52,11 +52,11 @@ class NodeList(Node, list):
     @classmethod
     def parse(cls, tokens):
         nodes = cls()
-        if len(tokens) == 1:
-            nodes, it = cls(), tokens[0]
-        else:
-            nodes, it = tokens[0], tokens[2]
-        nodes.append(it)
+        for t in tokens:
+            if type(t) is cls:
+                nodes.extend(t)
+            elif isinstance(t, Node):
+                nodes.append(t)
         return nodes
 
     def __init__(self):
