@@ -2,7 +2,7 @@
 
 import rply
 from collections import defaultdict
-from node import Node, NodeList
+from node import Node, NodeList, OptionalNode
 
 TOKENS = {
     'IDENT': r'[a-zA-Z]\w*',
@@ -23,10 +23,7 @@ bnf_lexer = lexer_gen.build()
 
 
 class ProductionList(NodeList):
-
-    def visit(self, prods):
-        for p in self:
-            p.visit(prods)
+    pass
 
 
 class Production(Node):
@@ -39,23 +36,29 @@ class Production(Node):
         self.ident = ident
         self.alternatives = alternatives
 
-    def visit(self, prods):
-        #for it in self.item_list:
-            #it.visit(prods, self.ident.value)
-        pass
+    def visit(self, ctx):
+        ctx.name = self.ident.value
+        self.alternatives.visit(ctx)
 
 
 class Alternatives(NodeList):
-    pass
+
+    def visit(self, ctx):
+        name = ctx.name
+        for a in self:
+            values = a.visit(ctx)
+            ctx.append(name, values)
 
 
 class ItemList(NodeList):
 
-    def visit(self, prods, ident_val):
-        for i, it in enumerate(self):
-            item_ident = "%s_%s" % (ident_val, i)
-            prods[ident_val].append(item_ident)
-            it.visit(prods, item_ident)
+    def visit(self, ctx):
+        # assume all Identifiers
+        values = []
+        for it in self:
+            it.visit(ctx)
+            values.append(it.value)
+        return values
 
 
 class SurroundItems(Node):
@@ -64,17 +67,35 @@ class SurroundItems(Node):
     def parse(cls, tokens):
         return cls(tokens[1])
 
-    def __init__(self, item_list):
+    def __init__(self, alternatives):
         Node.__init__(self)
-        self.item_list = item_list
+        self.alternatives = alternatives
 
 
 class OptionalItems(SurroundItems):
-    pass
+
+    @property
+    def value(self):
+        return self.name
+
+    def visit(self, ctx):
+        name = ctx.register_cls(OptionalNode)
+
+        ctx.name = name
+        self.alternatives.visit(ctx)
+        ctx.append(name, [], OptionalNode)
+
+        self.name = name
 
 
 class RepetitiveItems(SurroundItems):
-    pass
+
+    @property
+    def value(self):
+        return self.name
+
+    def visit(self, ctx):
+        self.name = ctx.register_cls(OptionalItems)
 
 
 class Identifier(Node):
@@ -91,15 +112,8 @@ class Identifier(Node):
     def value(self):
         return self.token.value
 
-    def visit(self, prods, ident_val):
+    def visit(self, ctx):
         pass
-
-
-class EmptyItem(Node):
-
-    @classmethod
-    def parse(cls, tokens):
-        return None
         
         
 productions = (
@@ -114,10 +128,9 @@ productions = (
     ('item_list : item', ItemList),
     ('item_list : item_list item', ItemList),
 
-    ('item : ', EmptyItem),
     ('item : IDENT', Identifier),
-    ('item : OPEN_BRACKET item_list CLOSE_BRACKET', OptionalItems),
-    ('item : OPEN_BRACE item_list CLOSE_BRACE', RepetitiveItems),
+    ('item : OPEN_BRACKET alternatives CLOSE_BRACKET', OptionalItems),
+    ('item : OPEN_BRACE alternatives CLOSE_BRACE', RepetitiveItems),
 )
 
 
@@ -127,9 +140,34 @@ for prod, cls in productions:
 bnf_parser = parser_gen.build()
 
 
-#def gen_productions(bnf):
-    #production_list = bnf_parser.parse(bnf_lexer.lex(bnf))
-    #prods = defaultdict(list)
-    ## pylint: disable=E1101
-    #production_list.visit(prods)
-    #return prods
+class ProductionGen(object):
+
+    def __init__(self, repo):
+        self.repo = repo
+        self._prods = []
+        self._count = 0
+
+    def register_cls(self, cls):
+        self._count += 1
+        name = "item_%s" % self._count
+        #assert name not in self.repo
+        self.repo[name] = cls
+        return name
+
+    def append(self, name, values, cls=None):
+        if cls is None:
+            cls = self.repo[name]
+        prod = "%s : %s;" % (name, " ".join(values))
+        self._prods.append((prod, cls))
+
+    @property
+    def productions(self):
+        return reversed(self._prods)
+
+
+def gen_productions(bnf, repo):
+    productions = bnf_parser.parse(bnf_lexer.lex(bnf))
+    ctx = ProductionGen(repo)
+    # pylint: disable=E1101
+    productions.visit(ctx)
+    return ctx.productions

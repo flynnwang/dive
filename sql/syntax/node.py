@@ -61,3 +61,20 @@ class NodeList(Node, list):
 
     def __init__(self):
         super(NodeList, self).__init__()
+
+    def visit(self, ctx):
+        for nd in self:
+            nd.visit(ctx)
+
+
+class OptionalNode(Node):
+
+    @classmethod
+    def parse(cls, tokens):
+        nodes = [t for t in tokens if isinstance(t, Node)]
+        return cls(tokens)
+
+    def __init__(self, nodes):
+        Node.__init__(self)
+        self.nodes = nodes
+
