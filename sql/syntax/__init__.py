@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import rply
+from string import capitalize
 from collections import defaultdict
 from node import Node, NodeList, OptionalNode
 
 TOKENS = {
-    'IDENT': r'[a-zA-Z]\w*',
+    'IDENT': r'\w+',
     'OPEN_BRACKET': r'\[',  # optinal
     'CLOSE_BRACKET': r'\]',
     'OR': r'\|',
@@ -23,7 +24,15 @@ bnf_lexer = lexer_gen.build()
 
 
 class ProductionList(NodeList):
-    pass
+
+    def visit(self, ctx):
+        for nd in self:
+            st = len(ctx.productions)
+            nd.visit(ctx)
+            ed = len(ctx.productions)
+            if st < ed:
+                end = None if st - 1 < 0 else st - 1
+                ctx.productions[st:ed] = ctx.productions[ed-1:end:-1]
 
 
 class Production(Node):
@@ -101,6 +110,20 @@ class Identifier(Node):
     @property
     def value(self):
         return self.token.value
+
+
+class EmptyItem(Node):
+
+    @classmethod
+    def parse(cls, tokens):
+        return cls()
+
+    def __init__(self):
+        Node.__init__(self)
+        self.value = ""
+
+    def visit(self, ctx):
+        return self.value
         
         
 productions = (
@@ -110,11 +133,12 @@ productions = (
     ('production : IDENT COLON alternatives SEMICOLON', Production),
 
     ('alternatives : item_list', Alternatives),
-    ('alternatives : item_list OR item_list', Alternatives),
+    ('alternatives : alternatives OR item_list', Alternatives),
 
     ('item_list : item', ItemList),
     ('item_list : item_list item', ItemList),
 
+    ('item : ', EmptyItem),
     ('item : IDENT', Identifier),
     ('item : OPEN_BRACKET alternatives CLOSE_BRACKET', OptionalItems),
     ('item : OPEN_BRACE alternatives CLOSE_BRACE', RepetitiveItems),
@@ -131,25 +155,21 @@ class ProductionGen(object):
 
     def __init__(self, repo):
         self.repo = repo
-        self._prods = []
+        self.productions = []
         self._count = 0
 
     def register_cls(self, cls):
         self._count += 1
         name = "item_%s" % self._count
-        #assert name not in self.repo
         self.repo[name] = cls
         return name
 
     def append(self, name, values, cls=None):
         if cls is None:
-            cls = self.repo[name]
-        prod = "%s : %s;" % (name, " ".join(values))
-        self._prods.append((prod, cls))
-
-    @property
-    def productions(self):
-        return reversed(self._prods)
+            cls_name = ''.join(map(capitalize, name.split('_')))
+            cls = self.repo[cls_name]
+        prod = "%s : %s" % (name, " ".join(values))
+        self.productions.append((prod, cls))
 
 
 def gen_productions(bnf, repo):

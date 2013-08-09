@@ -131,17 +131,17 @@ class Asterisk(TokenNode, Selectable):
         return tb.columns.copy()
 
 
-class SelectSubList(Node, Selectable, list):
+class SelectSublist(Node, Selectable, list):
 
     @classmethod
     def parse(cls, p):
-        sublist = SelectSubList()
+        sublist = SelectSublist()
         if len(p) == 1:
             column = p[0]
             sublist.append(column)
         else:
             for c in p:
-                if isinstance(c, SelectSubList):
+                if isinstance(c, SelectSublist):
                     sublist += c
         return sublist
 

@@ -1,44 +1,29 @@
 # -*- coding: utf-8 -*-
 
-from node import Node, TokenNode
+from node import Node, TokenNode, NodeList
 from clauses import WhereClause, HavingClause
 
 
-class SearchCondition(Node):
+class SearchCondition(NodeList):
     """ OR logic """
 
-    @classmethod
-    def parse(cls, p):
-        if len(p) == 1:
-            term, more = p[0], None
-        else:
-            more, term = p[0], p[2]
-        return SearchCondition(term, more)
-
-    def __init__(self, term, more=None):
-        self.term = term
-        self.more = more
-
     def visit(self, ctx):
-        c = self.term.visit(ctx)
-        if self.more is None:
-            return c
-        c2 = self.more.visit(ctx)
-        return lambda r: c(r) or c2(r)
+        funcs = [self[0].visit(ctx)]
+        for more in self[1]:
+            funcs.append(more.visit(ctx))
+        funcs = filter(None, funcs)
+        return lambda r: any(f(r) for f in funcs)
 
 
-class BooleanTerm(Node):
+class BooleanTerm(NodeList):
     """ AND logic """
 
-    def __init__(self, p):
-        self.factor, self.more = (p[0], None) if len(p) == 1 else (p[2], p[0])
-
     def visit(self, ctx):
-        c = self.factor.visit(ctx)
-        if self.more is None:
-            return c
-        c2 = self.more.visit(ctx)
-        return lambda r: c(r) and c2(r)
+        funcs = [self[0].visit(ctx)]
+        for more in self[1]:
+            funcs.append(more.visit(ctx))
+        funcs = filter(None, funcs)
+        return lambda r: all(f(r) for f in funcs)
         
 
 class BooleanPrimary(Node):
@@ -74,8 +59,7 @@ class BooleanFactor(Node):
     """ NOT """
 
     def __init__(self, p):
-        self.predicate, self.not_ = (p[0], False) if len(p) == 1\
-            else (p[1], True)
+        self.not_, self.predicate = p
 
     def visit(self, ctx):
         c = self.predicate.visit(ctx)

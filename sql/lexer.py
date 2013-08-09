@@ -56,8 +56,8 @@ class LexerGeneratorBuilder(object):
 TOKENS, sql_lexer = LexerGeneratorBuilder().build()
 
 
-def lex(sql, lexer=sql_lexer):
-    stream = lexer.lex(sql)
+def lex(s, lexer=sql_lexer):
+    stream = lexer.lex(s)
     while True:
         t = next(stream)
         if not t:

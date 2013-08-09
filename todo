@@ -1,6 +1,7 @@
 TODO
 ----
 R grammer of sql BNF: string => productions
+R check on grammer: serach condition
 
 R auto link production -> class
 

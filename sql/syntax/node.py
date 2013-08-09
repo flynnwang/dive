@@ -82,3 +82,8 @@ class OptionalNode(Node):
     def __init__(self, nodes):
         Node.__init__(self)
         self.nodes = nodes
+
+    def visit(self, ctx):
+        for nd in self.nodes:
+            nd.visit(ctx)
+            

@@ -2,19 +2,14 @@
 
 from rply import ParserGenerator
 from lexer import TOKENS, sql_lexer
-from syntax.productions import productions
+from syntax.productions import select_bnf, node_classes
+from syntax import gen_productions
 
 
 def build():
     pg = ParserGenerator(TOKENS, cache_id="sql_parser")
-    for prod, cls in productions:
-        prod = prod.split(':', 1)
-        name = prod[0].strip()
-        exnteds = [p.strip() for p in prod[1].split('|')]
-
-        for p in exnteds:
-            production = "%s : %s" % (name, p)
-            pg.production(production)(cls.production)
+    for prod, cls in gen_productions(select_bnf, node_classes):
+        pg.production(prod)(cls.production)
     return pg.build()
 
 

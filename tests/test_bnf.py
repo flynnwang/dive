@@ -47,6 +47,19 @@ class BNFParserTest(unittest.TestCase):
         assert repetitives.alternatives[0][0].value == "A"
         assert repetitives.alternatives[0][1].value == "B"
 
+    def test_empty_item(self):
+        bnf = self._parse("S : ;")
+
+        assert bnf[0].ident.value == "S"
+        assert bnf[0].alternatives[0][0].value == ""
+
+    def test_triple_items(self):
+        bnf = self._parse("S : A | B | C ;")
+
+        print bnf
+        #assert bnf[0].ident.value == "S"
+        #assert bnf[0].alternatives[0][0].value == ""
+
 
 class BNFGenerationTest(unittest.TestCase):
 
@@ -61,50 +74,54 @@ class BNFGenerationTest(unittest.TestCase):
         return list(gen_productions(s, ClassRepo()))
 
     def test_single_prod(self):
-        prod = "S : A;"
-        prods = self._gen(prod)
+        prods = self._gen("S : A;")
 
         assert 1 == len(prods)
-        assert (prod, "S") == prods[0]
+        assert ("S : A", "S") == prods[0]
 
     def test_double_prods(self):
-        prod = "S : A B;"
-        prods = self._gen(prod)
+        prods = self._gen("S : A B;")
 
         assert 1 == len(prods)
-        assert (prod, "S") == prods[0]
+        assert ("S : A B", "S") == prods[0]
 
     def test_optional_items(self):
         prods = self._gen("S : [A];")
 
         assert 3 == len(prods)
-        assert ("S : item_1;", "S") == prods[0]
-        assert ("item_1 : A;", OptionalNode) == prods[1]
-        assert ("item_1 : ;", OptionalNode) == prods[2]
+        assert ("S : item_1", "S") == prods[0]
+        assert ("item_1 : A", OptionalNode) == prods[1]
+        assert ("item_1 : ", OptionalNode) == prods[2]
 
     def test_repetitive_items(self):
         prods = self._gen("S : {A};")
 
         assert 4 == len(prods)
-        assert ("S : item_1;", "S") == prods[0]
-        assert ("item_1 : item_1 A;", NodeList) == prods[1]
-        assert ("item_1 : A;", NodeList) == prods[2]
-        assert ("item_1 : ;", NodeList) == prods[3]
+        assert ("S : item_1", "S") == prods[0]
+        assert ("item_1 : item_1 A", NodeList) == prods[1]
+        assert ("item_1 : A", NodeList) == prods[2]
+        assert ("item_1 : ", NodeList) == prods[3]
 
     def test_prod_with_alternatives(self):
         prods = self._gen("S : A | B;")
 
         assert 2 == len(prods)
-        assert ("S : B;", "S") == prods[0]
-        assert ("S : A;", "S") == prods[1]
+        assert ("S : B", "S") == prods[0]
+        assert ("S : A", "S") == prods[1]
 
     def test_select_list(self):
         prod = "select_list : asterisk | sublist { comma sublist };"
         prods = self._gen(prod)
 
         assert 5 == len(prods)
-        assert ("select_list : sublist item_1;", "select_list") == prods[0]
-        assert ("item_1 : item_1 comma sublist;", NodeList) == prods[1]
-        assert ("item_1 : comma sublist;", NodeList) == prods[2]
-        assert ("item_1 : ;", NodeList) == prods[3]
-        assert ("select_list : asterisk;", "select_list") == prods[4]
+        assert ("select_list : sublist item_1", "SelectList") == prods[0]
+        assert ("item_1 : item_1 comma sublist", NodeList) == prods[1]
+        assert ("item_1 : comma sublist", NodeList) == prods[2]
+        assert ("item_1 : ", NodeList) == prods[3]
+        assert ("select_list : asterisk", "SelectList") == prods[4]
+
+    def test_empty_item(self):
+        prods = self._gen("S : ;")
+
+        assert 1 == len(prods)
+        assert ("S : ", "S") == prods[0]

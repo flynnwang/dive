@@ -3,80 +3,66 @@
     based on: http://www.andrew.cmu.edu/user/shadow/sql/sql3bnf.sep93.txt
 """
 
+from inspect import isclass
+from node import Node
 from comparator import Comparator
 from select import (SelectStatement, TableName, SelectList, Column,
-                    SelectSubList, Asterisk)
+                    SelectSublist, Asterisk)
 from conditions import (SearchCondition, BooleanTerm, BooleanFactor,
                         BooleanPrimary, RowValueDesignator)
 from clauses import (WhereClause, EmptyGroupbyClause,
                      GroupByClause, GroupingColumnList, HavingClause,
-                     OrderByClause, SortSepcList, OrderingSpec,
+                     OrderByClause, SortSpecList, OrderingSpec,
                      EmptyOrderByClause, LimitClause)
 from functions import AttributeFunction
 
 
-productions = [
-    ("""select_stat : SELECT select_list
-                      FROM table_name where_clause
-                      groupby_clause having_clause
-                      orderby_clause
-                      limit_clause""",
-        SelectStatement),
+select_bnf = """
+    select_statement : SELECT select_list FROM table_name [where_clause]
+        group_by_clause [having_clause]
+        order_by_clause [limit_clause];
 
-    ("select_list : asterisk | select_sublist", SelectList),
-    ("""select_sublist : column 
-                       | attribute_function 
-                       | select_sublist COMMA select_sublist""",
-        SelectSubList),
+    select_list : asterisk | select_sublist;
 
-    ("asterisk : ASTERISK", Asterisk),
-    # TODO: rename column -> value expression
-    ("column : IDENTIFIER", Column),
-    ("table_name : IDENTIFIER", TableName),
-    ('attribute_function : IDENTIFIER LEFT_PAREN column RIGHT_PAREN',
-        AttributeFunction),
+    select_sublist : column 
+        | attribute_function
+        | select_sublist COMMA select_sublist;
 
-    ("where_clause : WHERE search_condition | ", WhereClause),
+    asterisk : ASTERISK;
 
-    ("""groupby_clause : GROUP BY grouping_column_list
-                       | empty_groupby_clause""", GroupByClause),
-    ("""grouping_column_list : column
-                             | grouping_column_list COMMA column""",
-        GroupingColumnList),
-    ("empty_groupby_clause : ", EmptyGroupbyClause),
+    column : IDENTIFIER;
 
-    ("having_clause : HAVING search_condition | ", HavingClause),
+    table_name : IDENTIFIER;
 
-    ("""orderby_clause : ORDER BY sort_specification_list
-                       | empty_orderby_clasue """, OrderByClause),
-    ("empty_orderby_clasue : ", EmptyOrderByClause),
-    ("""sort_specification_list : ordering_specification
-                     | sort_specification_list COMMA ordering_specification""",
-        SortSepcList),
-    ("""ordering_specification : column
-                               | column ASC
-                               | column DESC""", OrderingSpec),
+    attribute_function : IDENTIFIER LEFT_PAREN column RIGHT_PAREN;
 
-    ("limit_clause : LIMIT NUMBER | ", LimitClause),
+    where_clause : WHERE search_condition;
+    search_condition : boolean_term {OR boolean_term};
+    boolean_term : boolean_factor {AND boolean_factor};
+    boolean_factor : [NOT] boolean_primary;
 
-    ("""search_condition : boolean_term
-                         | search_condition OR boolean_term""",
-        SearchCondition),
-    ("""boolean_term : boolean_factor
-                     | boolean_term AND boolean_factor""", BooleanTerm),
-    ("""boolean_factor : boolean_primary
-                       | NOT boolean_primary""", BooleanFactor),
-    ("boolean_primary : row_value_designator comp_op row_value_designator",
-        BooleanPrimary),
+    group_by_clause : GROUP BY grouping_column_list | empty_groupby_clause;
+    grouping_column_list : column | grouping_column_list COMMA column;
+    empty_groupby_clause : ;
 
-    ("""row_value_designator : STRING 
-                             | NUMBER 
-                             | IDENTIFIER""",
-        RowValueDesignator),
+    having_clause : HAVING search_condition;
 
-    ("""comp_op : EQUAL 
-                | LESS_THAN | LESS_THAN_OR_EQUAL
-                | GREATER_THAN | GREATER_THAN_OR_EQUAL
-                | LIKE""", 
-        Comparator),
-]
+    order_by_clause : ORDER BY sort_spec_list | empty_order_by_clause;
+    empty_order_by_clause : ;
+
+    sort_spec_list : ordering_spec 
+        { COMMA ordering_spec };
+    ordering_spec : column | column ASC | column DESC;
+
+    limit_clause : LIMIT NUMBER;
+
+    boolean_primary : row_value_designator comparator row_value_designator;
+    row_value_designator : STRING | NUMBER | IDENTIFIER;
+    comparator : EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL 
+            | GREATER_THAN | GREATER_THAN_OR_EQUAL | LIKE;
+"""
+
+
+node_classes = {x.__name__: x
+                for x in locals().values() if (isclass(x) 
+                                               and issubclass(x, Node))}

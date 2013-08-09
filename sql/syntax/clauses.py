@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from node import Node
+from node import Node, NodeList
 from functools import total_ordering
 from itertools import izip
 
@@ -58,17 +58,8 @@ class GroupByClause(Clause):
         ctx.rdd = ctx.rdd.map(_group_by)
 
 
-class GroupingColumnList(Node, list):
-
-    @classmethod
-    def parse(cls, p):
-        if len(p) == 1:
-            columns = cls()
-            c = p[0]
-        else:
-            columns, c = p[0], p[2]
-        columns.append(c)
-        return columns
+class GroupingColumnList(NodeList):
+    pass
 
 
 class HavingClause(WhereClause):
@@ -121,7 +112,7 @@ class EmptyOrderByClause(EmptyClause):
         ctx.rdd = ctx.rdd.sort()
 
 
-class SortSepcList(GroupingColumnList):
+class SortSpecList(GroupingColumnList):
     pass
 
 
