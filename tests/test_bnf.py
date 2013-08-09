@@ -97,3 +97,14 @@ class BNFGenerationTest(unittest.TestCase):
         assert 2 == len(prods)
         assert ("S : B;", "S") == prods[0]
         assert ("S : A;", "S") == prods[1]
+
+    def test_select_list(self):
+        prod = "select_list : asterisk | sublist { comma sublist };"
+        prods = self._gen(prod)
+
+        assert 5 == len(prods)
+        assert ("select_list : sublist item_1;", "select_list") == prods[0]
+        assert ("item_1 : item_1 comma sublist;", NodeList) == prods[1]
+        assert ("item_1 : comma sublist;", NodeList) == prods[2]
+        assert ("item_1 : ;", NodeList) == prods[3]
+        assert ("select_list : asterisk;", "select_list") == prods[4]
