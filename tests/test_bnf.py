@@ -65,46 +65,35 @@ class BNFGenerationTest(unittest.TestCase):
         prods = self._gen(prod)
 
         assert 1 == len(prods)
-        assert prod == prods[0][0]
-        assert "S" == prods[0][1]
+        assert (prod, "S") == prods[0]
 
     def test_double_prods(self):
         prod = "S : A B;"
         prods = self._gen(prod)
 
         assert 1 == len(prods)
-        assert prod == prods[0][0]
-        assert "S" == prods[0][1]
+        assert (prod, "S") == prods[0]
 
     def test_optional_items(self):
-        prod = "S : [A];"
-        prods = self._gen(prod)
+        prods = self._gen("S : [A];")
 
         assert 3 == len(prods)
-
-        assert "S : item_1;" == prods[0][0]
-        assert "S" == prods[0][1]
-
-        assert "item_1 : A;" == prods[1][0]
-        assert OptionalNode == prods[1][1]
-
-        assert "item_1 : ;" == prods[2][0]
-        assert OptionalNode == prods[2][1]
+        assert ("S : item_1;", "S") == prods[0]
+        assert ("item_1 : A;", OptionalNode) == prods[1]
+        assert ("item_1 : ;", OptionalNode) == prods[2]
 
     def test_repetitive_items(self):
-        prod = "S : {A};"
-        prods = self._gen(prod)
+        prods = self._gen("S : {A};")
 
         assert 4 == len(prods)
+        assert ("S : item_1;", "S") == prods[0]
+        assert ("item_1 : item_1 A;", NodeList) == prods[1]
+        assert ("item_1 : A;", NodeList) == prods[2]
+        assert ("item_1 : ;", NodeList) == prods[3]
 
-        assert "S : item_1;" == prods[0][0]
-        assert "S" == prods[0][1]
+    def test_prod_with_alternatives(self):
+        prods = self._gen("S : A | B;")
 
-        assert "item_1 : item_1 A;" == prods[1][0]
-        assert NodeList == prods[1][1]
-
-        assert "item_1 : A;" == prods[2][0]
-        assert NodeList == prods[2][1]
-
-        assert "item_1 : ;" == prods[3][0]
-        assert NodeList == prods[3][1]
+        assert 2 == len(prods)
+        assert ("S : B;", "S") == prods[0]
+        assert ("S : A;", "S") == prods[1]
