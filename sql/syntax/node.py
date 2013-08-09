@@ -48,6 +48,9 @@ class TokenNode(Node):
 
 
 class NodeList(Node, list):
+    """ I : ;
+        I : A;
+        I : I A;"""
 
     @classmethod
     def parse(cls, tokens):
@@ -68,13 +71,14 @@ class NodeList(Node, list):
 
 
 class OptionalNode(Node):
+    """ I : ;
+        I : A; """
 
     @classmethod
     def parse(cls, tokens):
-        nodes = [t for t in tokens if isinstance(t, Node)]
-        return cls(tokens)
+        if tokens:
+            return cls([t for t in tokens if isinstance(t, Node)])
 
     def __init__(self, nodes):
         Node.__init__(self)
         self.nodes = nodes
-

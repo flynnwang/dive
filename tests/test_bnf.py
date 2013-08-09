@@ -3,7 +3,7 @@
 import unittest
 from collections import defaultdict
 from dive.sql.syntax import bnf_lexer, bnf_parser, gen_productions
-from dive.sql.syntax.node import OptionalNode
+from dive.sql.syntax.node import OptionalNode, NodeList
 
 
 class BNFParserTest(unittest.TestCase):
@@ -47,8 +47,6 @@ class BNFParserTest(unittest.TestCase):
         assert repetitives.alternatives[0][0].value == "A"
         assert repetitives.alternatives[0][1].value == "B"
 
-    #bnf = self._parse("main : {A | B};")
-
 
 class BNFGenerationTest(unittest.TestCase):
 
@@ -83,15 +81,30 @@ class BNFGenerationTest(unittest.TestCase):
         prods = self._gen(prod)
 
         assert 3 == len(prods)
-        print prods
 
         assert "S : item_1;" == prods[0][0]
         assert "S" == prods[0][1]
 
-        assert "item_1 : ;" == prods[1][0]
+        assert "item_1 : A;" == prods[1][0]
         assert OptionalNode == prods[1][1]
 
-        assert "item_1 : A;" == prods[2][0]
+        assert "item_1 : ;" == prods[2][0]
         assert OptionalNode == prods[2][1]
 
-    # TODO: test_repetitive_items
+    def test_repetitive_items(self):
+        prod = "S : {A};"
+        prods = self._gen(prod)
+
+        assert 4 == len(prods)
+
+        assert "S : item_1;" == prods[0][0]
+        assert "S" == prods[0][1]
+
+        assert "item_1 : item_1 A;" == prods[1][0]
+        assert NodeList == prods[1][1]
+
+        assert "item_1 : A;" == prods[2][0]
+        assert NodeList == prods[2][1]
+
+        assert "item_1 : ;" == prods[3][0]
+        assert NodeList == prods[3][1]

@@ -37,28 +37,19 @@ class Production(Node):
         self.alternatives = alternatives
 
     def visit(self, ctx):
-        ctx.name = self.ident.value
-        self.alternatives.visit(ctx)
+        name = self.ident.value
+        for a in self.alternatives:
+            ctx.append(name, a.visit(ctx))
 
 
 class Alternatives(NodeList):
-
-    def visit(self, ctx):
-        name = ctx.name
-        for a in self:
-            values = a.visit(ctx)
-            ctx.append(name, values)
+    pass
 
 
 class ItemList(NodeList):
 
     def visit(self, ctx):
-        # assume all Identifiers
-        values = []
-        for it in self:
-            it.visit(ctx)
-            values.append(it.value)
-        return values
+        return [it.visit(ctx) for it in self]
 
 
 class SurroundItems(Node):
@@ -74,28 +65,24 @@ class SurroundItems(Node):
 
 class OptionalItems(SurroundItems):
 
-    @property
-    def value(self):
-        return self.name
-
     def visit(self, ctx):
-        name = ctx.register_cls(OptionalNode)
-
-        ctx.name = name
-        self.alternatives.visit(ctx)
-        ctx.append(name, [], OptionalNode)
-
-        self.name = name
+        self.value = ctx.register_cls(OptionalNode)
+        ctx.append(self.value, [], OptionalNode)
+        for a in self.alternatives:
+            ctx.append(self.value, a.visit(ctx), OptionalNode)
+        return self.value
 
 
 class RepetitiveItems(SurroundItems):
 
-    @property
-    def value(self):
-        return self.name
-
     def visit(self, ctx):
-        self.name = ctx.register_cls(OptionalItems)
+        self.value = ctx.register_cls(NodeList)
+        ctx.append(self.value, [], NodeList)
+        for a in self.alternatives:
+            values = a.visit(ctx)
+            ctx.append(self.value, values, NodeList)
+            ctx.append(self.value, [self.value] + values, NodeList)
+        return self.value
 
 
 class Identifier(Node):
@@ -108,12 +95,12 @@ class Identifier(Node):
         Node.__init__(self)
         self.token = token
 
+    def visit(self, ctx):
+        return self.token.value
+
     @property
     def value(self):
         return self.token.value
-
-    def visit(self, ctx):
-        pass
         
         
 productions = (
