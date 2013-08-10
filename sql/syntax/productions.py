@@ -57,7 +57,13 @@ select_bnf = """
 
     boolean_primary: predicate;
     
-    predicate: comparison_predicate;
+    predicate: comparison_predicate | in_predicate;
+
+    in_predicate: row_value_designator [ NOT ] IN in_predicate_value;
+
+    in_predicate_value: LEFT_PAREN in_value_list RIGHT_PAREN;
+
+    in_value_list: value_expr { COMMA value_expr };
 
     comparison_predicate: row_value_designator comparator row_value_designator;
 
@@ -66,7 +72,7 @@ select_bnf = """
     value_expr: STRING | NUMBER | IDENTIFIER;
 
     comparator: EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL
-               | GREATER_THAN | GREATER_THAN_OR_EQUAL | LIKE;
+              | GREATER_THAN | GREATER_THAN_OR_EQUAL | LIKE;
 """
 
 # TODO
@@ -74,14 +80,6 @@ select_bnf = """
                         #| LEFT_PAREN row_value_designator_list RIGHT_PAREN;
 
     #row_value_designator_list: value_expr { COMMA value_expr};
-
-    #predicate: comparison_predicate | in_predicate;
-
-    #in_predicate: row_value_designator [ NOT ] IN in_predicate_value
-
-    #in_predicate_value: LEFT_PAREN in_value_list RIGHT_PAREN
-
-    #in_value_list: value_expression { COMMA value_expression }
     
 
 node_classes = {x.__name__: x
