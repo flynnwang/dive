@@ -14,44 +14,48 @@ class LexerGenerator(rply.LexerGenerator):
         super(LexerGenerator, self).add(name, pattern)
 
 
+KEYWORDS = [
+    'select', 'from', 'where', 'like', 'having', 'order', 'not',
+    'and', 'or', 'group', 'by', 'desc', 'asc', 'limit'
+]
+
+SYMBOL_TOKENS = [
+    ('EQUAL', '='),
+    ('LESS_THAN_OR_EQUAL', '<='),
+    ('LESS_THAN', '<'),
+    ('GREATER_THAN_OR_EQUAL', '>='),
+    ('GREATER_THAN', '>'),
+    ('ASTERISK', '[*]'),
+    ('LEFT_PAREN', '\('),
+    ('RIGHT_PAREN', '\)'),
+    ("STRING", r'".*"'),
+    ("STRING", r"'.*'"),
+    ('COMMA', ','),
+    ("IDENTIFIER", r"[_a-zA-Z]\w*"),
+    ("NUMBER", r"\d+"),
+]
+
+
 class LexerGeneratorBuilder(object):
 
-    KEYWORDS = ['select', 'from', 'where', 'like', 'having', 'order', 'not',
-                'and', 'or', 'group', 'by', 'desc', 'asc', 'limit']
-    TOKENS = [('EQUAL', '='), ('LESS_THAN_OR_EQUAL', '<='),
-              ('LESS_THAN', '<'), ('GREATER_THAN_OR_EQUAL', '>='),
-              ('GREATER_THAN', '>'), ('ASTERISK', '[*]'),
-              ('LEFT_PAREN', '\('), ('RIGHT_PAREN', '\)')]
+    def __init__(self, keywords=KEYWORDS, symbols=SYMBOL_TOKENS):
+        self.lg = LexerGenerator()
+        self.keywords = keywords
+        self.symbols = symbols
 
-    IDENTIFIER = ("IDENTIFIER", r"[_a-zA-Z]\w*")
-    NUMBER = ("NUMBER", r"\d+")
+    def register_keywords(self, keywords):
+        for t in keywords:
+            self.lg.add(t.upper(), t)
 
-    def register_keyword_tokens(self, lg):
-        for t in self.KEYWORDS:
-            lg.add(t.upper(), t)
-
-    def register_tokens(self, lg, tokens):
-        for t, p in tokens:
-            lg.add(t.upper(), p)
-
-    def register_string_rules(self, lg):
-        STRING_PTNS = [r'".*"', r"'.*'"]
-        for p in STRING_PTNS:
-            lg.add("STRING", p)
+    def register_symbols(self, symbols):
+        for t, p in symbols:
+            self.lg.add(t.upper(), p)
 
     def build(self):
-        lg = LexerGenerator()
-
-        self.register_keyword_tokens(lg)
-        self.register_tokens(lg, self.TOKENS)
-        self.register_string_rules(lg)
-
-        lg.add('COMMA', ',')
-        lg.add(*self.IDENTIFIER)
-        lg.add(*self.NUMBER)
-        lg.ignore(r"\s+")
-
-        return lg.tokens, lg.build()
+        self.register_keywords(self.keywords)
+        self.register_symbols(self.symbols)
+        self.lg.ignore(r"\s+")
+        return self.lg.tokens, self.lg.build()
 
 TOKENS, sql_lexer = LexerGeneratorBuilder().build()
 
