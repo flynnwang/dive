@@ -4,9 +4,15 @@ from node import Node, TokenNode, NodeList
 from clauses import WhereClause, HavingClause
 
 
-class SearchCondition(NodeList):
+class SearchCondition(Node):
 
-    """ OR logic """
+    def __init__(self, tokens):
+        self.boolean_value_expr = tokens[0]
+
+
+class BooleanValueExpr(NodeList):
+
+    """ OR """
 
     @property
     def terms(self):
@@ -19,7 +25,7 @@ class SearchCondition(NodeList):
 
 class BooleanTerm(NodeList):
 
-    """ AND logic """
+    """ AND """
 
     @property
     def factors(self):
@@ -30,16 +36,40 @@ class BooleanTerm(NodeList):
         return lambda r: all(f(r) for f in funcs)
 
 
+class BooleanFactor(Node):
+
+    """ NOT """
+
+    def __init__(self, nodes):
+        self.not_, self.boolean_primary = nodes
+
+    @property
+    def predicate(self):
+        return self.boolean_primary.predicate.predicate
+
+    def visit(self, ctx):
+        c = self.predicate.visit(ctx)
+        if self.not_:
+            return lambda r: not c(r)
+        return c
+
+
 class BooleanPrimary(Node):
 
-    @classmethod
-    def parse(cls, prods):
-        return cls(*prods)
+    def __init__(self, tokens):
+        self.predicate = tokens[0]
 
-    def __init__(self, left, op, right):
-        self.left = left
-        self.op = op
-        self.right = right
+
+class Predicate(Node):
+
+    def __init__(self, nodes):
+        self.predicate = nodes[0]
+        
+
+class ComparisonPredicate(Node):
+
+    def __init__(self, nodes):
+        self.left, self.op, self.right = nodes
 
     def _get_table_by_clause(self, ctx):
         node = self
@@ -57,20 +87,6 @@ class BooleanPrimary(Node):
         def check(r):
             return self.op(r[idx], self.right.value)
         return check
-
-
-class BooleanFactor(Node):
-
-    """ NOT """
-
-    def __init__(self, p):
-        self.not_, self.predicate = p
-
-    def visit(self, ctx):
-        c = self.predicate.visit(ctx)
-        if self.not_:
-            return lambda r: not c(r)
-        return c
 
 
 class Number(TokenNode):
@@ -95,7 +111,17 @@ class String(TokenNode):
         return self._val
 
 
-class RowValueDesignator(TokenNode):
+class RowValueDesignator(Node):
+
+    def __init__(self, tokens):
+        self.value_expr = tokens[0]
+
+    @property
+    def value(self):
+        return self.value_expr.value
+
+
+class ValueExpr(TokenNode):
 
     @classmethod
     def parse(cls, tokens):

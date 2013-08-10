@@ -34,7 +34,7 @@ class WhereClause(Clause):
         self.search_condition = search_condition
 
     def visit(self, ctx):
-        _filter = self.search_condition.visit(ctx)
+        _filter = self.search_condition.boolean_value_expr.visit(ctx)
         ctx.rdd = ctx.rdd.filter(_filter)
 
 
@@ -138,6 +138,3 @@ class LimitClause(Clause):
 
     def __init__(self, limit):
         self.value = limit
-
-    def visit(self, ctx):
-        ctx.rdd = ctx.rdd.take(self.limit)

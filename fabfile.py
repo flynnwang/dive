@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 from fabric.api import local
 
 
-def test():
-    local("py.test -x tests/*.py")
+def test(options=""):
+    local("py.test -%sx tests/*.py" % options)
 
 
 def pep8():

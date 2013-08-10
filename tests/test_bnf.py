@@ -56,9 +56,10 @@ class BNFParserTest(unittest.TestCase):
     def test_triple_items(self):
         bnf = self._parse("S : A | B | C ;")
 
-        print bnf
-        #assert bnf[0].ident.value == "S"
-        #assert bnf[0].alternatives[0][0].value == ""
+        assert bnf[0].ident.value == "S"
+        assert bnf[0].alternatives[0][0].value == "A"
+        assert bnf[0].alternatives[1][0].value == "B"
+        assert bnf[0].alternatives[2][0].value == "C"
 
 
 class BNFGenerationTest(unittest.TestCase):
