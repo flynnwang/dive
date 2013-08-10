@@ -1,16 +1,12 @@
 TODO
 ----
-R grammer of sql BNF: string => productions
-R check on grammer: serach condition
-
-R auto link production -> class
+- paren support in search condition
 
 - date support
 - datetime support
 - float number support
 
 F INTO OUTFILE '/path/to/file.csv'
-- paren support in search condition
 
 F column alias
 - table alias
@@ -24,6 +20,12 @@ R different return value of visit()
 
 DONE
 ----
+T fix parser test 
+R where clause -> use ro property
+
+R grammer of sql BNF: string => productions
+R auto link production -> class
+
 R better grammer definition: | for multiple productions
 
 F limit x

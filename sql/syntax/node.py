@@ -86,4 +86,8 @@ class OptionalNode(Node):
     def visit(self, ctx):
         for nd in self.nodes:
             nd.visit(ctx)
+
+    @property
+    def first(self):
+        return self.nodes[0]
             

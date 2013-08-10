@@ -14,15 +14,14 @@ class SelectWhereTest(DiveTestBase):
         assert 1 == len(res)
         assert row[1] == res[0][0]
 
-    #def test_parse_search_condition(self):
-        ## TODO: refactor
-        #select = parse(self.sql)
-        ## pylint: disable=E1101
-        #factor = select.where_clause\
-                       #.search_condition.term.factor.predicate
+    def test_parse_search_condition(self):
+        select = parse(self.sql)
+        # pylint: disable=E1101
+        factor = select.where\
+                       .search_condition.terms[0].factors[0].predicate
 
-        #assert "id" == factor.left.value
-        #assert 3 == factor.right.value
+        assert "id" == factor.left.value
+        assert 3 == factor.right.value
 
 
 class SelectMultiOrWhereTest(SelectTestBase):
@@ -31,17 +30,17 @@ class SelectMultiOrWhereTest(SelectTestBase):
     def expected_select_result(self):
         return [r for r in self.rows if r[0] <= 1 or r[0] >= 25]
 
-    #def test_parse_search_condition(self):
-        #select = parse(self.sql)
-        ## pylint: disable=E1101
-        #search_condition = select.where_clause.search_condition
-        #right_factor = search_condition.term.factor.predicate
-        #assert "id" == right_factor.left.value
-        #assert 25 == right_factor.right.value
+    def test_parse_search_condition(self):
+        select = parse(self.sql)
+        # pylint: disable=E1101
+        search_condition = select.where.search_condition
+        right_factor = search_condition.terms[0].factors[0].predicate
+        assert "id" == right_factor.left.value
+        assert 1 == right_factor.right.value
 
-        #left_factor = search_condition.more.term.factor.predicate
-        #assert "id" == left_factor.left.value
-        #assert 1 == left_factor.right.value
+        left_factor = search_condition.terms[1].factors[0].predicate
+        assert "id" == left_factor.left.value
+        assert 25 == left_factor.right.value
 
 
 class SelectMultiAndWhereTest(SelectTestBase):

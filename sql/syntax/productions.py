@@ -18,9 +18,10 @@ from functions import AttributeFunction
 
 
 select_bnf = """
-    select_statement : SELECT select_list FROM table_name [where_clause]
-        group_by_clause [having_clause]
-        order_by_clause [limit_clause];
+    select_statement : SELECT select_list FROM table_name
+        [where_clause]
+        [group_by_clause] [having_clause]
+        [order_by_clause] [limit_clause];
 
     select_list : asterisk | select_sublist;
 
@@ -41,14 +42,12 @@ select_bnf = """
     boolean_term : boolean_factor {AND boolean_factor};
     boolean_factor : [NOT] boolean_primary;
 
-    group_by_clause : GROUP BY grouping_column_list | empty_groupby_clause;
+    group_by_clause : GROUP BY grouping_column_list;
     grouping_column_list : column | grouping_column_list COMMA column;
-    empty_groupby_clause : ;
 
     having_clause : HAVING search_condition;
 
-    order_by_clause : ORDER BY sort_spec_list | empty_order_by_clause;
-    empty_order_by_clause : ;
+    order_by_clause : ORDER BY sort_spec_list;
 
     sort_spec_list : ordering_spec 
         { COMMA ordering_spec };

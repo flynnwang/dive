@@ -2,7 +2,8 @@
 
 from dpark.dependency import Aggregator
 from node import Node, TokenNode
-from clauses import GroupByClause, WhereClause
+from clauses import (GroupByClause, WhereClause, EmptyGroupbyClause,
+                     EmptyOrderByClause, EmptyClause)
 from functions import AttributeFunction, AggregateFunction
 from itertools import izip
 
@@ -13,15 +14,15 @@ class SelectStatement(Node):
     def parse(cls, p):
         return cls(p[1], *p[3:])
 
-    def __init__(self,  select_list, table_name, where_clause,
-                 groupby_clause, having_clause, orderby_clause, limit_clause):
+    def __init__(self,  select_list, table_name, where,
+                 groupby, having, orderby, limit):
         self.select_list = select_list
         self.table_name = table_name
-        self.where_clause = where_clause
-        self.groupby_clause = groupby_clause
-        self.having_clause = having_clause
-        self.orderby_clause = orderby_clause
-        self.limit_clause = limit_clause
+        self.where = where and where.first or EmptyClause()
+        self.groupby = groupby and groupby.first or EmptyGroupbyClause()
+        self.having = having and having.first or EmptyClause()
+        self.orderby = orderby and orderby.first or EmptyOrderByClause()
+        self.limit = limit and limit.first
 
     def __repr__(self):
         return "<SelectCore: SELECT %s FROM %s>" % (self.select_list,
@@ -34,14 +35,13 @@ class SelectStatement(Node):
                     self.select_list.column_indexes(ctx.table)]
 
         ctx.rdd = ctx.table.rdd(ctx.dpark)
-        if self.where_clause:
-            self.where_clause.visit(ctx)
+        self.where.visit(ctx)
 
         if not (self.select_list.has_aggregate_function or
-                isinstance(self.groupby_clause, GroupByClause)):
+                isinstance(self.groupby, GroupByClause)):
             ctx.rdd = ctx.rdd.map(_map_result)
         else:
-            self.groupby_clause.visit(ctx)
+            self.groupby.visit(ctx)
 
             tb = ctx.table
             selected = self.select_list.selected
@@ -63,10 +63,9 @@ class SelectStatement(Node):
             agg = Aggregator(create_combiner, merge_value, merge_combiner)
             ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result)
 
-            if self.having_clause:
-                self.having_clause.visit(ctx)
+            self.having.visit(ctx)
 
-        self.orderby_clause.visit(ctx)
+        self.orderby.visit(ctx)
         return ctx.rdd
 
 

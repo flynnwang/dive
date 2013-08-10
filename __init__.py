@@ -32,10 +32,9 @@ class Table(object):
 
     def collect(self):
         rdd = self.query.rdd
-        # TODO add limit_clause as property
-        limit_clause = self.query.select.limit_clause
-        if limit_clause:
-            return rdd.take(limit_clause.nodes[0].limit)
+        limit = self.query.select.limit
+        if limit:
+            return rdd.take(limit.value)
         return rdd.collect()
 
 

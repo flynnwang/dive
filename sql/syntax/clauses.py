@@ -137,7 +137,9 @@ class LimitClause(Clause):
             return cls(int(tokens[1].value))
 
     def __init__(self, limit):
-        self.limit = limit
+        self.value = limit
 
     def visit(self, ctx):
         ctx.rdd = ctx.rdd.take(self.limit)
+
+

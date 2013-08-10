@@ -7,22 +7,24 @@ from clauses import WhereClause, HavingClause
 class SearchCondition(NodeList):
     """ OR logic """
 
+    @property
+    def terms(self):
+        return [self[0]] + self[1]
+
     def visit(self, ctx):
-        funcs = [self[0].visit(ctx)]
-        for more in self[1]:
-            funcs.append(more.visit(ctx))
-        funcs = filter(None, funcs)
+        funcs = filter(None, [t.visit(ctx) for t in self.terms])
         return lambda r: any(f(r) for f in funcs)
 
 
 class BooleanTerm(NodeList):
     """ AND logic """
 
+    @property
+    def factors(self):
+        return [self[0]] + self[1]
+
     def visit(self, ctx):
-        funcs = [self[0].visit(ctx)]
-        for more in self[1]:
-            funcs.append(more.visit(ctx))
-        funcs = filter(None, funcs)
+        funcs = filter(None, [t.visit(ctx) for t in self.factors])
         return lambda r: all(f(r) for f in funcs)
         
 
