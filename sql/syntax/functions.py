@@ -67,7 +67,7 @@ class AverageFunction(AggregateFunction):
         return (1, v)
 
     def merge(self, (c1, s1), (c2, s2)):
-        return (c1+c2, s1+s2)
+        return (c1 + c2, s1 + s2)
 
     def result(self, v):
         cnt, sum = v
@@ -79,5 +79,3 @@ funcs = {
     'sum': SumFunction,
     'avg': AverageFunction,
 }
-
-

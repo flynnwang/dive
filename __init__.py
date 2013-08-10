@@ -25,7 +25,7 @@ class Table(object):
             return self.query.rdd
 
         def coercion(r):
-            return [conv(r[i]) for i, conv 
+            return [conv(r[i]) for i, conv
                     in enumerate(self.columns.values())]
         return dpark.union([dpark.csvFile(p) for p in self.paths])\
                     .map(coercion)
@@ -61,7 +61,7 @@ class Query(object):
     def execute(self):
         # pylint: disable=E1101
         self.select = parse(self.sql)
-        self.table = self.schema.find_table(self.select.table_name.value) 
+        self.table = self.schema.find_table(self.select.table_name.value)
 
         name = str(uuid.uuid4())
         columns = self.select.select_list.columns(self.table)

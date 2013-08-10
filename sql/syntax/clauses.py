@@ -20,7 +20,7 @@ class EmptyGroupbyClause(EmptyClause):
 
     def visit(self, ctx):
         ctx.rdd = ctx.rdd.map(lambda r: (None, r))
-    
+
 
 class WhereClause(Clause):
 
@@ -141,5 +141,3 @@ class LimitClause(Clause):
 
     def visit(self, ctx):
         ctx.rdd = ctx.rdd.take(self.limit)
-
-

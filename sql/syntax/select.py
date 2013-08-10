@@ -153,7 +153,7 @@ class SelectSublist(Node, Selectable, list):
 
     def columns(self, tb):
         _type = lambda x: x
-        return [(c.name, (tb.columns[c.name] 
+        return [(c.name, (tb.columns[c.name]
                 if c.value in tb.columns else _type))
                 for c in self]
 

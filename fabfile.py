@@ -8,5 +8,5 @@ def test():
     local("py.test -x tests/*.py")
 
 
-def run_pep8():
+def pep8():
     local("find . | grep py$ | xargs autopep8 --in-place")

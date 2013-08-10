@@ -15,7 +15,7 @@ class CountFuncTest(SelectTestBase):
         select = parse(self.sql)
         # pylint: disable=E1101
         func_name = select.select_list.selected[0].value
-        assert func_name == 'count' 
+        assert func_name == 'count'
 
 
 class SumFuncTest(SelectTestBase):
@@ -29,7 +29,7 @@ class AvgFuncTest(SelectTestBase):
     sql = "select avg(age) from user"
 
     def expected_select_result(self):
-        return [[float(sum(r[2] for r in self.rows))/len(self.rows)]]
+        return [[float(sum(r[2] for r in self.rows)) / len(self.rows)]]
 
 
 class CountAndSumFuncTest(SelectTestBase):

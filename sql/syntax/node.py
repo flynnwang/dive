@@ -48,6 +48,7 @@ class TokenNode(Node):
 
 
 class NodeList(Node, list):
+
     """ I : ;
         I : A;
         I : I A;"""
@@ -71,6 +72,7 @@ class NodeList(Node, list):
 
 
 class OptionalNode(Node):
+
     """ I : ;
         I : A; """
 
@@ -90,4 +92,3 @@ class OptionalNode(Node):
     @property
     def first(self):
         return self.nodes[0]
-            

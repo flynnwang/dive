@@ -14,7 +14,7 @@ class Comparator(TokenNode):
 
     def __call__(self, x, y):
         raise Exception("NOT IMPLEMENTED")
-       
+
 
 class Equal(Comparator):
 
@@ -32,19 +32,19 @@ class LessThanOrEqual(Comparator):
 
     def __call__(self, x, y):
         return op.le(x, y)
-        
+
 
 class GreaterThan(Comparator):
 
     def __call__(self, x, y):
         return op.gt(x, y)
-       
+
 
 class GreaterThanOrEqual(Comparator):
 
     def __call__(self, x, y):
         return op.ge(x, y)
-        
+
 
 class LikeComparator(Comparator):
 

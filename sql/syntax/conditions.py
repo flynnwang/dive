@@ -5,6 +5,7 @@ from clauses import WhereClause, HavingClause
 
 
 class SearchCondition(NodeList):
+
     """ OR logic """
 
     @property
@@ -17,6 +18,7 @@ class SearchCondition(NodeList):
 
 
 class BooleanTerm(NodeList):
+
     """ AND logic """
 
     @property
@@ -26,7 +28,7 @@ class BooleanTerm(NodeList):
     def visit(self, ctx):
         funcs = filter(None, [t.visit(ctx) for t in self.factors])
         return lambda r: all(f(r) for f in funcs)
-        
+
 
 class BooleanPrimary(Node):
 
@@ -58,6 +60,7 @@ class BooleanPrimary(Node):
 
 
 class BooleanFactor(Node):
+
     """ NOT """
 
     def __init__(self, p):

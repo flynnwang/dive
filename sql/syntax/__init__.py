@@ -32,7 +32,7 @@ class ProductionList(NodeList):
             ed = len(ctx.productions)
             if st < ed:
                 end = None if st - 1 < 0 else st - 1
-                ctx.productions[st:ed] = ctx.productions[ed-1:end:-1]
+                ctx.productions[st:ed] = ctx.productions[ed - 1:end:-1]
 
 
 class Production(Node):
@@ -124,8 +124,8 @@ class EmptyItem(Node):
 
     def visit(self, ctx):
         return self.value
-        
-        
+
+
 productions = (
     ('production_list : production', ProductionList),
     ('production_list : production_list production', ProductionList),

@@ -63,5 +63,5 @@ select_bnf = """
 
 
 node_classes = {x.__name__: x
-                for x in locals().values() if (isclass(x) 
+                for x in locals().values() if (isclass(x)
                                                and issubclass(x, Node))}
