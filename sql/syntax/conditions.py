@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import re
 from node import Node, TokenNode, NodeList
 from clauses import WhereClause, HavingClause
 
@@ -82,6 +83,23 @@ class Predicate(Node):
 
     def visit(self, ctx):
         return self.predicate.visit(ctx)
+
+
+class LikePredicate(Predicate):
+
+    def __init__(self, tokens):
+        Node.__init__(self)
+        self.row_designator, self.not_, _, self.pattern = tokens
+        self.re = re.compile(self.pattern.value[1:-1])
+
+    def visit(self, ctx):
+        tb = self._get_table_by_clause(ctx)
+        idx = tb.index(self.row_designator.value)
+
+        def like_(r):
+            v = self.re.match(r[idx])
+            return not v if self.not_ else v
+        return like_
 
 
 class InPredicate(Predicate):

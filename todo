@@ -1,10 +1,12 @@
 TODO
 ----
-- move search condition in the way of sql.sep93
+
+- move search condition in the way of mysql 
 
 R better list value support
 R split data model
-R move like out of comparator
+
+F numeric condition expression support
 
 R use visit or value?
 
@@ -30,6 +32,7 @@ R different return value of visit()
 
 DONE
 ----
+R move like out of comparator
 - paren support in search condition
 
 - in operator

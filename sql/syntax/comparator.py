@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import re
 import operator as op
 from node import TokenNode
 
@@ -45,18 +44,10 @@ class GreaterThanOrEqual(Comparator):
     def __call__(self, x, y):
         return op.ge(x, y)
 
-
-class LikeComparator(Comparator):
-
-    def __call__(self, x, y):
-        # TODO pre compile re
-        return re.match(y, x)
-
 COMPARATORS = {
     '=': Equal,
     '<': LessThan,
     '<=': LessThanOrEqual,
     '>': GreaterThan,
     '>=': GreaterThanOrEqual,
-    'like': LikeComparator,
 }

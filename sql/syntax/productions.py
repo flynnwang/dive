@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-    based on: http://www.andrew.cmu.edu/user/shadow/sql/sql3bnf.sep93.txt
+    based on:
+
+    http://www.andrew.cmu.edu/user/shadow/sql/sql3bnf.sep93.txt
+    http://www.antlr3.org/grammar/1347528470063/MySQL.g
 """
 
 from inspect import isclass
@@ -59,7 +62,11 @@ select_bnf = """
 
     value_expr_primary: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
     
-    predicate: comparison_predicate | in_predicate;
+    predicate: comparison_predicate
+             | in_predicate
+             | like_predicate;
+
+    like_predicate: row_value_designator [ NOT ] LIKE STRING;
 
     in_predicate: row_value_designator [ NOT ] IN in_predicate_value;
 
@@ -74,7 +81,7 @@ select_bnf = """
     value_expr: STRING | NUMBER | IDENTIFIER;
 
     comparator: EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL
-              | GREATER_THAN | GREATER_THAN_OR_EQUAL | LIKE;
+              | GREATER_THAN | GREATER_THAN_OR_EQUAL;
 """
     
 
