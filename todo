@@ -2,8 +2,14 @@ TODO
 ----
 - move search condition in the way of sql.sep93
 
-- in operator
-- paren support in search condition
+R better list value support
+R split data model
+R move like out of comparator
+
+R use visit or value?
+
+F record tokens for debug
+
 
 - date support
 - datetime support
@@ -21,8 +27,12 @@ JOIN related:
 
 R different return value of visit()
 
+
 DONE
 ----
+- paren support in search condition
+
+- in operator
 T fix parser test 
 R where clause -> use ro property
 

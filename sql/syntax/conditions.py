@@ -20,7 +20,10 @@ class BooleanValueExpr(NodeList):
 
     def visit(self, ctx):
         funcs = filter(None, [t.visit(ctx) for t in self.terms])
-        return lambda r: any(f(r) for f in funcs)
+
+        def or_(r):
+            return any(f(r) for f in funcs)
+        return or_
 
 
 class BooleanTerm(NodeList):
@@ -33,7 +36,10 @@ class BooleanTerm(NodeList):
 
     def visit(self, ctx):
         funcs = filter(None, [t.visit(ctx) for t in self.factors])
-        return lambda r: all(f(r) for f in funcs)
+
+        def and_(r):
+            return all(f(r) for f in funcs)
+        return and_
 
 
 class BooleanFactor(Node):
@@ -43,12 +49,8 @@ class BooleanFactor(Node):
     def __init__(self, nodes):
         self.not_, self.boolean_primary = nodes
 
-    @property
-    def predicate(self):
-        return self.boolean_primary.predicate.predicate
-
     def visit(self, ctx):
-        c = self.predicate.visit(ctx)
+        c = self.boolean_primary.visit(ctx)
         if self.not_:
             return lambda r: not c(r)
         return c
@@ -57,7 +59,10 @@ class BooleanFactor(Node):
 class BooleanPrimary(Node):
 
     def __init__(self, tokens):
-        self.predicate = tokens[0]
+        self.node = tokens[0]
+
+    def visit(self, ctx):
+        return self.node.visit(ctx)
 
 
 class Predicate(Node):
@@ -74,6 +79,9 @@ class Predicate(Node):
                 return ctx.result_table
             elif isinstance(node, WhereClause):
                 return ctx.table
+
+    def visit(self, ctx):
+        return self.predicate.visit(ctx)
 
 
 class InPredicate(Predicate):
@@ -153,6 +161,15 @@ class RowValueDesignator(Node):
     @property
     def value(self):
         return self.value_expr.value
+       
+
+class ValueExprPrimary(Node):
+
+    def __init__(self, tokens):
+        self.boolean_value_expr = tokens[1]
+
+    def visit(self, ctx):
+        return self.boolean_value_expr.visit(ctx)
 
 
 class ValueExpr(TokenNode):

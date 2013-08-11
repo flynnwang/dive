@@ -55,7 +55,9 @@ select_bnf = """
 
     boolean_factor: [ NOT ] boolean_primary;
 
-    boolean_primary: predicate;
+    boolean_primary: predicate | value_expr_primary;
+
+    value_expr_primary: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
     
     predicate: comparison_predicate | in_predicate;
 
@@ -74,12 +76,6 @@ select_bnf = """
     comparator: EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL
               | GREATER_THAN | GREATER_THAN_OR_EQUAL | LIKE;
 """
-
-# TODO
-    #row_value_designator: value_expr
-                        #| LEFT_PAREN row_value_designator_list RIGHT_PAREN;
-
-    #row_value_designator_list: value_expr { COMMA value_expr};
     
 
 node_classes = {x.__name__: x

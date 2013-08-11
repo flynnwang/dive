@@ -48,3 +48,10 @@ class SelectTripleConditionTest(SelectTestBase):
 
     def expected_select_result(self):
         return [r for r in self.rows if r[0] in (1, 2, 3)]
+
+
+class ParenCondtionsTest(SelectTestBase):
+    sql = "select id, name, age from user where name='a' and (id=1 or id=3) "
+
+    def expected_select_result(self):
+        return [r for r in self.rows if r[0] in (1, 3) and r[1] is 'a']
