@@ -16,7 +16,7 @@ from predicate import *
 from datamodel import *
 
 select_bnf = """
-    select_statement: SELECT select_list FROM table_name
+    select_expr: SELECT select_list FROM table_name
         [ where_clause ]
         [ group_by_clause ] [ having_clause ]
         [ order_by_clause ] [ limit_clause ];

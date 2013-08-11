@@ -1,6 +1,9 @@
 TODO
 ----
 R favor parse() to do parsing
+R name and module clean
+R move common logic into node.py
+
 
 F INTO OUTFILE '/path/to/file.csv'
 

@@ -8,62 +8,72 @@ from functions import AttributeFunction, AggregateFunction
 from itertools import izip
 
 
-class SelectStatement(Node):
+class SelectExpr(Node):
 
     @classmethod
     def parse(cls, p):
-        return cls(p[1], *p[3:])
+        where = p[4] and p[4].first or EmptyClause()
+        groupby = p[5] and p[5].first or EmptyGroupbyClause()
+        having = p[6] and p[6].first or EmptyClause()
+        orderby = p[7] and p[7].first or EmptyOrderByClause()
+        limit = p[8] and p[8].first
+        return cls(p[1], p[3], where=where, groupby=groupby,
+                   having=having, orderby=orderby, limit=limit)
 
-    def __init__(self,  select_list, table_name, where,
-                 groupby, having, orderby, limit):
+    def __init__(self,  select_list, table_name,
+                 where, groupby, having, orderby, limit):
         self.select_list = select_list
         self.table_name = table_name
-        self.where = where and where.first or EmptyClause()
-        self.groupby = groupby and groupby.first or EmptyGroupbyClause()
-        self.having = having and having.first or EmptyClause()
-        self.orderby = orderby and orderby.first or EmptyOrderByClause()
-        self.limit = limit and limit.first
+        self.where = where
+        self.groupby = groupby
+        self.having = having
+        self.orderby = orderby
+        self.limit = limit
 
     def __repr__(self):
         return "<SelectCore: SELECT %s FROM %s>" % (self.select_list,
                                                     self.table_name)
 
-    def visit(self, ctx):
-
-        def _map_result(r):
+    def _apply_where(self, ctx):
+        def _map(r):
             return [r[idx] for idx in
                     self.select_list.column_indexes(ctx.table)]
+        ctx.rdd = ctx.rdd.map(_map)
 
+    def _apply_groupby(self, ctx):
+        self.groupby.visit(ctx)
+
+        tb = ctx.table
+        selected = self.select_list.selected
+
+        def create_combiner(r):
+            return [f.create(r[tb.index(f.column.value)])
+                    for f, v in izip(selected, r)]
+
+        def merge_value(c, v):
+            return merge_combiner(c, create_combiner(v))
+
+        def merge_combiner(c1, c2):
+            return [f.merge(v1, v2)
+                    for f, v1, v2 in izip(selected, c1, c2)]
+
+        def make_result((k, r)):
+            return [f.result(v) for f, v in izip(selected, r)]
+
+        agg = Aggregator(create_combiner, merge_value, merge_combiner)
+        ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result)
+
+        self.having.visit(ctx)
+
+    def visit(self, ctx):
         ctx.rdd = ctx.table.rdd(ctx.dpark)
         self.where.visit(ctx)
 
         if not (self.select_list.has_aggregate_function or
                 isinstance(self.groupby, GroupByClause)):
-            ctx.rdd = ctx.rdd.map(_map_result)
+            self._apply_where(ctx)
         else:
-            self.groupby.visit(ctx)
-
-            tb = ctx.table
-            selected = self.select_list.selected
-
-            def create_combiner(r):
-                return [f.create(r[tb.index(f.column.value)])
-                        for f, v in izip(selected, r)]
-
-            def merge_value(c, v):
-                return merge_combiner(c, create_combiner(v))
-
-            def merge_combiner(c1, c2):
-                return [f.merge(v1, v2)
-                        for f, v1, v2 in izip(selected, c1, c2)]
-
-            def make_result((k, r)):
-                return [f.result(v) for f, v in izip(selected, r)]
-
-            agg = Aggregator(create_combiner, merge_value, merge_combiner)
-            ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result)
-
-            self.having.visit(ctx)
+            self._apply_groupby(ctx)
 
         self.orderby.visit(ctx)
         return ctx.rdd
