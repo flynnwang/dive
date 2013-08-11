@@ -29,6 +29,9 @@ JOIN related:
 
 R different return value of visit()
 
+## Util
+F git hook: pass test before commit
+
 
 DONE
 ----

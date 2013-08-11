@@ -12,7 +12,8 @@ from select import *
 from conditions import *
 from clauses import *
 from functions import *
-
+from predicate import *
+from datamodel import *
 
 select_bnf = """
     select_statement: SELECT select_list FROM table_name
@@ -66,7 +67,7 @@ select_bnf = """
              | in_predicate
              | like_predicate;
 
-    like_predicate: row_value_designator [ NOT ] LIKE STRING;
+    like_predicate: row_value_designator [ NOT ] LIKE value_expr;
 
     in_predicate: row_value_designator [ NOT ] IN in_predicate_value;
 
