@@ -10,6 +10,11 @@ def build():
     pg = ParserGenerator(TOKENS, cache_id="sql_parser")
     for prod, cls in gen_productions(select_bnf, node_classes):
         pg.production(prod)(cls.production)
+
+    @pg.error
+    def error_handler(token):
+        raise ValueError("Ran into a %s(%s) where it wasn't expected"
+                         % (token.gettokentype(), token.getstr()))
     return pg.build()
 
 

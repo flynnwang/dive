@@ -92,3 +92,11 @@ class OptionalNode(Node):
     @property
     def first(self):
         return self.nodes[0]
+
+class NodeWrapper(Node):
+
+    def __init__(self):
+        """@todo: to be defined1. """
+        Node.__init__(self)
+
+        

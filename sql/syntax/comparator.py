@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import operator as op
+import operator
 from node import TokenNode
 
 
@@ -18,31 +18,31 @@ class Comparator(TokenNode):
 class Equal(Comparator):
 
     def __call__(self, x, y):
-        return op.eq(x, y)
+        return operator.eq(x, y)
 
 
 class LessThan(Comparator):
 
     def __call__(self, x, y):
-        return op.lt(x, y)
+        return operator.lt(x, y)
 
 
 class LessThanOrEqual(Comparator):
 
     def __call__(self, x, y):
-        return op.le(x, y)
+        return operator.le(x, y)
 
 
 class GreaterThan(Comparator):
 
     def __call__(self, x, y):
-        return op.gt(x, y)
+        return operator.gt(x, y)
 
 
 class GreaterThanOrEqual(Comparator):
 
     def __call__(self, x, y):
-        return op.ge(x, y)
+        return operator.ge(x, y)
 
 COMPARATORS = {
     '=': Equal,

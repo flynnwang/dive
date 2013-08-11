@@ -26,8 +26,6 @@ class WhereClause(Clause):
 
     @classmethod
     def parse(cls, prods):
-        if len(prods) == 0:
-            return None
         return cls(prods[1])
 
     def __init__(self, search_condition):

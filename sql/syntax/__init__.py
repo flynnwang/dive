@@ -148,6 +148,12 @@ productions = (
 parser_gen = rply.ParserGenerator(TOKENS.keys(), cache_id="bnf_parser")
 for prod, cls in productions:
     parser_gen.production(prod)(cls.production)
+
+@parser_gen.error
+def error_handler(token):
+    raise ValueError("Ran into a %s(%s) where it wasn't expected"
+                     % (token.gettokentype(), token.getstr()))
+
 bnf_parser = parser_gen.build()
 
 

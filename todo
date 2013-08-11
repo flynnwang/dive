@@ -1,40 +1,34 @@
 TODO
 ----
+R favor parse() to do parsing
 
-- move search condition in the way of mysql 
+F INTO OUTFILE '/path/to/file.csv'
 
+R refactor search condition: in the way of mysql 
 R better list value support
-R split data model
-
 F numeric condition expression support
-
-R use visit or value?
-
 F record tokens for debug
-
 
 - date support
 - datetime support
 - float number support
 
-F INTO OUTFILE '/path/to/file.csv'
 
 F column alias
 - table alias
-- add parser error handler
 
-
-JOIN related:
-- multiple table support
-
-R different return value of visit()
 
 ## Util
 F git hook: pass test before commit
 
+JOIN related:
+- multiple table support
 
 DONE
 ----
+- add parser error handler
+R use visit or value: (when ctx needed use visit, else use value)
+R split data model
 R move like out of comparator
 - paren support in search condition
 
