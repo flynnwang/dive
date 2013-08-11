@@ -22,6 +22,12 @@ select_bnf = """
         [ order_by_clause ] [ limit_clause ];
 
 
+    select_list: asterisk | select_sublist;
+
+    select_sublist: column | attribute_function
+                  | select_sublist COMMA select_sublist;
+
+
     group_by_clause: GROUP BY grouping_column_list;
 
     grouping_column_list: column { COMMA column };
@@ -34,7 +40,6 @@ select_bnf = """
     ordering_spec: column | column ASC | column DESC;
 
 
-
     where_clause: WHERE search_condition;
 
     having_clause: HAVING search_condition;
@@ -42,26 +47,7 @@ select_bnf = """
     search_condition: boolean_value_expr;
 
 
-    select_list: asterisk | select_sublist;
-
-    select_sublist: column 
-        | attribute_function
-        | select_sublist COMMA select_sublist;
-
-
-
-
     limit_clause: LIMIT NUMBER;
-
-
-    asterisk: ASTERISK;
-
-    column: IDENTIFIER;
-
-    table_name: IDENTIFIER;
-
-    attribute_function: IDENTIFIER LEFT_PAREN column RIGHT_PAREN;
-
 
 
     boolean_value_expr: boolean_term { OR boolean_term };
@@ -74,19 +60,31 @@ select_bnf = """
 
     value_expr_primary: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
     
+
     predicate: comparison_predicate
              | in_predicate
              | like_predicate;
 
-    like_predicate: row_value_designator [ NOT ] LIKE value_expr;
+    like_predicate: column [ NOT ] LIKE value_expr;
 
-    in_predicate: row_value_designator [ NOT ] IN in_predicate_value;
+
+    in_predicate: column [ NOT ] IN in_predicate_value;
 
     in_predicate_value: LEFT_PAREN in_value_list RIGHT_PAREN;
 
     in_value_list: value_expr { COMMA value_expr };
 
+
     comparison_predicate: row_value_designator comparator row_value_designator;
+
+
+    asterisk: ASTERISK;
+
+    column: IDENTIFIER;
+
+    table_name: IDENTIFIER;
+
+    attribute_function: IDENTIFIER LEFT_PAREN column RIGHT_PAREN;
 
     row_value_designator: value_expr;
 

@@ -28,12 +28,12 @@ class LikePredicate(Predicate):
 
     def __init__(self, tokens):
         Node.__init__(self)
-        self.row_designator, self.not_, _, self.pattern = tokens
+        self.column, self.not_, _, self.pattern = tokens
         self.re = re.compile(self.pattern.value)
 
     def visit(self, ctx):
         tb = self._get_table_by_clause(ctx)
-        idx = tb.index(self.row_designator.value)
+        idx = tb.index(self.column.value)
 
         def like_(r):
             v = self.re.match(r[idx])
@@ -45,11 +45,11 @@ class InPredicate(Predicate):
 
     def __init__(self, tokens):
         Node.__init__(self)
-        self.row_designator, self.not_, _, self.predicate_value = tokens
+        self.column, self.not_, _, self.predicate_value = tokens
 
     def visit(self, ctx):
         tb = self._get_table_by_clause(ctx)
-        idx = tb.index(self.row_designator.value)
+        idx = tb.index(self.column.value)
 
         def in_(r):
             v = r[idx] in self.predicate_value.value
