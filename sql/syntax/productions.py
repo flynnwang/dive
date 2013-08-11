@@ -21,11 +21,38 @@ select_bnf = """
         [ group_by_clause ] [ having_clause ]
         [ order_by_clause ] [ limit_clause ];
 
+
+    group_by_clause: GROUP BY grouping_column_list;
+
+    grouping_column_list: column { COMMA column };
+
+
+    order_by_clause: ORDER BY sort_spec_list;
+
+    sort_spec_list: ordering_spec { COMMA ordering_spec };
+
+    ordering_spec: column | column ASC | column DESC;
+
+
+
+    where_clause: WHERE search_condition;
+
+    having_clause: HAVING search_condition;
+
+    search_condition: boolean_value_expr;
+
+
     select_list: asterisk | select_sublist;
 
     select_sublist: column 
         | attribute_function
         | select_sublist COMMA select_sublist;
+
+
+
+
+    limit_clause: LIMIT NUMBER;
+
 
     asterisk: ASTERISK;
 
@@ -35,23 +62,7 @@ select_bnf = """
 
     attribute_function: IDENTIFIER LEFT_PAREN column RIGHT_PAREN;
 
-    where_clause: WHERE search_condition;
 
-    group_by_clause: GROUP BY grouping_column_list;
-    grouping_column_list: column | grouping_column_list COMMA column;
-
-    having_clause: HAVING search_condition;
-
-    order_by_clause: ORDER BY sort_spec_list;
-
-    sort_spec_list: ordering_spec 
-        { COMMA ordering_spec };
-    ordering_spec: column | column ASC | column DESC;
-
-    limit_clause: LIMIT NUMBER;
-
-
-    search_condition: boolean_value_expr;
 
     boolean_value_expr: boolean_term { OR boolean_term };
 

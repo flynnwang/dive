@@ -36,13 +36,15 @@ class WhereClause(Clause):
         ctx.rdd = ctx.rdd.filter(_filter)
 
 
+class HavingClause(WhereClause):
+    pass
+
+
 class GroupByClause(Clause):
 
     @classmethod
     def parse(cls, prods):
-        if isinstance(prods[0], EmptyClause):
-            return prods[0]
-        return cls(prods[2])    # group by columns
+        return cls(prods[2].flattened_nodes)
 
     def __init__(self, columns):
         self.columns = columns
@@ -60,17 +62,11 @@ class GroupingColumnList(NodeList):
     pass
 
 
-class HavingClause(WhereClause):
-    pass
-
-
 class OrderByClause(Clause):
 
     @classmethod
     def parse(cls, tokens):
-        if isinstance(tokens[0], EmptyOrderByClause):
-            return tokens[0]
-        return cls(tokens[2])    # orderby by columns ordering
+        return cls(tokens[2])
 
     def __init__(self, sort_spec):
         self.sort_spec = sort_spec
@@ -86,19 +82,14 @@ class OrderByClause(Clause):
                 self.r = r
 
             def __le__(self, other):
-                for u, v, spec in izip(self.keys, other.keys, sort_spec):
-                    result = cmp(u, v)
-                    if result == 0:
-                        continue
-                    if spec.desc:
-                        result = -result
-                    return result < 0
-                return True
+                comp = [cmp(u, v) * spec.ordering for u, v, spec in
+                        izip(self.keys, other.keys, sort_spec.flattened_nodes)]
+                return comp <= [0] * len(comp)
 
             @property
             def keys(self):
                 return (self.r[tb.index(spec.column.value)]
-                        for spec in sort_spec)
+                        for spec in sort_spec.flattened_nodes)
 
         ctx.rdd = ctx.rdd.map(lambda r: Ordered(r))\
                      .sort().map(lambda o: o.r)
@@ -110,7 +101,7 @@ class EmptyOrderByClause(EmptyClause):
         ctx.rdd = ctx.rdd.sort()
 
 
-class SortSpecList(GroupingColumnList):
+class SortSpecList(NodeList):
     pass
 
 
@@ -118,13 +109,12 @@ class OrderingSpec(Node):
 
     @classmethod
     def parse(cls, tokens):
-        if len(tokens) == 2 and tokens[1].value == 'desc':
-            return cls(tokens[0], desc=True)
-        return cls(tokens[0])
+        ordering = tokens[1].value == 'desc' and -1 or 1
+        return cls(tokens[0], ordering)
 
-    def __init__(self, column, desc=False):
+    def __init__(self, column, ordering):
         self.column = column
-        self.desc = desc
+        self.ordering = ordering
 
 
 class LimitClause(Clause):

@@ -79,6 +79,7 @@ class SelectExpr(Node):
         return ctx.rdd
 
 
+# TODO: column -> column_spec (table.column syntax)
 class Column(AggregateFunction):
 
     @classmethod

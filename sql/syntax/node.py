@@ -70,6 +70,10 @@ class NodeList(Node, list):
         for nd in self:
             nd.visit(ctx)
 
+    @property
+    def flattened_nodes(self):
+        return [self[0]] + self[1]
+
 
 class OptionalNode(Node):
 
@@ -93,10 +97,10 @@ class OptionalNode(Node):
     def first(self):
         return self.nodes[0]
 
-class NodeWrapper(Node):
+#class NodeWrapper(Node):
 
-    def __init__(self):
-        """@todo: to be defined1. """
-        Node.__init__(self)
+    #def __init__(self):
+        #"""@todo: to be defined1. """
+        #Node.__init__(self)
 
         
