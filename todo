@@ -1,11 +1,12 @@
 TODO
 ----
+F INTO OUTFILE '/.../path/'
+
 R favor parse() to do parsing
 R name and module clean
 R move common logic into node.py
 
 
-F INTO OUTFILE '/path/to/file.csv'
 
 R refactor search condition: in the way of mysql 
 R better list value support
@@ -20,12 +21,18 @@ F record tokens for debug
 F column alias
 - table alias
 
+## defact
+D how to resolve limit & outfile confilt
 
-## Util
+## util & dev
 F git hook: pass test before commit
+F use virtualenv (for pip dump)
 
-JOIN related:
+## JOIN related:
 - multiple table support
+
+
+
 
 DONE
 ----

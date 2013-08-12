@@ -32,6 +32,12 @@ class Table(object):
 
     def collect(self):
         rdd = self.query.rdd
+
+        outfile = self.query.select.outfile
+        if outfile:
+            rdd.saveAsCSVFile(outfile.filedir)
+            return
+
         limit = self.query.select.limit
         if limit:
             return rdd.take(limit.value)

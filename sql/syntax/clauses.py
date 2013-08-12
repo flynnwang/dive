@@ -121,8 +121,19 @@ class LimitClause(Clause):
 
     @classmethod
     def parse(cls, tokens):
+        # TODO remove if
         if len(tokens) == 2:
             return cls(int(tokens[1].value))
 
     def __init__(self, limit):
         self.value = limit
+
+
+class OutfileClause(Clause):
+
+    @classmethod
+    def parse(cls, tokens):
+        return cls(tokens[2].value)
+
+    def __init__(self, filedir):
+        self.filedir = filedir

@@ -28,8 +28,12 @@ class DiveTestBase(unittest.TestCase):
     def setUp(self):
         table = UserTable([self.test_file_path])
         self.schema = Schema([table])
-        with open(self.test_file_path, 'r') as f:
-            self.rows = [[int(l[0]), l[1], int(l[2])] for l in csv.reader(f)]
+        self.rows = self._read_csv(self.test_file_path)
+
+    def _read_csv(self, filepath):
+        with open(filepath, 'r') as f:
+            rows = [[int(l[0]), l[1], int(l[2])] for l in csv.reader(f)]
+        return rows
 
     def _execute_query(self, sql):
         tb = Query(sql, self.schema).execute()

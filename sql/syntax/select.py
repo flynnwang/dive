@@ -12,15 +12,17 @@ class SelectExpr(Node):
 
     @classmethod
     def parse(cls, p):
-        where = p[4] and p[4].first or EmptyClause()
-        groupby = p[5] and p[5].first or EmptyGroupbyClause()
-        having = p[6] and p[6].first or EmptyClause()
-        orderby = p[7] and p[7].first or EmptyOrderByClause()
-        limit = p[8] and p[8].first
-        return cls(p[1], p[3], where=where, groupby=groupby,
-                   having=having, orderby=orderby, limit=limit)
+        outfile = p[2] and p[2].first
+        table_name = p[4] 
+        where = p[5] and p[5].first or EmptyClause()
+        groupby = p[6] and p[6].first or EmptyGroupbyClause()
+        having = p[7] and p[7].first or EmptyClause()
+        orderby = p[8] and p[8].first or EmptyOrderByClause()
+        limit = p[9] and p[9].first
+        return cls(p[1], outfile, table_name, where, groupby,
+                   having, orderby, limit)
 
-    def __init__(self,  select_list, table_name,
+    def __init__(self,  select_list, outfile, table_name,
                  where, groupby, having, orderby, limit):
         self.select_list = select_list
         self.table_name = table_name
@@ -29,6 +31,7 @@ class SelectExpr(Node):
         self.having = having
         self.orderby = orderby
         self.limit = limit
+        self.outfile = outfile
 
     def __repr__(self):
         return "<SelectCore: SELECT %s FROM %s>" % (self.select_list,

@@ -16,10 +16,13 @@ from predicate import *
 from datamodel import *
 
 select_bnf = """
-    select_expr: SELECT select_list FROM table_name
+    select_expr: SELECT select_list [outfile_clause] FROM table_name
         [ where_clause ]
         [ group_by_clause ] [ having_clause ]
         [ order_by_clause ] [ limit_clause ];
+
+
+    outfile_clause: INTO OUTFILE string;
 
 
     select_list: asterisk | select_sublist;
@@ -92,6 +95,8 @@ select_bnf = """
 
     comparator: EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL
               | GREATER_THAN | GREATER_THAN_OR_EQUAL;
+
+    string: STRING;
 """
     
 
