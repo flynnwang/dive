@@ -99,8 +99,8 @@ class OptionalNode(Node):
         return self.nodes[0]
 
 
-# TODO merge WrapNode & TokenNode
-class WrapNode(Node):
+# TODO merge ProxyNode & TokenNode
+class ProxyNode(Node):
 
     @classmethod
     def parse(cls, tokens):
@@ -113,3 +113,12 @@ class WrapNode(Node):
     @property
     def value(self):
         return self.child.value
+
+    def visit(self, ctx):
+        self.child.visit(ctx)
+
+    def __getattribute__(self, name):
+        try:
+            return Node.__getattribute__(self, name)
+        except:
+            return self.child.__getattribute__(name)

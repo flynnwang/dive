@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from rply import Token
 from dpark.dependency import Aggregator
-from node import Node, TokenNode, NodeList, WrapNode
+from node import Node, TokenNode, NodeList, ProxyNode
 from clauses import (GroupByClause, WhereClause, EmptyGroupbyClause,
                      EmptyOrderByClause, EmptyClause)
 from functions import Aggregatable
@@ -41,17 +42,15 @@ class SelectExpr(Node):
     def _apply_where(self, ctx):
         def _map(r):
             return [r[idx] for idx in
-                    self.select_list.column_indexes(ctx.table)]
+                    self.select_list.column_indexes]
         ctx.rdd = ctx.rdd.map(_map)
 
     def _apply_groupby(self, ctx):
         self.groupby.visit(ctx)
 
         tb = ctx.table
-        # TODO: method
-        selected = self.select_list.child.flattened_nodes
+        selected = self.select_list.selected
 
-        # TODO: * support
         def create_combiner(r):
             return [f.create(r[tb.index(f.value)])
                     for f, v in izip(selected, r)]
@@ -73,6 +72,7 @@ class SelectExpr(Node):
 
     def visit(self, ctx):
         ctx.rdd = ctx.table.rdd(ctx.dpark)
+        self.select_list.visit(ctx)
         self.where.visit(ctx)
 
         if not (self.select_list.has_aggregate_function or
@@ -85,16 +85,8 @@ class SelectExpr(Node):
         return ctx.rdd
 
 
-class DerivedColumn(WrapNode, Aggregatable):
-
-    def create(self, v):
-        return self.child.create(v)
-
-    def merge(self, v1, v2):
-        return self.child.merge(v1, v2)
-
-    def result(self, v):
-        return self.child.result(v)
+class DerivedColumn(ProxyNode):
+    pass
 
 
 # TODO: column -> column_ref (table.column syntax)
@@ -123,34 +115,33 @@ class Selectable(object):
     def has_aggregate_function(self):
         return False
 
-    def column_indexes(self, tb):
+    def column_indexes(self):
         pass
 
-    def columns(self, tb):
+    def column_defs(self, tb):
         pass
 
 
-class SelectList(WrapNode, Selectable):
-
-    def column_indexes(self, tb):
-        return self.child.column_indexes(tb)
-
-    def columns(self, tb):
-        return self.child.columns(tb)
-
-    @property
-    def has_aggregate_function(self):
-        return self.child.has_aggregate_function
+class SelectList(ProxyNode):
+    pass
 
 
 # TODO: multi-table support
 class Asterisk(TokenNode, Selectable):
 
-    def column_indexes(self, tb):
-        return range(len(tb.columns))
+    @property
+    def column_indexes(self):
+        return range(len(self.tb.columns))
 
-    def columns(self, tb):
+    def column_defs(self, tb):
         return tb.columns.copy()
+
+    @property
+    def selected(self):
+        return [Column(Token('column', c)) for c in self.tb.columns.keys()]
+
+    def visit(self, ctx):
+        self.tb = ctx.table
 
 
 # TODO: assume only column or agg func
@@ -160,14 +151,22 @@ class SelectSublist(NodeList, Selectable):
     def has_aggregate_function(self):
         return any([nd.child.is_agg_func for nd in self.flattened_nodes])
 
-    def column_indexes(self, tb):
-        return [tb.index(c.value) for c in self.flattened_nodes]
+    @property
+    def column_indexes(self):
+        return [self.tb.index(c.value) for c in self.flattened_nodes]
 
-    def columns(self, tb):
+    def column_defs(self, tb):
         _type = lambda x: x
         return [(c.value, (tb.columns[c.value]
                 if c.value in tb.columns else _type))
                 for c in self.flattened_nodes]
+
+    @property
+    def selected(self):
+        return self.flattened_nodes
+
+    def visit(self, ctx):
+        self.tb = ctx.table
 
 
 class TableName(TokenNode):

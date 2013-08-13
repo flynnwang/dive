@@ -6,6 +6,8 @@ R move common logic into node.py
 
 R TODO strip agg function
 
+F datamodel should be aggreatable
+
 F date support
 F datetime support
 F float number support

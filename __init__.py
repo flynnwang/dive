@@ -70,7 +70,7 @@ class Query(object):
         self.table = self.schema.find_table(self.select.table_name.value)
 
         name = str(uuid.uuid4())
-        columns = self.select.select_list.columns(self.table)
+        columns = self.select.select_list.column_defs(self.table)
         self.result_table = Table(name, columns, query=self)
 
         self.select.visit(self)

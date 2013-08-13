@@ -66,3 +66,13 @@ class GroupByWithoutAggFuncTest(SelectTestBase):
             it = g.next()
             result.append([it[0], it[1]])
         return result
+
+
+class GroupAsteriskTest(SelectTestBase):
+    sql = "select * from user group by id"
+
+    def expected_select_result(self):
+        result = []
+        for _, g in groupby(self.rows, lambda x: x[0]):
+            result.append(g.next())
+        return result

@@ -28,7 +28,6 @@ class AttributeFunction(Node, Valueable):
 
     @classmethod
     def parse(cls, tokens):
-        from functions import funcs
         func = tokens[0].value
         if func not in funcs:
             raise Exception("No attibute function found: %s" % func)
