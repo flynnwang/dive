@@ -21,7 +21,7 @@ class Number(TokenNode, Valueable):
 
     @property
     def value(self):
-        return int(self._token.value)
+        return int(self.token.value)
 
 
 class String(TokenNode, Valueable):
@@ -31,4 +31,4 @@ class String(TokenNode, Valueable):
 
     @property
     def value(self):
-        return self._token.value[1:-1]
+        return self.token.value[1:-1]

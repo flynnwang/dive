@@ -36,7 +36,7 @@ class SelectExpr(Node):
         self.outfile = outfile
 
     def __repr__(self):
-        return "<SelectCore: SELECT %s FROM %s>" % (self.select_list,
+        return "<SelectExpr: SELECT %s FROM %s>" % (self.select_list,
                                                     self.table_name)
 
     def _apply_where(self, ctx):
@@ -98,15 +98,11 @@ class Column(TokenNode, Aggregatable, Valueable):
 
     @property
     def column(self):
-        return self._token
+        return self.token
 
     @property
     def name(self):
-        return self._token.value
-
-    @property
-    def value(self):
-        return self._token.value
+        return self.token.value
 
 
 class Selectable(object):
@@ -149,7 +145,7 @@ class SelectSublist(NodeList, Selectable):
 
     @property
     def has_aggregate_function(self):
-        return any([nd.child.is_agg_func for nd in self.flattened_nodes])
+        return any([nd.is_agg_func for nd in self.flattened_nodes])
 
     @property
     def column_indexes(self):

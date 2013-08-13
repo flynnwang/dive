@@ -26,28 +26,6 @@ class Node(object):
         return "<%s>" % self.__class__.__name__
 
 
-class TokenNode(Node):
-
-    @classmethod
-    def parse(cls, tokens):
-        return cls(tokens[0])
-
-    def __init__(self, token):
-        super(TokenNode, self).__init__()
-        self._token = token
-
-    @property
-    def name(self):
-        return self._token.name
-
-    @property
-    def value(self):
-        return self._token.value
-
-    def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.value)
-
-
 class NodeList(Node, list):
 
     """ I : ;
@@ -83,8 +61,7 @@ class OptionalNode(Node):
 
     @classmethod
     def parse(cls, tokens):
-        if tokens:
-            return cls([t for t in tokens if isinstance(t, Node)])
+        return tokens and cls([t for t in tokens if isinstance(t, Node)])
 
     def __init__(self, nodes):
         Node.__init__(self)
@@ -99,26 +76,40 @@ class OptionalNode(Node):
         return self.nodes[0]
 
 
-# TODO merge ProxyNode & TokenNode
 class ProxyNode(Node):
+    """ ProxyNode propgate method access to the proxied node """
 
     @classmethod
     def parse(cls, tokens):
         return cls(tokens[0])
 
-    def __init__(self, child):
+    def __init__(self, node):
         Node.__init__(self)
-        self.child = child
+        self.node = node
 
     @property
     def value(self):
-        return self.child.value
+        return self.node.value
 
     def visit(self, ctx):
-        self.child.visit(ctx)
+        self.node.visit(ctx)
 
     def __getattribute__(self, name):
         try:
             return Node.__getattribute__(self, name)
         except:
-            return self.child.__getattribute__(name)
+            return self.node.__getattribute__(name)
+
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__,
+                             self.node.__class__.__name__)
+
+
+class TokenNode(ProxyNode):
+
+    def __init__(self, token):
+        super(TokenNode, self).__init__(token)
+
+    @property
+    def token(self):
+        return self.node
