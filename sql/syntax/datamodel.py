@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
 
-from node import TokenNode
+from node import TokenNode, Node
 
 
-class Number(TokenNode):
+class Valueable(object):
+
+    @property
+    def is_agg_func(self):
+        return False
+
+    @property
+    def value(self):
+        raise NotImplementedError("should provide a value")
+
+
+class Number(TokenNode, Valueable):
 
     def __init__(self, token):
         TokenNode.__init__(self, token)
@@ -13,7 +24,7 @@ class Number(TokenNode):
         return int(self._token.value)
 
 
-class String(TokenNode):
+class String(TokenNode, Valueable):
 
     def __init__(self, token):
         TokenNode.__init__(self, token)

@@ -24,8 +24,9 @@ select_bnf = """
 
     select_list: asterisk | select_sublist;
 
-    select_sublist: column | attribute_function
-                  | select_sublist COMMA select_sublist;
+    select_sublist: derived_column { COMMA derived_column }; 
+    
+    derived_column: value_expr;
 
 
     outfile_clause: INTO OUTFILE string;
@@ -86,7 +87,10 @@ select_bnf = """
 
     row_value_designator: value_expr;
 
-    value_expr: string | number | column;
+    value_expr: string
+              | number 
+              | column
+              | attribute_function;
 
     comparator: EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL
               | GREATER_THAN | GREATER_THAN_OR_EQUAL;

@@ -4,8 +4,8 @@
 class Node(object):
 
     @classmethod
-    def parse(cls, prods):
-        return cls(prods)
+    def parse(cls, tokens):
+        return cls(tokens)
 
     @classmethod
     def production(cls, tokens):
@@ -15,7 +15,8 @@ class Node(object):
                 t.parent = node
         return node
 
-    def __init__(self, prods=None):
+    def __init__(self, tokens=None):
+        # TODO remove __init__
         self.parent = None
 
     def visit(self, ctx):
@@ -28,8 +29,8 @@ class Node(object):
 class TokenNode(Node):
 
     @classmethod
-    def parse(cls, prods):
-        return cls(prods[0])
+    def parse(cls, tokens):
+        return cls(tokens[0])
 
     def __init__(self, token):
         super(TokenNode, self).__init__()
@@ -97,10 +98,18 @@ class OptionalNode(Node):
     def first(self):
         return self.nodes[0]
 
-#class NodeWrapper(Node):
 
-    #def __init__(self):
-        #"""@todo: to be defined1. """
-        #Node.__init__(self)
+# TODO merge WrapNode & TokenNode
+class WrapNode(Node):
 
-        
+    @classmethod
+    def parse(cls, tokens):
+        return cls(tokens[0])
+
+    def __init__(self, child):
+        Node.__init__(self)
+        self.child = child
+
+    @property
+    def value(self):
+        return self.child.value

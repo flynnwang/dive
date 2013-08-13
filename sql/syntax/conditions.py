@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from node import Node, TokenNode, NodeList
+from node import Node, NodeList, WrapNode
 
 
 class SearchCondition(Node):
@@ -83,7 +83,7 @@ class ValueExprPrimary(Node):
         return self.boolean_value_expr.visit(ctx)
 
 
-class ValueExpr(TokenNode):
+class ValueExpr(WrapNode):
 
     @classmethod
     def parse(cls, tokens):

@@ -1,31 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from node import Node
+from datamodel import Valueable
 
 
-class AttributeFunction(Node):
-
-    def __init__(self, token, column):
-        self._token = token
-        self.column = column
-
-    @classmethod
-    def parse(cls, prods):
-        func = prods[0].value
-        if func not in funcs:
-            raise Exception("No attibute function found: %s" % func)
-        return funcs[func](prods[0], prods[2])
-
-    @property
-    def value(self):
-        return self._token.value
-
-    @property
-    def name(self):
-        return "%s(%s)" % (self._token.value, self.column.value)
-
-
-class AggregateFunction(AttributeFunction):
+class Aggregatable(object):
 
     def create(self, v):
         return v
@@ -37,7 +16,34 @@ class AggregateFunction(AttributeFunction):
         return v
 
 
-class CountFunction(AggregateFunction):
+class AttributeFunction(Node, Valueable):
+
+    @property
+    def is_agg_func(self):
+        return True
+
+    def __init__(self, token, column):
+        self._token = token
+        self.column = column
+
+    @classmethod
+    def parse(cls, tokens):
+        from functions import funcs
+        func = tokens[0].value
+        if func not in funcs:
+            raise Exception("No attibute function found: %s" % func)
+        return funcs[func](tokens[0], tokens[2])
+
+    @property
+    def value(self):
+        return self.column.value
+
+    @property
+    def name(self):
+        return self._token.value
+
+
+class CountFunction(AttributeFunction, Aggregatable):
 
     def create(self, v):
         return v is not None and 1 or 0
@@ -49,7 +55,7 @@ class CountFunction(AggregateFunction):
         return v
 
 
-class SumFunction(AggregateFunction):
+class SumFunction(AttributeFunction, Aggregatable):
 
     def create(self, v):
         return v
@@ -61,7 +67,7 @@ class SumFunction(AggregateFunction):
         return v
 
 
-class AverageFunction(AggregateFunction):
+class AverageFunction(AttributeFunction, Aggregatable):
 
     def create(self, v):
         return (1, v)
