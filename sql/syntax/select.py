@@ -145,21 +145,21 @@ class SelectSublist(NodeList, Selectable):
 
     @property
     def has_aggregate_function(self):
-        return any([nd.is_agg_func for nd in self.flattened_nodes])
+        return any([nd.is_agg_func for nd in self.nodes])
 
     @property
     def column_indexes(self):
-        return [self.tb.index(c.value) for c in self.flattened_nodes]
+        return [self.tb.index(c.value) for c in self.nodes]
 
     def column_defs(self, tb):
         _type = lambda x: x
         return [(c.value, (tb.columns[c.value]
                 if c.value in tb.columns else _type))
-                for c in self.flattened_nodes]
+                for c in self.nodes]
 
     @property
     def selected(self):
-        return self.flattened_nodes
+        return self.nodes
 
     def visit(self, ctx):
         self.tb = ctx.table

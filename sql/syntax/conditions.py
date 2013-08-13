@@ -11,7 +11,7 @@ class BooleanValueExpr(NodeList):
 
     @property
     def terms(self):
-        return self.flattened_nodes
+        return self.nodes
 
     def visit(self, ctx):
         funcs = [t.visit(ctx) for t in self.terms]
@@ -25,7 +25,7 @@ class BooleanTerm(NodeList):
 
     @property
     def factors(self):
-        return self.flattened_nodes
+        return self.nodes
 
     def visit(self, ctx):
         funcs = [t.visit(ctx) for t in self.factors]
@@ -58,10 +58,7 @@ class BooleanPrimary(ProxyNode):
 
 
 class ValueExprPrimary(ProxyNode):
-
-    @classmethod
-    def parse(cls, tokens):
-        return cls(tokens[1])
+    NODE_INDEX = 1
 
 
 class ValueExpr(ProxyNode):

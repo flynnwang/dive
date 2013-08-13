@@ -5,7 +5,7 @@ class Node(object):
 
     @classmethod
     def parse(cls, tokens):
-        return cls(tokens)
+        raise NotImplementedError()
 
     @classmethod
     def production(cls, tokens):
@@ -14,10 +14,6 @@ class Node(object):
             if isinstance(t, Node):
                 t.parent = node
         return node
-
-    def __init__(self, tokens=None):
-        # TODO remove __init__
-        self.parent = None
 
     def visit(self, ctx):
         pass
@@ -50,8 +46,12 @@ class NodeList(Node, list):
             nd.visit(ctx)
 
     @property
-    def flattened_nodes(self):
+    def nodes(self):
         return [self[0]] + self[1]
+
+    @property
+    def value(self):
+        return [self[0].value] + [v.value for v in self[1]]
 
 
 class OptionalNode(Node):
@@ -80,9 +80,11 @@ class ProxyNode(Node):
 
     """ ProxyNode propgate method access to the proxied node """
 
+    NODE_INDEX = 0
+
     @classmethod
     def parse(cls, tokens):
-        return cls(tokens[0])
+        return cls(tokens[cls.NODE_INDEX])
 
     def __init__(self, node):
         Node.__init__(self)

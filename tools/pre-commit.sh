@@ -6,7 +6,7 @@
 git stash -q --keep-index
 
 echo 'run tests...'
-fab test:options=xs
+fab test
 RESULT=$?
 
 git stash pop -q
