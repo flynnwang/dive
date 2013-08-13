@@ -87,11 +87,4 @@ class ValueExpr(TokenNode):
 
     @classmethod
     def parse(cls, tokens):
-        tk = tokens[0]
-        return tk.name in DESIGNATORS and DESIGNATORS[tk.name](tk) or cls(tk)
-
-from datamodel import String, Number
-DESIGNATORS = {
-    'STRING': String,
-    'NUMBER': Number,
-}
+        return tokens[0]

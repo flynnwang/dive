@@ -22,13 +22,13 @@ select_bnf = """
         [ order_by_clause ] [ limit_clause ];
 
 
-    outfile_clause: INTO OUTFILE string;
-
-
     select_list: asterisk | select_sublist;
 
     select_sublist: column | attribute_function
                   | select_sublist COMMA select_sublist;
+
+
+    outfile_clause: INTO OUTFILE string;
 
 
     group_by_clause: GROUP BY grouping_column_list;
@@ -61,8 +61,6 @@ select_bnf = """
 
     boolean_primary: predicate | value_expr_primary;
 
-    value_expr_primary: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
-    
 
     predicate: comparison_predicate
              | in_predicate
@@ -81,22 +79,27 @@ select_bnf = """
     comparison_predicate: row_value_designator comparator row_value_designator;
 
 
-    asterisk: ASTERISK;
+    value_expr_primary: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
 
-    column: IDENTIFIER;
-
-    table_name: IDENTIFIER;
 
     attribute_function: IDENTIFIER LEFT_PAREN column RIGHT_PAREN;
 
     row_value_designator: value_expr;
 
-    value_expr: STRING | NUMBER | IDENTIFIER;
+    value_expr: string | number | column;
 
     comparator: EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL
               | GREATER_THAN | GREATER_THAN_OR_EQUAL;
 
+    asterisk: ASTERISK;
+
     string: STRING;
+
+    number: NUMBER; 
+
+    column: IDENTIFIER;
+
+    table_name: IDENTIFIER;
 """
     
 

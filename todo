@@ -1,21 +1,17 @@
 TODO
 ----
-F INTO OUTFILE '/.../path/'
-
 R favor parse() to do parsing
 R name and module clean
 R move common logic into node.py
 
+F date support
+F datetime support
+F float number support
 
-
-R refactor search condition: in the way of mysql 
 R better list value support
 F numeric condition expression support
 F record tokens for debug
 
-- date support
-- datetime support
-- float number support
 
 
 F column alias
@@ -36,6 +32,8 @@ F use virtualenv (for pip dump)
 
 DONE
 ----
+F INTO OUTFILE '/.../path/'
+
 - add parser error handler
 R use visit or value: (when ctx needed use visit, else use value)
 R split data model
