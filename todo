@@ -1,8 +1,6 @@
 TODO
 ----
-R favor parse() to do parsing
-R name and module clean
-R move common logic into node.py
+
 
 R TODO strip agg function
 
@@ -25,7 +23,6 @@ F column alias
 D how to resolve limit & outfile confilt
 
 ## util & dev
-F git hook: pass test before commit
 F use virtualenv (for pip dump)
 
 ## JOIN related:
@@ -36,6 +33,11 @@ F use virtualenv (for pip dump)
 
 DONE
 ----
+R favor parse() to do parsing
+R name and module clean
+R move common logic into node.py
+
+F git hook: pass test before commit
 F INTO OUTFILE '/.../path/'
 
 - add parser error handler

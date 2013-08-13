@@ -10,7 +10,7 @@ class Predicate(Node):
     def __init__(self, nodes):
         Node.__init__(self)
         self.predicate = nodes[0]
-        
+
     def _get_table_by_clause(self, ctx):
         node = self
         while True:

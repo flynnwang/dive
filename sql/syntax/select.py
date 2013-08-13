@@ -15,7 +15,7 @@ class SelectExpr(Node):
     @classmethod
     def parse(cls, p):
         outfile = p[2] and p[2].first
-        table_name = p[4] 
+        table_name = p[4]
         where = p[5] and p[5].first or EmptyClause()
         groupby = p[6] and p[6].first or EmptyGroupbyClause()
         having = p[7] and p[7].first or EmptyClause()

@@ -32,7 +32,7 @@ class WhereClause(Clause):
         self.search_condition = search_condition
 
     def visit(self, ctx):
-        _filter = self.search_condition.boolean_value_expr.visit(ctx)
+        _filter = self.search_condition.visit(ctx)
         ctx.rdd = ctx.rdd.filter(_filter)
 
 

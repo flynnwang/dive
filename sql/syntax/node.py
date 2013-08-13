@@ -77,6 +77,7 @@ class OptionalNode(Node):
 
 
 class ProxyNode(Node):
+
     """ ProxyNode propgate method access to the proxied node """
 
     @classmethod
@@ -92,7 +93,7 @@ class ProxyNode(Node):
         return self.node.value
 
     def visit(self, ctx):
-        self.node.visit(ctx)
+        return self.node.visit(ctx)
 
     def __getattribute__(self, name):
         try:

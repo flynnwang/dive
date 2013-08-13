@@ -69,23 +69,19 @@ select_bnf = """
 
     like_predicate: column [ NOT ] LIKE value_expr;
 
-
     in_predicate: column [ NOT ] IN in_predicate_value;
 
     in_predicate_value: LEFT_PAREN in_value_list RIGHT_PAREN;
 
     in_value_list: value_expr { COMMA value_expr };
 
-
-    comparison_predicate: row_value_designator comparator row_value_designator;
+    comparison_predicate: value_expr comparator value_expr;
 
 
     value_expr_primary: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
 
 
     attribute_function: IDENTIFIER LEFT_PAREN column RIGHT_PAREN;
-
-    row_value_designator: value_expr;
 
     value_expr: string
               | number 
@@ -105,7 +101,7 @@ select_bnf = """
 
     table_name: IDENTIFIER;
 """
-    
+
 
 node_classes = {x.__name__: x
                 for x in locals().values() if (isclass(x)
