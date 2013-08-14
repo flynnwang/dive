@@ -98,6 +98,8 @@ class ProxyNode(Node):
         return self.node.visit(ctx)
 
     def __getattribute__(self, name):
+        if name.startswith('__') and name.endswith('__'):
+            return Node.__getattribute__(self, name)
         try:
             return Node.__getattribute__(self, name)
         except:
