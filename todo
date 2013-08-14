@@ -1,7 +1,5 @@
 TODO
 ----
-F date support
-F datetime support
 F float number support
 
 R TODO strip agg function
@@ -28,6 +26,8 @@ F use virtualenv (for pip dump)
 
 DONE
 ----
+F time, datetime support
+F date support
 D how to resolve limit & outfile confilt
 
 R favor parse() to do parsing
