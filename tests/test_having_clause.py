@@ -8,9 +8,9 @@ class HavingColumnConditionTest(SelectTestBase):
     sql = "select id, count(id) from user groupby id having id < 5"
 
     def expected_select_result(self):
-        return [[id_, len(list(g))]
-                for id_, g in groupby(self.rows, lambda x: x[0])
-                if id_ < 5]
+        return tuple((id_, len(list(g)))
+                     for id_, g in groupby(self.rows, lambda x: x[0])
+                     if id_ < 5)
 
 
 class HavingColumnConditionTest2(SelectTestBase):
@@ -22,5 +22,5 @@ class HavingColumnConditionTest2(SelectTestBase):
             g = list(g)
             name = g[0][1]
             if name < 'c':
-                rows.append([id_, name, len(g)])
-        return rows
+                rows.append((id_, name, len(g)))
+        return tuple(rows)

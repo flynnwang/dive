@@ -53,8 +53,8 @@ class GroupByClause(Clause):
         tb = ctx.table
 
         def _group_by(r):
-            grouping = [r[tb.index(c.value)] for c in self.columns]
-            return (tuple(grouping), r)
+            grouping = tuple(r[tb.index(c.value)] for c in self.columns)
+            return (grouping, r)
         ctx.rdd = ctx.rdd.map(_group_by)
 
 

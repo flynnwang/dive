@@ -11,9 +11,11 @@ from dive.models import Integer, String
 
 class UserTable(Table):
     # order matters
-    id = Integer()
-    name = String()
-    age = Integer()
+    columns = (
+        ('id', Integer()),
+        ('name', String()),
+        ('age', Integer()),
+    )
 
     def __init__(self, paths):
         name = "user"
@@ -36,7 +38,7 @@ class DiveTestBase(unittest.TestCase):
 
     def _read_csv(self, filepath):
         with open(filepath, 'r') as f:
-            rows = [[int(l[0]), l[1], int(l[2])] for l in csv.reader(f)]
+            rows = tuple((int(l[0]), l[1], int(l[2])) for l in csv.reader(f))
         return rows
 
     def _execute_query(self, sql):

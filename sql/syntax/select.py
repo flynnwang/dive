@@ -41,8 +41,8 @@ class SelectExpr(Node):
 
     def _apply_where(self, ctx):
         def _map(r):
-            return [r[idx] for idx in
-                    self.select_list.column_indexes]
+            return tuple(r[idx] for idx in
+                         self.select_list.column_indexes)
         ctx.rdd = ctx.rdd.map(_map)
 
     def _apply_groupby(self, ctx):
@@ -52,18 +52,18 @@ class SelectExpr(Node):
         selected = self.select_list.selected
 
         def create_combiner(r):
-            return [f.create(r[tb.index(f.value)])
-                    for f, v in izip(selected, r)]
+            return tuple(f.create(r[tb.index(f.value)])
+                         for f, v in izip(selected, r))
 
         def merge_value(c, v):
             return merge_combiner(c, create_combiner(v))
 
         def merge_combiner(c1, c2):
-            return [f.merge(v1, v2)
-                    for f, v1, v2 in izip(selected, c1, c2)]
+            return tuple(f.merge(v1, v2)
+                         for f, v1, v2 in izip(selected, c1, c2))
 
         def make_result((k, r)):
-            return [f.result(v) for f, v in izip(selected, r)]
+            return tuple(f.result(v) for f, v in izip(selected, r))
 
         agg = Aggregator(create_combiner, merge_value, merge_combiner)
         ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result)

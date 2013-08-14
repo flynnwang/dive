@@ -19,39 +19,39 @@ class SelectMultiOrWhereTest(SelectTestBase):
     sql = "select id, name, age from user where id <= 1 or id >= 25"
 
     def expected_select_result(self):
-        return [r for r in self.rows if r[0] <= 1 or r[0] >= 25]
+        return tuple(r for r in self.rows if r[0] <= 1 or r[0] >= 25)
 
 
 class SelectMultiAndWhereTest(SelectTestBase):
     sql = "select id, name, age from user where id >=1 and id <= 3"
 
     def expected_select_result(self):
-        return [r for r in self.rows if 1 <= r[0] <= 3]
+        return tuple(r for r in self.rows if 1 <= r[0] <= 3)
 
 
 class SelectAndThenOrTest(SelectTestBase):
     sql = "select id, name, age from user where id >=1 and id <= 3 or id >= 20"
 
     def expected_select_result(self):
-        return [r for r in self.rows if 1 <= r[0] <= 3 or r[0] >= 20]
+        return tuple(r for r in self.rows if 1 <= r[0] <= 3 or r[0] >= 20)
 
 
 class SelectNotTest(SelectTestBase):
     sql = "select id, name, age from user where not id >= 3"
 
     def expected_select_result(self):
-        return [r for r in self.rows if not r[0] >= 3]
+        return tuple(r for r in self.rows if not r[0] >= 3)
 
 
 class SelectTripleConditionTest(SelectTestBase):
     sql = "select id, name, age from user where id=1 or id=2 or id=3"
 
     def expected_select_result(self):
-        return [r for r in self.rows if r[0] in (1, 2, 3)]
+        return tuple(r for r in self.rows if r[0] in (1, 2, 3))
 
 
 class ParenCondtionsTest(SelectTestBase):
     sql = "select id, name, age from user where name='a' and (id=1 or id=3) "
 
     def expected_select_result(self):
-        return [r for r in self.rows if r[0] in (1, 3) and r[1] is 'a']
+        return tuple(r for r in self.rows if r[0] in (1, 3) and r[1] is 'a')

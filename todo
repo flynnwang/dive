@@ -1,5 +1,6 @@
 TODO
 ----
+D remove parsing lr conflit
 
 F use virtualenv (for pip dump)
 

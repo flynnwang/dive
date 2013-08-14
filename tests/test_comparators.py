@@ -6,7 +6,7 @@ class LessThanCompTest(SelectTestBase):
     sql = 'select id, name, age from user where name < "c"'
 
     def expected_select_result(self):
-        return [r for r in self.rows if r[1] < 'c']
+        return tuple(r for r in self.rows if r[1] < 'c')
 
 
 class LessThanOrEqualCompTest(SelectTestBase):
@@ -17,7 +17,7 @@ class LessThanOrEqualCompTest(SelectTestBase):
         assert '<=' == lte[-2]
 
     def expected_select_result(self):
-        return [r for r in self.rows if r[1] <= 'c']
+        return tuple(r for r in self.rows if r[1] <= 'c')
 
 
 class GreaterThanOrEqualCompTest(SelectTestBase):
@@ -28,18 +28,18 @@ class GreaterThanOrEqualCompTest(SelectTestBase):
         assert '>=' == gt[-2]
 
     def expected_select_result(self):
-        return [r for r in self.rows if r[1] >= 'y']
+        return tuple(r for r in self.rows if r[1] >= 'y')
 
 
 class GreaterThanCompTest(SelectTestBase):
     sql = 'select id, name, age from user where name > "y"'
 
     def expected_select_result(self):
-        return [r for r in self.rows if r[1] > 'y']
+        return tuple(r for r in self.rows if r[1] > 'y')
 
 
 class LikeCompTest(SelectTestBase):
     sql = 'select id, name, age from user where name like "[a-c]"'
 
     def expected_select_result(self):
-        return [r for r in self.rows if 'a' <= r[1] <= 'c']
+        return tuple(r for r in self.rows if 'a' <= r[1] <= 'c')

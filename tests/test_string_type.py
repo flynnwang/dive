@@ -14,7 +14,7 @@ class StringEqualCompTest(SelectTestBase):
         assert expected == tokens[-1]
 
     def expected_select_result(self):
-        return [r for r in self.rows if r[1] == 'c']
+        return tuple(r for r in self.rows if r[1] == 'c')
 
 
 class SingleQuoteStringCompTest(DiveTestBase):

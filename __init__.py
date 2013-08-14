@@ -11,28 +11,14 @@ optParser.add_option("-s")   # "option used for py.test"
 optParser.add_option("-x")
 
 
-class TableMeta(type):
-
-    def __call__(cls, *args, **kwargs):
-        obj = type.__call__(cls, *args, **kwargs)
-
-        if not hasattr(obj, 'columns'):
-            columns = sorted(((n, c) for n, c in inspect.getmembers(cls) 
-                             if isinstance(c, Model)), 
-                             key=lambda (n, c): id(c))
-            obj.columns = OrderedDict(columns)
-        return obj
-
-
 class Table(object):
 
-    __metaclass__ = TableMeta
+    columns = ()
 
-    def __init__(self, name, paths=[], columns=None, query=None):
+    def __init__(self, name, paths=None, columns=None, query=None):
         self.name = name
-        if columns:
-            self.columns = OrderedDict(columns)
-        self.paths = paths
+        self.columns = OrderedDict(columns or self.__class__.columns)
+        self.paths = paths or []
         self.query = query
 
     def index(self, field):
@@ -59,7 +45,7 @@ class Table(object):
         if outfile:
             rdd.saveAsCSVFile(outfile.filedir)
             return outfile.filedir
-        return rdd.collect()
+        return tuple(rdd.collect())
 
 
 class Schema(object):
