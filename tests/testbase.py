@@ -6,13 +6,14 @@ import unittest
 import csv
 from dive import Table, Schema, Query
 from dive.sql.lexer import lex
+from dive.models import Integer, String
 
 
 class UserTable(Table):
 
     def __init__(self, paths):
         name = "user"
-        fields = [("id", int), ("name", str), ("age", int)]
+        fields = [("id", Integer()), ("name", String()), ("age", Integer())]
         Table.__init__(self, name, fields, paths)
 
 

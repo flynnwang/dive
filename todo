@@ -1,26 +1,21 @@
 TODO
 ----
-
+F date support
+F datetime support
+F float number support
 
 R TODO strip agg function
 
 F datamodel should be aggreatable
 
-F date support
-F datetime support
-F float number support
-
 R better list value support
 F numeric condition expression support
 F record tokens for debug
 
-
-
 F column alias
-- table alias
+F table alias
 
-## defact
-D how to resolve limit & outfile confilt
+## defact (D)
 
 ## util & dev
 F use virtualenv (for pip dump)
@@ -33,6 +28,8 @@ F use virtualenv (for pip dump)
 
 DONE
 ----
+D how to resolve limit & outfile confilt
+
 R favor parse() to do parsing
 R name and module clean
 R move common logic into node.py

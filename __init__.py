@@ -25,7 +25,7 @@ class Table(object):
             return self.query.rdd
 
         def coercion(r):
-            return [conv(r[i]) for i, conv
+            return [m.cast(r[i]) for i, m
                     in enumerate(self.columns.values())]
         return dpark.union([dpark.csvFile(p) for p in self.paths])\
                     .map(coercion)
@@ -33,14 +33,14 @@ class Table(object):
     def collect(self):
         rdd = self.query.rdd
 
+        limit = self.query.select.limit
+        if limit:
+            rdd = self.query.dpark.makeRDD(rdd.take(limit.value))
+        
         outfile = self.query.select.outfile
         if outfile:
             rdd.saveAsCSVFile(outfile.filedir)
-            return
-
-        limit = self.query.select.limit
-        if limit:
-            return rdd.take(limit.value)
+            return outfile.filedir
         return rdd.collect()
 
 
