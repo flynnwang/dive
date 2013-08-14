@@ -7,7 +7,7 @@ class Model(object):
 
     def cast(self, s):
         raise NotImplementedError()
-        
+
 
 class String(Model):
 
@@ -25,7 +25,7 @@ class Float(Model):
 
     def cast(self, s):
         return float(s)
-        
+
 
 class Date(Model):
 

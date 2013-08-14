@@ -1,19 +1,37 @@
 # -*- coding: utf-8 -*-
 
 import uuid
+import inspect
 from dpark import DparkContext, optParser
 from sql.parser import parse
 from collections import OrderedDict
+from models import Model
 
 optParser.add_option("-s")   # "option used for py.test"
 optParser.add_option("-x")
 
 
+class TableMeta(type):
+
+    def __call__(cls, *args, **kwargs):
+        obj = type.__call__(cls, *args, **kwargs)
+
+        if not hasattr(obj, 'columns'):
+            columns = sorted(((n, c) for n, c in inspect.getmembers(cls) 
+                             if isinstance(c, Model)), 
+                             key=lambda (n, c): id(c))
+            obj.columns = OrderedDict(columns)
+        return obj
+
+
 class Table(object):
 
-    def __init__(self, name, columns, paths=[], query=None):
+    __metaclass__ = TableMeta
+
+    def __init__(self, name, paths=[], columns=None, query=None):
         self.name = name
-        self.columns = OrderedDict(columns)
+        if columns:
+            self.columns = OrderedDict(columns)
         self.paths = paths
         self.query = query
 
@@ -36,7 +54,7 @@ class Table(object):
         limit = self.query.select.limit
         if limit:
             rdd = self.query.dpark.makeRDD(rdd.take(limit.value))
-        
+
         outfile = self.query.select.outfile
         if outfile:
             rdd.saveAsCSVFile(outfile.filedir)
@@ -71,7 +89,7 @@ class Query(object):
 
         name = str(uuid.uuid4())
         columns = self.select.select_list.column_defs(self.table)
-        self.result_table = Table(name, columns, query=self)
+        self.result_table = Table(name, columns=columns, query=self)
 
         self.select.visit(self)
 

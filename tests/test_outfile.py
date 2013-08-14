@@ -28,7 +28,7 @@ class OutfileTest(DiveTestBase):
 
         results = [self._read_csv(os.path.join(self.outfile, f))
                    for f in os.listdir(self.outfile)]
-        results = reduce(lambda x, y: x+y, results)
+        results = reduce(lambda x, y: x + y, results)
         expected = self._expected()
 
         assert len(expected) == len(results)

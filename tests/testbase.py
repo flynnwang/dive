@@ -10,11 +10,14 @@ from dive.models import Integer, String
 
 
 class UserTable(Table):
+    # order matters
+    id = Integer()
+    name = String()
+    age = Integer()
 
     def __init__(self, paths):
         name = "user"
-        fields = [("id", Integer()), ("name", String()), ("age", Integer())]
-        Table.__init__(self, name, fields, paths)
+        Table.__init__(self, name, paths)
 
 
 class DiveTestBase(unittest.TestCase):

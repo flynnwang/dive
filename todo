@@ -1,31 +1,30 @@
 TODO
 ----
-F float number support
 
-R TODO strip agg function
+F use virtualenv (for pip dump)
+
+R strip agg function into productions
 
 F datamodel should be aggreatable
 
-R better list value support
-F numeric condition expression support
-F record tokens for debug
+F numeric condition expression support (e.g. field > 5.6)
+
+F? record tokens for debug
 
 F column alias
 F table alias
 
-## defact (D)
+F README
 
-## util & dev
-F use virtualenv (for pip dump)
-
-## JOIN related:
-- multiple table support
-
-
+## features
+- simple join (left, inner, outer)
+- normal multiple table support (like mysql)
 
 
 DONE
 ----
+F easier table definition
+F float number support
 F time, datetime support
 F date support
 D how to resolve limit & outfile confilt
