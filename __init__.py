@@ -13,6 +13,7 @@ optParser.add_option("-x")
 
 class Table(object):
 
+    dialect = "excel"
     columns = ()
 
     def __init__(self, name, paths=None, columns=None, query=None):
@@ -31,8 +32,8 @@ class Table(object):
         def coercion(r):
             return [m.cast(r[i]) for i, m
                     in enumerate(self.columns.values())]
-        return dpark.union([dpark.csvFile(p) for p in self.paths])\
-                    .map(coercion)
+        return dpark.union([dpark.csvFile(p, dialect=self.dialect)
+                           for p in self.paths]).map(coercion)
 
     def collect(self):
         rdd = self.query.rdd
