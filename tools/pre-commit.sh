@@ -5,8 +5,7 @@
 
 git stash -q --keep-index
 
-echo 'run tests...'
-fab test
+py.test -qxvs tests/*.py
 RESULT=$?
 
 git stash pop -q

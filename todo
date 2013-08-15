@@ -1,8 +1,5 @@
 TODO
 ----
-D remove parsing lr conflit
-
-F use virtualenv (for pip dump)
 
 F count(*)
 R strip agg function into productions
@@ -25,6 +22,9 @@ F README
 
 DONE
 ----
+F use virtualenv (for pip dump)
+D remove parsing lr conflit
+
 F easier table definition
 F float number support
 F time, datetime support
