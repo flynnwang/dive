@@ -10,6 +10,7 @@ def build():
     pg = ParserGenerator(TOKENS, cache_id="sql_parser")
     for prod, cls in gen_productions(select_bnf, node_classes):
         pg.production(prod)(cls.production)
+        #print prod
 
     @pg.error
     def error_handler(token):

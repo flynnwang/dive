@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+#import warnings
+#warnings.filterwarnings("ignore")
+
 import rply
 from string import capitalize
 from collections import defaultdict
@@ -13,7 +16,8 @@ TOKENS = {
     'OPEN_BRACE': r'{',     # one or more
     'CLOSE_BRACE': r'}',
     'COLON': r':',
-    'SEMICOLON': r';'
+    'SEMICOLON': r';',
+    'END': r'[$]',
 }
 
 lexer_gen = rply.LexerGenerator()
@@ -138,14 +142,15 @@ productions = (
     ('item_list : item', ItemList),
     ('item_list : item_list item', ItemList),
 
-    ('item : ', EmptyItem),
+    ('item : END', EmptyItem),
     ('item : IDENT', Identifier),
     ('item : OPEN_BRACKET alternatives CLOSE_BRACKET', OptionalItems),
     ('item : OPEN_BRACE alternatives CLOSE_BRACE', RepetitiveItems),
 )
 
 
-parser_gen = rply.ParserGenerator(TOKENS.keys(), cache_id="bnf_parser")
+parser_gen = rply.ParserGenerator(TOKENS.keys(),
+                                  cache_id="bnf_parser")
 for prod, cls in productions:
     parser_gen.production(prod)(cls.production)
 

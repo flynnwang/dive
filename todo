@@ -4,6 +4,7 @@ D remove parsing lr conflit
 
 F use virtualenv (for pip dump)
 
+F count(*)
 R strip agg function into productions
 
 F datamodel should be aggreatable

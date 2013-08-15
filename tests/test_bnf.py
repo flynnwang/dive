@@ -48,7 +48,7 @@ class BNFParserTest(unittest.TestCase):
         assert repetitives.alternatives[0][1].value == "B"
 
     def test_empty_item(self):
-        bnf = self._parse("S : ;")
+        bnf = self._parse("S : $;")
 
         assert bnf[0].ident.value == "S"
         assert bnf[0].alternatives[0][0].value == ""
@@ -121,8 +121,3 @@ class BNFGenerationTest(unittest.TestCase):
         assert ("item_1 : ", NodeList) == prods[3]
         assert ("select_list : asterisk", "SelectList") == prods[4]
 
-    def test_empty_item(self):
-        prods = self._gen("S : ;")
-
-        assert 1 == len(prods)
-        assert ("S : ", "S") == prods[0]
