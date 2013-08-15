@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-
 import pytest
 from os.path import dirname, abspath, join
 import unittest

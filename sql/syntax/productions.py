@@ -14,7 +14,7 @@ from clauses import *
 from functions import *
 from predicate import *
 from datamodel import *
-    #grouping_column_list: column { COMMA column };
+
 
 select_bnf = """
     select_expr: SELECT select_list [outfile_clause] FROM table_name

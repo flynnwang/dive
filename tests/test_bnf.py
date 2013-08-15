@@ -98,4 +98,5 @@ class BNFGenerationTest(unittest.TestCase):
 
         assert 2 == len(prods)
         assert ("select_list : asterisk", "SelectList") == prods[1]
-        assert ("select_list : select_list comma sublist", "SelectList") == prods[0]
+        assert ("select_list : select_list comma sublist",
+                "SelectList") == prods[0]

@@ -9,12 +9,8 @@ class SearchCondition(ProxyNode):
 
 class BooleanValueExpr(NodeList):
 
-    @property
-    def terms(self):
-        return self
-
     def visit(self, ctx):
-        funcs = [t.visit(ctx) for t in self.terms]
+        funcs = [t.visit(ctx) for t in self]
 
         def or_(r):
             return any(f(r) for f in funcs)
@@ -23,12 +19,8 @@ class BooleanValueExpr(NodeList):
 
 class BooleanTerm(NodeList):
 
-    @property
-    def factors(self):
-        return self
-
     def visit(self, ctx):
-        funcs = [t.visit(ctx) for t in self.factors]
+        funcs = [t.visit(ctx) for t in self]
 
         def and_(r):
             return all(f(r) for f in funcs)
