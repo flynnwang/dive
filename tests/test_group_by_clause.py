@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import pytest
 from testbase import SelectTestBase, DiveTestBase
 from itertools import groupby
 from dive.sql.parser import parse
@@ -7,6 +8,14 @@ from dive.sql.parser import parse
 
 class CountFuncTest(SelectTestBase):
     sql = "select count(id) from user"
+
+    def expected_select_result(self):
+        return ((len(self.rows), ), )
+
+
+@pytest.skip
+class CountAsterickTest(SelectTestBase):
+    sql = "select count(*) from user"
 
     def expected_select_result(self):
         return ((len(self.rows), ), )

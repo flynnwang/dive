@@ -15,6 +15,12 @@ def test(opt="qsx"):
     local("py.test %s tests/*.py" % opt)
 
 
+def testone(case="SelectWhereTest", opt="qxv"):
+    if opt:
+        opt = "-" + opt
+    local("py.test %s tests/*.py -k %s" % (opt, case))
+
+
 def pep8():
     local("find . | grep py$ | xargs autopep8 --in-place")
 
