@@ -16,7 +16,7 @@ class Node(object):
         return node
 
     def visit(self, ctx):
-        pass
+        self.ctx = ctx
 
     def __repr__(self):
         return "<%s>" % self.__class__.__name__
@@ -40,6 +40,7 @@ class NodeList(Node, list):
         super(NodeList, self).__init__()
 
     def visit(self, ctx):
+        Node.visit(self, ctx)
         return [nd.visit(ctx) for nd in self]
 
     @property
@@ -60,6 +61,7 @@ class OptionalNode(Node):
         self.nodes = nodes
 
     def visit(self, ctx):
+        Node.visit(self, ctx)
         for nd in self.nodes:
             nd.visit(ctx)
 
@@ -87,6 +89,7 @@ class ProxyNode(Node):
         return self.node.value
 
     def visit(self, ctx):
+        Node.visit(self, ctx)
         return self.node.visit(ctx)
 
     def __getattribute__(self, name):
@@ -102,6 +105,7 @@ class ProxyNode(Node):
                              self.node.__class__.__name__)
 
 
+# TODO split tokennode and proxynode
 class TokenNode(ProxyNode):
 
     def __init__(self, token):
@@ -110,3 +114,10 @@ class TokenNode(ProxyNode):
     @property
     def token(self):
         return self.node
+
+    def visit(self, ctx):
+        return Node.visit(self, ctx)
+
+    @property
+    def value(self):
+        return self.token.value

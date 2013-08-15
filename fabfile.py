@@ -15,7 +15,7 @@ def test(opt="qsx"):
     local("py.test %s tests/*.py" % opt)
 
 
-def testone(case="SelectWhereTest", opt="qxv"):
+def testone(case="SelectWhereTest", opt="sxv"):
     if opt:
         opt = "-" + opt
     local("py.test %s tests/*.py -k %s" % (opt, case))

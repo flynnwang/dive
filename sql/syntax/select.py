@@ -52,7 +52,7 @@ class SelectExpr(Node):
         selected = self.select_list.selected
 
         def create_combiner(r):
-            return tuple(f.create(r[tb.index(f.value)])
+            return tuple(f.create(r)
                          for f, v in izip(selected, r))
 
         def merge_value(c, v):
@@ -104,6 +104,9 @@ class Column(TokenNode, Aggregatable, Valueable):
     def name(self):
         return self.token.value
 
+    def create(self, r):
+        return r[self.ctx.table.index(self.name)]
+
 
 class Selectable(object):
 
@@ -123,7 +126,7 @@ class SelectList(ProxyNode):
 
 
 # TODO: multi-table support
-class Asterisk(TokenNode, Selectable):
+class Asterisk(TokenNode, Selectable, Aggregatable):
 
     @property
     def column_indexes(self):
@@ -138,6 +141,10 @@ class Asterisk(TokenNode, Selectable):
 
     def visit(self, ctx):
         self.tb = ctx.table
+        TokenNode.visit(self, ctx)
+
+    def create(self, r):
+        return r
 
 
 # TODO: assume only column or agg func
@@ -162,6 +169,7 @@ class SelectSublist(NodeList, Selectable):
         return self
 
     def visit(self, ctx):
+        NodeList.visit(self, ctx)
         self.tb = ctx.table
 
 

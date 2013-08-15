@@ -11,6 +11,7 @@ class Valueable(object):
 
     @property
     def value(self):
+        # TODO: do we need it?
         raise NotImplementedError("should provide a value")
 
 

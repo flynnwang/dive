@@ -15,6 +15,9 @@ class Aggregatable(object):
     def result(self, v):
         return v
 
+    def arg(self, r):
+        return r
+
 
 class AttributeFunction(Node, Valueable):
 
@@ -41,10 +44,15 @@ class AttributeFunction(Node, Valueable):
     def name(self):
         return self._token.value
 
+    def visit(self, ctx):
+        self.tb = ctx.table
+        self.column.visit(ctx)
+
 
 class CountFunction(AttributeFunction, Aggregatable):
 
-    def create(self, v):
+    def create(self, r):
+        v = self.column.create(r)
         return v is not None and 1 or 0
 
     def merge(self, v1, v2):
