@@ -25,6 +25,13 @@ class FunctionArgument(ProxyNode):
 
 class AttributeFunction(Node, Valueable):
 
+    @classmethod
+    def parse(cls, tokens):
+        func = tokens[0].value
+        if func not in funcs:
+            raise Exception("No attibute function found: %s" % func)
+        return funcs[func](tokens[0], tokens[2])
+
     @property
     def is_agg_func(self):
         return True
@@ -32,13 +39,6 @@ class AttributeFunction(Node, Valueable):
     def __init__(self, token, argument):
         self._token = token
         self.argument = argument
-
-    @classmethod
-    def parse(cls, tokens):
-        func = tokens[0].value
-        if func not in funcs:
-            raise Exception("No attibute function found: %s" % func)
-        return funcs[func](tokens[0], tokens[2])
 
     @property
     def value(self):

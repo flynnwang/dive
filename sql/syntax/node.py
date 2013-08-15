@@ -16,7 +16,7 @@ class Node(object):
         return node
 
     def visit(self, ctx):
-        self.ctx = ctx
+        pass
 
     def __repr__(self):
         return "<%s>" % self.__class__.__name__
@@ -116,6 +116,7 @@ class TokenNode(ProxyNode):
         return self.node
 
     def visit(self, ctx):
+        self.tb = ctx.table
         return Node.visit(self, ctx)
 
     @property
