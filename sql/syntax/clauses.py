@@ -44,7 +44,7 @@ class GroupByClause(Clause):
 
     @classmethod
     def parse(cls, prods):
-        return cls(prods[2].nodes)
+        return cls(prods[2])
 
     def __init__(self, columns):
         self.columns = columns
@@ -83,13 +83,13 @@ class OrderByClause(Clause):
 
             def __le__(self, other):
                 comp = [cmp(u, v) * spec.ordering for u, v, spec in
-                        izip(self.keys, other.keys, sort_spec.nodes)]
+                        izip(self.keys, other.keys, sort_spec)]
                 return comp <= [0] * len(comp)
 
             @property
             def keys(self):
                 return (self.r[tb.index(spec.column.value)]
-                        for spec in sort_spec.nodes)
+                        for spec in sort_spec)
 
         ctx.rdd = ctx.rdd.map(lambda r: Ordered(r))\
                      .sort().map(lambda o: o.r)

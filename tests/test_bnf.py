@@ -38,15 +38,6 @@ class BNFParserTest(unittest.TestCase):
         assert bnf[0].ident.value == "main"
         assert bnf[0].alternatives[0][0].alternatives[0][0].value == "A"
 
-    def test_repetitive_items(self):
-        bnf = self._parse("main : {A B};")
-
-        assert bnf[0].ident.value == "main"
-
-        repetitives = bnf[0].alternatives[0][0]
-        assert repetitives.alternatives[0][0].value == "A"
-        assert repetitives.alternatives[0][1].value == "B"
-
     def test_empty_item(self):
         bnf = self._parse("S : $;")
 
@@ -94,15 +85,6 @@ class BNFGenerationTest(unittest.TestCase):
         assert ("item_1 : A", OptionalNode) == prods[1]
         assert ("item_1 : ", OptionalNode) == prods[2]
 
-    def test_repetitive_items(self):
-        prods = self._gen("S : {A};")
-
-        assert 4 == len(prods)
-        assert ("S : item_1", "S") == prods[0]
-        assert ("item_1 : item_1 A", NodeList) == prods[1]
-        assert ("item_1 : A", NodeList) == prods[2]
-        assert ("item_1 : ", NodeList) == prods[3]
-
     def test_prod_with_alternatives(self):
         prods = self._gen("S : A | B;")
 
@@ -111,13 +93,9 @@ class BNFGenerationTest(unittest.TestCase):
         assert ("S : A", "S") == prods[1]
 
     def test_select_list(self):
-        prod = "select_list : asterisk | sublist { comma sublist };"
+        prod = "select_list : asterisk | select_list comma sublist;"
         prods = self._gen(prod)
 
-        assert 5 == len(prods)
-        assert ("select_list : sublist item_1", "SelectList") == prods[0]
-        assert ("item_1 : item_1 comma sublist", NodeList) == prods[1]
-        assert ("item_1 : comma sublist", NodeList) == prods[2]
-        assert ("item_1 : ", NodeList) == prods[3]
-        assert ("select_list : asterisk", "SelectList") == prods[4]
-
+        assert 2 == len(prods)
+        assert ("select_list : asterisk", "SelectList") == prods[1]
+        assert ("select_list : select_list comma sublist", "SelectList") == prods[0]

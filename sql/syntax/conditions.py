@@ -11,7 +11,7 @@ class BooleanValueExpr(NodeList):
 
     @property
     def terms(self):
-        return self.nodes
+        return self
 
     def visit(self, ctx):
         funcs = [t.visit(ctx) for t in self.terms]
@@ -25,7 +25,7 @@ class BooleanTerm(NodeList):
 
     @property
     def factors(self):
-        return self.nodes
+        return self
 
     def visit(self, ctx):
         funcs = [t.visit(ctx) for t in self.factors]

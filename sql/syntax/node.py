@@ -24,9 +24,7 @@ class Node(object):
 
 class NodeList(Node, list):
 
-    """ I : ;
-        I : A;
-        I : I A;"""
+    """ I : A | I A; """
 
     @classmethod
     def parse(cls, tokens):
@@ -42,22 +40,16 @@ class NodeList(Node, list):
         super(NodeList, self).__init__()
 
     def visit(self, ctx):
-        for nd in self:
-            nd.visit(ctx)
-
-    @property
-    def nodes(self):
-        return [self[0]] + self[1]
+        return [nd.visit(ctx) for nd in self]
 
     @property
     def value(self):
-        return [self[0].value] + [v.value for v in self[1]]
+        return [v.value for v in self]
 
 
 class OptionalNode(Node):
 
-    """ I : ;
-        I : A; """
+    """ I :  | A; """
 
     @classmethod
     def parse(cls, tokens):

@@ -4,7 +4,9 @@ from fabric.api import local
 
 
 def test(options=""):
-    local("py.test -%sx tests/*.py" % options)
+    if options:
+        options = "-" + options
+    local("py.test %s tests/*.py" % options)
 
 
 def pep8():

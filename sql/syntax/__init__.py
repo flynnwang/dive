@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#import warnings
-#warnings.filterwarnings("ignore")
-
 import rply
 from string import capitalize
 from collections import defaultdict
@@ -13,8 +10,6 @@ TOKENS = {
     'OPEN_BRACKET': r'\[',  # optinal
     'CLOSE_BRACKET': r'\]',
     'OR': r'\|',
-    'OPEN_BRACE': r'{',     # one or more
-    'CLOSE_BRACE': r'}',
     'COLON': r':',
     'SEMICOLON': r';',
     'END': r'[$]',
@@ -60,12 +55,10 @@ class Alternatives(NodeList):
 
 
 class ItemList(NodeList):
-
-    def visit(self, ctx):
-        return [it.visit(ctx) for it in self]
+    pass
 
 
-class SurroundItems(Node):
+class OptionalItems(Node):
 
     @classmethod
     def parse(cls, tokens):
@@ -75,26 +68,11 @@ class SurroundItems(Node):
         Node.__init__(self)
         self.alternatives = alternatives
 
-
-class OptionalItems(SurroundItems):
-
     def visit(self, ctx):
         self.value = ctx.register_cls(OptionalNode)
         ctx.append(self.value, [], OptionalNode)
         for a in self.alternatives:
             ctx.append(self.value, a.visit(ctx), OptionalNode)
-        return self.value
-
-
-class RepetitiveItems(SurroundItems):
-
-    def visit(self, ctx):
-        self.value = ctx.register_cls(NodeList)
-        ctx.append(self.value, [], NodeList)
-        for a in self.alternatives:
-            values = a.visit(ctx)
-            ctx.append(self.value, values, NodeList)
-            ctx.append(self.value, [self.value] + values, NodeList)
         return self.value
 
 
@@ -145,7 +123,6 @@ productions = (
     ('item : END', EmptyItem),
     ('item : IDENT', Identifier),
     ('item : OPEN_BRACKET alternatives CLOSE_BRACKET', OptionalItems),
-    ('item : OPEN_BRACE alternatives CLOSE_BRACE', RepetitiveItems),
 )
 
 

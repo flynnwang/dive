@@ -14,6 +14,7 @@ from clauses import *
 from functions import *
 from predicate import *
 from datamodel import *
+    #grouping_column_list: column { COMMA column };
 
 select_bnf = """
     select_expr: SELECT select_list [outfile_clause] FROM table_name
@@ -24,7 +25,7 @@ select_bnf = """
 
     select_list: asterisk | select_sublist;
 
-    select_sublist: derived_column { COMMA derived_column }; 
+    select_sublist: derived_column | select_sublist COMMA derived_column;
     
     derived_column: value_expr;
 
@@ -34,12 +35,12 @@ select_bnf = """
 
     group_by_clause: GROUP BY grouping_column_list;
 
-    grouping_column_list: column { COMMA column };
+    grouping_column_list: column | grouping_column_list COMMA column;
 
 
     order_by_clause: ORDER BY sort_spec_list;
 
-    sort_spec_list: ordering_spec { COMMA ordering_spec };
+    sort_spec_list: ordering_spec | sort_spec_list COMMA ordering_spec;
 
     ordering_spec: column | column ASC | column DESC;
 
@@ -54,9 +55,9 @@ select_bnf = """
     limit_clause: LIMIT NUMBER;
 
 
-    boolean_value_expr: boolean_term { OR boolean_term };
+    boolean_value_expr: boolean_term | boolean_value_expr OR boolean_term;
 
-    boolean_term: boolean_factor { AND boolean_factor };
+    boolean_term: boolean_factor | boolean_term AND boolean_factor;
 
     boolean_factor: [ NOT ] boolean_primary;
 
@@ -73,7 +74,7 @@ select_bnf = """
 
     in_predicate_value: LEFT_PAREN in_value_list RIGHT_PAREN;
 
-    in_value_list: value_expr { COMMA value_expr };
+    in_value_list: value_expr | in_value_list  COMMA value_expr;
 
     comparison_predicate: value_expr comparator value_expr;
 
