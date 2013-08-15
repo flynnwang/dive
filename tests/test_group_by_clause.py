@@ -13,7 +13,6 @@ class CountFuncTest(SelectTestBase):
         return ((len(self.rows), ), )
 
 
-@pytest.skip
 class CountAsterickTest(SelectTestBase):
     sql = "select count(*) from user"
 

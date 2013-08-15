@@ -80,4 +80,4 @@ class Query(object):
 
         self.select.visit(self)
 
-        return self.result_table
+        return self.result_table.collect()

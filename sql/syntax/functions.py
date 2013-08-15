@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from node import Node
+from node import Node, ProxyNode
 from datamodel import Valueable
 
 
 class Aggregatable(object):
 
     def create(self, v):
-        return v
+        return self.arg(v)
 
     def merge(self, v1, v2):
         return v1
@@ -19,15 +19,19 @@ class Aggregatable(object):
         return r
 
 
+class FunctionArgument(ProxyNode):
+    pass
+
+
 class AttributeFunction(Node, Valueable):
 
     @property
     def is_agg_func(self):
         return True
 
-    def __init__(self, token, column):
+    def __init__(self, token, argument):
         self._token = token
-        self.column = column
+        self.argument = argument
 
     @classmethod
     def parse(cls, tokens):
@@ -38,21 +42,22 @@ class AttributeFunction(Node, Valueable):
 
     @property
     def value(self):
-        return self.column.value
+        return self.argument.value
 
     @property
     def name(self):
         return self._token.value
 
     def visit(self, ctx):
+        Node.visit(self, ctx)
         self.tb = ctx.table
-        self.column.visit(ctx)
+        self.argument.visit(ctx)
 
 
 class CountFunction(AttributeFunction, Aggregatable):
 
     def create(self, r):
-        v = self.column.create(r)
+        v = self.argument.arg(r)
         return v is not None and 1 or 0
 
     def merge(self, v1, v2):
@@ -64,7 +69,8 @@ class CountFunction(AttributeFunction, Aggregatable):
 
 class SumFunction(AttributeFunction, Aggregatable):
 
-    def create(self, v):
+    def create(self, r):
+        v = self.argument.arg(r)
         return v
 
     def merge(self, v1, v2):
@@ -76,7 +82,8 @@ class SumFunction(AttributeFunction, Aggregatable):
 
 class AverageFunction(AttributeFunction, Aggregatable):
 
-    def create(self, v):
+    def create(self, r):
+        v = self.argument.arg(r)
         return (1, v)
 
     def merge(self, (c1, s1), (c2, s2)):

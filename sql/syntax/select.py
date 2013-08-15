@@ -104,7 +104,7 @@ class Column(TokenNode, Aggregatable, Valueable):
     def name(self):
         return self.token.value
 
-    def create(self, r):
+    def arg(self, r):
         return r[self.ctx.table.index(self.name)]
 
 
@@ -137,7 +137,11 @@ class Asterisk(TokenNode, Selectable, Aggregatable):
 
     @property
     def selected(self):
-        return [Column(Token('column', c)) for c in self.tb.columns.keys()]
+        # TODO bad design
+        columns = [Column(Token('column', c)) for c in self.tb.columns.keys()]
+        for c in columns:
+            c.ctx = self.ctx
+        return columns
 
     def visit(self, ctx):
         self.tb = ctx.table

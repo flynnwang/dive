@@ -1,14 +1,11 @@
 TODO
 ----
 
-F count(*)
 R strip agg function into productions
 
 F datamodel should be aggreatable
 
 F numeric condition expression support (e.g. field > 5.6)
-
-F? record tokens for debug
 
 F column alias
 F table alias
@@ -22,6 +19,7 @@ F README
 
 DONE
 ----
+F count(*)
 F use virtualenv (for pip dump)
 D remove parsing lr conflit
 

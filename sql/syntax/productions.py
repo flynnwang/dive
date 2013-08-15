@@ -82,7 +82,10 @@ select_bnf = """
     value_expr_primary: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
 
 
-    attribute_function: IDENTIFIER LEFT_PAREN column RIGHT_PAREN;
+    attribute_function: IDENTIFIER LEFT_PAREN function_argument RIGHT_PAREN;
+
+    function_argument: column | asterisk;
+
 
     value_expr: string
               | number 
