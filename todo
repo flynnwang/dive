@@ -12,6 +12,8 @@ F table alias
 
 F README
 
+R better test data 
+
 ## features
 - simple join (left, inner, outer)
 - normal multiple table support (like mysql)

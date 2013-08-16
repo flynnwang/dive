@@ -50,8 +50,12 @@ class BooleanPrimary(ProxyNode):
 
 
 class ValueExprPrimary(ProxyNode):
-    NODE_INDEX = 1
+    pass
 
 
 class ValueExpr(ProxyNode):
     pass
+
+
+class ParenedValueExpr(ProxyNode):
+    NODE_INDEX = 1

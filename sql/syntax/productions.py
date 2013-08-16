@@ -27,7 +27,7 @@ select_bnf = """
 
     select_sublist: derived_column | select_sublist COMMA derived_column;
     
-    derived_column: value_expr;
+    derived_column: value_expr_primary;
 
 
     outfile_clause: INTO OUTFILE string;
@@ -68,32 +68,36 @@ select_bnf = """
              | in_predicate
              | like_predicate;
 
-    like_predicate: column [ NOT ] LIKE value_expr;
+    like_predicate: column [ NOT ] LIKE value_expr_primary;
 
     in_predicate: column [ NOT ] IN in_predicate_value;
 
     in_predicate_value: LEFT_PAREN in_value_list RIGHT_PAREN;
 
-    in_value_list: value_expr | in_value_list  COMMA value_expr;
+    in_value_list: value_expr_primary 
+        | in_value_list  COMMA value_expr_primary;
 
-    comparison_predicate: value_expr comparator value_expr;
+    comparison_predicate: value_expr_primary comparator value_expr_primary;
+
+    comparator: EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL
+              | GREATER_THAN | GREATER_THAN_OR_EQUAL;
 
 
-    value_expr_primary: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
+    value_expr: boolean_value_expr;
+
+    value_expr_primary: parened_value_expr
+        | string
+        | number
+        | column
+        | attribute_function;
+
+    parened_value_expr: LEFT_PAREN value_expr RIGHT_PAREN;
 
 
     attribute_function: IDENTIFIER LEFT_PAREN function_argument RIGHT_PAREN;
 
     function_argument: column | asterisk;
 
-
-    value_expr: string
-              | number 
-              | column
-              | attribute_function;
-
-    comparator: EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL
-              | GREATER_THAN | GREATER_THAN_OR_EQUAL;
 
     asterisk: ASTERISK;
 
