@@ -88,27 +88,23 @@ class DerivedColumn(ProxyNode):
 
 
 class Column(TokenNode, Aggregatable):
-    """ split up column in select_list and column in agg function """
+    # TODO split up column in select_list and column in agg function
 
     @property
     def is_agg_func(self):
         return False
 
     @property
-    def column(self):
-        # TODO where used?
-        return self.token
-
-    @property
     def name(self):
         return self.token.value
 
-    def rvalue(self, r):
-        """ runtime value """
-        return r[self.tb_index]
+    def value(self, r=None):
+        if r:
+            return r[self.tb_index]
+        return self.token.value
 
     def create(self, r):
-        return self.rvalue(r)
+        return self.value(r)
 
     def visit(self, ctx):
         # TODO really?
@@ -154,7 +150,7 @@ class Asterisk(TokenNode, Selectable, Aggregatable):
         self.tb = ctx.table
         TokenNode.visit(self, ctx)
 
-    def rvalue(self, r):
+    def value(self, r=None):
         return r
 
 
@@ -167,13 +163,12 @@ class SelectSublist(NodeList, Selectable):
 
     @property
     def column_indexes(self):
-        return [self.tb.index(c.value) for c in self]
+        return [self.tb.index(c.value()) for c in self]
 
     def column_defs(self, tb):
         _type = lambda x: x
-        return [(c.value, (tb.columns[c.value]
-                if c.value in tb.columns else _type))
-                for c in self]
+        return [(c.value(), (tb.columns[c.value()]
+                if c.value() in tb.columns else _type)) for c in self]
 
     @property
     def selected(self):

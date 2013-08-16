@@ -63,7 +63,7 @@ class Query(object):
     def execute(self):
         # pylint: disable=E1101
         self.select = parse(self.sql)
-        self.table = self.schema.find_table(self.select.table_name.value)
+        self.table = self.schema.find_table(self.select.table_name.value())
 
         name = str(uuid.uuid4())
         columns = self.select.select_list.column_defs(self.table)

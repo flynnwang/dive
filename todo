@@ -1,9 +1,11 @@
 TODO
 ----
-F use value or visit ?
+R column table ref
 
 R count(id)'s table field name?
 F comparition should apply with columns
+
+F max, min function
 
 F datamodel should be aggreatable
 F numeric condition expression support (e.g. field > 5.6)
@@ -24,6 +26,7 @@ F add fab cmd for compile parser cache
 
 DONE
 ----
+R refactor value() 
 R strip agg function into productions
 F run py.test in ipython mode (py.text --pdb)
 

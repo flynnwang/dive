@@ -4,6 +4,7 @@ from node import Node, ProxyNode
 
 
 class Aggregatable(object):
+
     """ set_function should impl methods below """
 
     def create(self, r):
@@ -28,7 +29,7 @@ class SetFunctionType(Node):
         if func not in funcs:
             raise Exception("No set function found with name: %s" % func)
         return funcs[func]
-        
+
 
 class SetFunctionSpec(Node):
 
@@ -44,9 +45,8 @@ class SetFunctionSpec(Node):
     def __init__(self, argument):
         self.argument = argument
 
-    @property
-    def value(self):
-        return self.argument.value
+    def value(self, r=None):
+        return self.argument.value(r)
 
     def visit(self, ctx):
         Node.visit(self, ctx)
@@ -59,7 +59,7 @@ class CountFunction(SetFunctionSpec, Aggregatable):
     name = "count"
 
     def create(self, r):
-        v = self.argument.rvalue(r)
+        v = self.argument.value(r)
         return v is not None and 1 or 0
 
     def merge(self, v1, v2):
@@ -74,7 +74,7 @@ class SumFunction(SetFunctionSpec, Aggregatable):
     name = "sum"
 
     def create(self, r):
-        v = self.argument.rvalue(r)
+        v = self.argument.value(r)
         return v
 
     def merge(self, v1, v2):
@@ -89,7 +89,7 @@ class AverageFunction(SetFunctionSpec, Aggregatable):
     name = "avg"
 
     def create(self, r):
-        v = self.argument.rvalue(r)
+        v = self.argument.value(r)
         return (1, v)
 
     def merge(self, (c1, s1), (c2, s2)):

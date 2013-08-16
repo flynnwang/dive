@@ -18,6 +18,9 @@ class Node(object):
     def visit(self, ctx):
         pass
 
+    def value(self, row=None):
+        return None
+
     def __repr__(self):
         return "<%s>" % self.__class__.__name__
 
@@ -43,9 +46,8 @@ class NodeList(Node, list):
         Node.visit(self, ctx)
         return [nd.visit(ctx) for nd in self]
 
-    @property
-    def value(self):
-        return [v.value for v in self]
+    def value(self, r=None):
+        return [v.value(r) for v in self]
 
 
 class ProxyNode(Node):
@@ -62,9 +64,8 @@ class ProxyNode(Node):
         Node.__init__(self)
         self.node = node
 
-    @property
-    def value(self):
-        return self.node.value
+    def value(self, r=None):
+        return self.node.value(r)
 
     def visit(self, ctx):
         Node.visit(self, ctx)
@@ -100,12 +101,7 @@ class TokenNode(Node):
 
     def __init__(self, token):
         Node.__init__(self)
-        self._token = token
+        self.token = token
 
-    @property
-    def token(self):
-        return self._token
-
-    @property
-    def value(self):
-        return self._token.value
+    def value(self, r=None):
+        return self.token.value

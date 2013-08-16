@@ -68,7 +68,7 @@ select_bnf = """
              | in_predicate
              | like_predicate;
 
-    like_predicate: column [ NOT ] LIKE value_expr_primary;
+    like_predicate: column [ NOT ] LIKE string;
 
     in_predicate: column [ NOT ] IN in_predicate_value;
 

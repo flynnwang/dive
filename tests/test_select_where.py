@@ -56,6 +56,7 @@ class SimpleParenCondtionsTest(SelectTestBase):
     def expected_select_result(self):
         return tuple(r for r in self.rows if 0 < r[0] < 3 and r[1] is 'a')
 
+
 class ParenCondtionsTest(SelectTestBase):
     sql = "select id, name, age from user where name='a' and (id>0 or id<3) "
 

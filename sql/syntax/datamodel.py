@@ -5,13 +5,11 @@ from node import TokenNode
 
 class Number(TokenNode):
 
-    @property
-    def value(self):
+    def value(self, r=None):
         return int(self.token.value)
 
 
 class String(TokenNode):
 
-    @property
-    def value(self):
+    def value(self, r=None):
         return self.token.value[1:-1]

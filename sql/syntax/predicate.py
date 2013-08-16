@@ -28,11 +28,11 @@ class LikePredicate(Predicate):
         Node.__init__(self)
         self.column = column
         self.not_ = not_
-        self.pattern = re.compile(pattern.value)
+        self.pattern = re.compile(pattern.value())
 
     def visit(self, ctx):
         tb = self._get_table_by_clause(ctx)
-        idx = tb.index(self.column.value)
+        idx = tb.index(self.column.value())
 
         def like_(r):
             v = self.pattern.match(r[idx])
@@ -54,10 +54,10 @@ class InPredicate(Predicate):
 
     def visit(self, ctx):
         tb = self._get_table_by_clause(ctx)
-        idx = tb.index(self.column.value)
+        idx = tb.index(self.column.value())
 
         def in_(r):
-            v = r[idx] in self.predicate_value.value
+            v = r[idx] in self.predicate_value.value()
             return not v if self.not_ else v
         return in_
 
@@ -83,8 +83,8 @@ class ComparisonPredicate(Predicate):
     def visit(self, ctx):
         # TODO comparition should apply with columns
         tb = self._get_table_by_clause(ctx)
-        idx = tb.index(self.left.value)
+        idx = tb.index(self.left.value())
 
         def check(r):
-            return self.op(r[idx], self.right.value)
+            return self.op(r[idx], self.right.value())
         return check

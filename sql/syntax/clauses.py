@@ -53,7 +53,7 @@ class GroupByClause(Clause):
         tb = ctx.table
 
         def _group_by(r):
-            grouping = tuple(r[tb.index(c.value)] for c in self.columns)
+            grouping = tuple(r[tb.index(c.value())] for c in self.columns)
             return (grouping, r)
         ctx.rdd = ctx.rdd.map(_group_by)
 
@@ -88,7 +88,7 @@ class OrderByClause(Clause):
 
             @property
             def keys(self):
-                return (self.r[tb.index(spec.column.value)]
+                return (self.r[tb.index(spec.column.value())]
                         for spec in sort_spec)
 
         ctx.rdd = ctx.rdd.map(lambda r: Ordered(r))\
@@ -125,17 +125,17 @@ class LimitClause(Clause):
         return cls(int(tokens[1].value))
 
     def __init__(self, limit):
-        self.value = limit
+        self.limit = limit
 
     def visit(self, ctx):
-        ctx.rdd = ctx.dpark.makeRDD(ctx.rdd.take(self.value))
+        ctx.rdd = ctx.dpark.makeRDD(ctx.rdd.take(self.limit))
 
 
 class OutfileClause(Clause):
 
     @classmethod
     def parse(cls, tokens):
-        return cls(tokens[2].value)
+        return cls(tokens[2].value())
 
     def __init__(self, filedir):
         self.filedir = filedir
