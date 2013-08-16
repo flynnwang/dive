@@ -4,6 +4,7 @@ import pytest
 from testbase import SelectTestBase, DiveTestBase
 from itertools import groupby
 from dive.sql.parser import parse
+from dive import Query
 
 
 class CountFuncTest(SelectTestBase):
@@ -46,6 +47,10 @@ class ColumnCountFuncTest(SelectTestBase):
 
     def expected_select_result(self):
         return ((self.rows[0][0], len(self.rows)), )
+
+    def test_new_table_names(self):
+        q = Query(self.sql, self.schema).execute()
+        assert ['id', 'count(id)'] == q.result_table.columns.keys()
 
 
 class SimpleGroupByTest(SelectTestBase):

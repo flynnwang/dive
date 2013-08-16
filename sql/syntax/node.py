@@ -107,3 +107,7 @@ class TokenNode(Node):
 
     def value(self, r=None):
         return self.token.value
+
+    @property
+    def name(self):
+        return self.token.value

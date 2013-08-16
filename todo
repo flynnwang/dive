@@ -1,9 +1,5 @@
 TODO
 ----
-R column table ref
-
-R count(id)'s table field name?
-F comparition should apply with columns
 
 F max, min function
 
@@ -26,7 +22,9 @@ F add fab cmd for compile parser cache
 
 DONE
 ----
-R refactor value() 
+R count(id)'s table field name?
+R column table ref
+R refactor value()  (F comparition should apply with columns)
 R strip agg function into productions
 F run py.test in ipython mode (py.text --pdb)
 

@@ -95,10 +95,6 @@ class Column(TokenNode, Aggregatable):
     def is_agg_func(self):
         return False
 
-    @property
-    def name(self):
-        return self.token.value
-
     def value(self, r=None):
         if r:
             return r[self.tb_index]

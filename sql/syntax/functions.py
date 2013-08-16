@@ -33,6 +33,8 @@ class SetFunctionType(Node):
 
 class SetFunctionSpec(Node):
 
+    func_name = 'func'
+
     @classmethod
     def parse(cls, tokens):
         func = tokens[0]
@@ -53,10 +55,14 @@ class SetFunctionSpec(Node):
         self.tb = ctx.table
         self.argument.visit(ctx)
 
+    @property
+    def name(self):
+        return "%s(%s)" % (self.func_name, self.argument.name)
+
 
 class CountFunction(SetFunctionSpec, Aggregatable):
 
-    name = "count"
+    func_name = "count"
 
     def create(self, r):
         v = self.argument.value(r)
@@ -71,7 +77,7 @@ class CountFunction(SetFunctionSpec, Aggregatable):
 
 class SumFunction(SetFunctionSpec, Aggregatable):
 
-    name = "sum"
+    func_name = "sum"
 
     def create(self, r):
         v = self.argument.value(r)
@@ -86,7 +92,7 @@ class SumFunction(SetFunctionSpec, Aggregatable):
 
 class AverageFunction(SetFunctionSpec, Aggregatable):
 
-    name = "avg"
+    func_name = "avg"
 
     def create(self, r):
         v = self.argument.value(r)
