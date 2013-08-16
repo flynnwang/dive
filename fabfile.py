@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 from fabric.api import local
 
 
@@ -30,3 +31,8 @@ def setup_dev_env():
         os.mkdir('bin')
     local("virtualenv --system-site-packages bin/env")
     local("pip install -r requirements.txt")
+
+
+def gen_parser():
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from sql.parser import sql_parser

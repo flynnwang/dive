@@ -92,7 +92,9 @@ select_bnf = """
     parened_value_expr: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
 
 
-    set_function_spec: IDENTIFIER LEFT_PAREN argument RIGHT_PAREN;
+    set_function_spec: set_function_type LEFT_PAREN argument RIGHT_PAREN;
+
+    set_function_type: SUM | AVG | COUNT;
 
     argument: column | asterisk;
 

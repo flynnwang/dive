@@ -1,10 +1,7 @@
 TODO
 ----
 
-R strip agg function into productions
-
 F datamodel should be aggreatable
-
 F numeric condition expression support (e.g. field > 5.6)
 
 F column alias
@@ -13,6 +10,8 @@ F table alias
 F README
 
 R better test data 
+F add fab cmd for compile parser cache
+
 
 ## features
 - simple join (left, inner, outer)
@@ -21,6 +20,9 @@ R better test data
 
 DONE
 ----
+R strip agg function into productions
+F run py.test in ipython mode (py.text --pdb)
+
 F count(*)
 F use virtualenv (for pip dump)
 D remove parsing lr conflit

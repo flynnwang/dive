@@ -23,30 +23,33 @@ class Argument(ProxyNode):
     pass
 
 
-class SetFunctionSpec(Node, Valueable):
+class SetFunctionType(Node):
 
     @classmethod
     def parse(cls, tokens):
         func = tokens[0].value
         if func not in funcs:
-            raise Exception("No attibute function found: %s" % func)
-        return funcs[func](tokens[0], tokens[2])
+            raise Exception("No set function found with name: %s" % func)
+        return funcs[func]
+        
+
+class SetFunctionSpec(Node, Valueable):
+
+    @classmethod
+    def parse(cls, tokens):
+        func = tokens[0]
+        return func(tokens[2])
 
     @property
     def is_agg_func(self):
         return True
 
-    def __init__(self, token, argument):
-        self._token = token
+    def __init__(self, argument):
         self.argument = argument
 
     @property
     def value(self):
         return self.argument.value
-
-    @property
-    def name(self):
-        return self._token.value
 
     def visit(self, ctx):
         Node.visit(self, ctx)
@@ -55,6 +58,10 @@ class SetFunctionSpec(Node, Valueable):
 
 
 class CountFunction(SetFunctionSpec, Aggregatable):
+
+    @property
+    def name(self):
+        return "count"
 
     def create(self, r):
         v = self.argument.arg(r)
@@ -69,6 +76,10 @@ class CountFunction(SetFunctionSpec, Aggregatable):
 
 class SumFunction(SetFunctionSpec, Aggregatable):
 
+    @property
+    def name(self):
+        return "sum"
+
     def create(self, r):
         v = self.argument.arg(r)
         return v
@@ -81,6 +92,10 @@ class SumFunction(SetFunctionSpec, Aggregatable):
 
 
 class AverageFunction(SetFunctionSpec, Aggregatable):
+
+    @property
+    def name(self):
+        return "avg"
 
     def create(self, r):
         v = self.argument.arg(r)
