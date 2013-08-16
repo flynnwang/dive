@@ -27,7 +27,7 @@ select_bnf = """
 
     select_sublist: derived_column | select_sublist COMMA derived_column;
     
-    derived_column: value_expr_primary;
+    derived_column: column | set_function_spec;
 
 
     outfile_clause: INTO OUTFILE string;
@@ -83,20 +83,18 @@ select_bnf = """
               | GREATER_THAN | GREATER_THAN_OR_EQUAL;
 
 
-    value_expr: boolean_value_expr;
-
     value_expr_primary: parened_value_expr
         | string
         | number
         | column
-        | attribute_function;
+        | set_function_spec;
 
-    parened_value_expr: LEFT_PAREN value_expr RIGHT_PAREN;
+    parened_value_expr: LEFT_PAREN boolean_value_expr RIGHT_PAREN;
 
 
-    attribute_function: IDENTIFIER LEFT_PAREN function_argument RIGHT_PAREN;
+    set_function_spec: IDENTIFIER LEFT_PAREN argument RIGHT_PAREN;
 
-    function_argument: column | asterisk;
+    argument: column | asterisk;
 
 
     asterisk: ASTERISK;

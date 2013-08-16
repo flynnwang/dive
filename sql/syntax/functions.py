@@ -19,11 +19,11 @@ class Aggregatable(object):
         return r
 
 
-class FunctionArgument(ProxyNode):
+class Argument(ProxyNode):
     pass
 
 
-class AttributeFunction(Node, Valueable):
+class SetFunctionSpec(Node, Valueable):
 
     @classmethod
     def parse(cls, tokens):
@@ -54,7 +54,7 @@ class AttributeFunction(Node, Valueable):
         self.argument.visit(ctx)
 
 
-class CountFunction(AttributeFunction, Aggregatable):
+class CountFunction(SetFunctionSpec, Aggregatable):
 
     def create(self, r):
         v = self.argument.arg(r)
@@ -67,7 +67,7 @@ class CountFunction(AttributeFunction, Aggregatable):
         return v
 
 
-class SumFunction(AttributeFunction, Aggregatable):
+class SumFunction(SetFunctionSpec, Aggregatable):
 
     def create(self, r):
         v = self.argument.arg(r)
@@ -80,7 +80,7 @@ class SumFunction(AttributeFunction, Aggregatable):
         return v
 
 
-class AverageFunction(AttributeFunction, Aggregatable):
+class AverageFunction(SetFunctionSpec, Aggregatable):
 
     def create(self, r):
         v = self.argument.arg(r)
