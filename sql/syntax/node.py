@@ -48,28 +48,6 @@ class NodeList(Node, list):
         return [v.value for v in self]
 
 
-class OptionalNode(Node):
-
-    """ I :  | A; """
-
-    @classmethod
-    def parse(cls, tokens):
-        return tokens and cls([t for t in tokens if isinstance(t, Node)])
-
-    def __init__(self, nodes):
-        Node.__init__(self)
-        self.nodes = nodes
-
-    def visit(self, ctx):
-        Node.visit(self, ctx)
-        for nd in self.nodes:
-            nd.visit(ctx)
-
-    @property
-    def first(self):
-        return self.nodes[0]
-
-
 class ProxyNode(Node):
 
     """ ProxyNode propgate method access to the proxied node """
@@ -101,19 +79,32 @@ class ProxyNode(Node):
             return self.node.__getattribute__(name)
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__,
-                             self.node.__class__.__name__)
+        return "<proxy %s of: %s>" % (self.__class__.__name__,
+                                      self.node.__class__.__name__)
 
 
-# TODO split tokennode and proxynode
-class TokenNode(ProxyNode):
+class OptionalNode(ProxyNode):
+
+    """ I :  | A; """
+
+    @classmethod
+    def parse(cls, tokens):
+        return tokens and cls(tokens[0])
+
+
+class TokenNode(Node):
+
+    @classmethod
+    def parse(cls, tokens):
+        return cls(tokens[0])
 
     def __init__(self, token):
-        super(TokenNode, self).__init__(token)
+        Node.__init__(self)
+        self._token = token
 
     @property
     def token(self):
-        return self.node
+        return self._token
 
     def visit(self, ctx):
         self.tb = ctx.table
@@ -121,4 +112,4 @@ class TokenNode(ProxyNode):
 
     @property
     def value(self):
-        return self.token.value
+        return self._token.value

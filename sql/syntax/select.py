@@ -14,14 +14,12 @@ class SelectExpr(Node):
 
     @classmethod
     def parse(cls, p):
-        outfile = p[2] and p[2].first
-        table_name = p[4]
-        where = p[5] and p[5].first or EmptyClause()
-        groupby = p[6] and p[6].first or EmptyGroupbyClause()
-        having = p[7] and p[7].first or EmptyClause()
-        orderby = p[8] and p[8].first or EmptyOrderByClause()
-        limit = p[9] and p[9].first or EmptyClause()
-        return cls(p[1], outfile, table_name, where, groupby,
+        where = p[5] or EmptyClause()
+        groupby = p[6] or EmptyGroupbyClause()
+        having = p[7] or EmptyClause()
+        orderby = p[8] or EmptyOrderByClause()
+        limit = p[9] or EmptyClause()
+        return cls(p[1], p[2], p[4], where, groupby,
                    having, orderby, limit)
 
     def __init__(self,  select_list, outfile, table_name,
