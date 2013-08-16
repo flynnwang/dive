@@ -106,8 +106,34 @@ class AverageFunction(SetFunctionSpec, Aggregatable):
         return float(sum) / cnt
 
 
+class MaxFunction(SetFunctionSpec, Aggregatable):
+
+    func_name = "max"
+
+    def create(self, r):
+        v = self.argument.value(r)
+        return v
+
+    def merge(self, v1, v2):
+        return max(v1, v2)
+
+
+class MinFunction(SetFunctionSpec, Aggregatable):
+
+    func_name = "min"
+
+    def create(self, r):
+        v = self.argument.value(r)
+        return v
+
+    def merge(self, v1, v2):
+        return min(v1, v2)
+
+
 funcs = {
     'count': CountFunction,
     'sum': SumFunction,
     'avg': AverageFunction,
+    'max': MaxFunction,
+    'min': MinFunction,
 }

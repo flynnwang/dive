@@ -17,7 +17,7 @@ class LexerGenerator(rply.LexerGenerator):
 KEYWORDS = [
     'select', 'from', 'where', 'like', 'having', 'order', 'not',
     'and', 'or', 'group', 'by', 'desc', 'asc', 'limit', 'into',
-    'outfile', 'in', 'sum', 'count', 'avg'
+    'outfile', 'in', 'sum', 'count', 'avg', 'max', 'min'
 ]
 
 SYMBOL_TOKENS = [

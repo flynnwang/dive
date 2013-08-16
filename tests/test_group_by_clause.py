@@ -89,3 +89,17 @@ class GroupAsteriskTest(SelectTestBase):
         for _, g in groupby(self.rows, lambda x: x[0]):
             result.append(tuple(g.next()))
         return tuple(result)
+
+
+class MaxFuncTest(SelectTestBase):
+    sql = "select max(id) from user"
+
+    def expected_select_result(self):
+        return ((max(r[0] for r in self.rows), ), )
+
+
+class MinFuncTest(SelectTestBase):
+    sql = "select min(id) from user"
+
+    def expected_select_result(self):
+        return ((min(r[0] for r in self.rows), ), )

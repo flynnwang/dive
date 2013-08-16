@@ -94,7 +94,7 @@ select_bnf = """
 
     set_function_spec: set_function_type LEFT_PAREN argument RIGHT_PAREN;
 
-    set_function_type: SUM | AVG | COUNT;
+    set_function_type: SUM | AVG | COUNT | MAX | MIN;
 
     argument: column | asterisk;
 
