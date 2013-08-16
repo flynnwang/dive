@@ -106,10 +106,6 @@ class TokenNode(Node):
     def token(self):
         return self._token
 
-    def visit(self, ctx):
-        self.tb = ctx.table
-        return Node.visit(self, ctx)
-
     @property
     def value(self):
         return self._token.value

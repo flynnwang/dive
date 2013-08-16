@@ -81,6 +81,7 @@ class ComparisonPredicate(Predicate):
         self.left, self.op, self.right = args
 
     def visit(self, ctx):
+        # TODO comparition should apply with columns
         tb = self._get_table_by_clause(ctx)
         idx = tb.index(self.left.value)
 

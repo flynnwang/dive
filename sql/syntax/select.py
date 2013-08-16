@@ -6,7 +6,6 @@ from node import Node, TokenNode, NodeList, ProxyNode
 from clauses import (GroupByClause, WhereClause, EmptyGroupbyClause,
                      EmptyOrderByClause, EmptyClause)
 from functions import Aggregatable
-from datamodel import Valueable
 from itertools import izip
 
 
@@ -88,8 +87,8 @@ class DerivedColumn(ProxyNode):
     pass
 
 
-# TODO: column -> column_ref (table.column syntax)
-class Column(TokenNode, Aggregatable, Valueable):
+class Column(TokenNode, Aggregatable):
+    """ split up column in select_list and column in agg function """
 
     @property
     def is_agg_func(self):
@@ -97,14 +96,23 @@ class Column(TokenNode, Aggregatable, Valueable):
 
     @property
     def column(self):
+        # TODO where used?
         return self.token
 
     @property
     def name(self):
         return self.token.value
 
-    def arg(self, r):
-        return r[self.tb.index(self.name)]
+    def rvalue(self, r):
+        """ runtime value """
+        return r[self.tb_index]
+
+    def create(self, r):
+        return self.rvalue(r)
+
+    def visit(self, ctx):
+        # TODO really?
+        self.tb_index = ctx.table.index(self.name)
 
 
 class Selectable(object):
@@ -146,7 +154,7 @@ class Asterisk(TokenNode, Selectable, Aggregatable):
         self.tb = ctx.table
         TokenNode.visit(self, ctx)
 
-    def create(self, r):
+    def rvalue(self, r):
         return r
 
 

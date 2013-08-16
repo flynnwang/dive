@@ -16,12 +16,6 @@ class EmptyClause(Clause):
         return cls()
 
 
-class EmptyGroupbyClause(EmptyClause):
-
-    def visit(self, ctx):
-        ctx.rdd = ctx.rdd.map(lambda r: (None, r))
-
-
 class WhereClause(Clause):
 
     @classmethod
@@ -32,12 +26,18 @@ class WhereClause(Clause):
         self.search_condition = search_condition
 
     def visit(self, ctx):
-        _filter = self.search_condition.visit(ctx)
-        ctx.rdd = ctx.rdd.filter(_filter)
+        _where = self.search_condition.visit(ctx)
+        ctx.rdd = ctx.rdd.filter(_where)
 
 
 class HavingClause(WhereClause):
     pass
+
+
+class EmptyGroupbyClause(EmptyClause):
+
+    def visit(self, ctx):
+        ctx.rdd = ctx.rdd.map(lambda r: (None, r))
 
 
 class GroupByClause(Clause):
@@ -98,6 +98,7 @@ class OrderByClause(Clause):
 class EmptyOrderByClause(EmptyClause):
 
     def visit(self, ctx):
+        # TODO do not sort if not order specified
         ctx.rdd = ctx.rdd.sort()
 
 

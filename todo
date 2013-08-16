@@ -2,6 +2,9 @@ TODO
 ----
 F use value or visit ?
 
+R count(id)'s table field name?
+F comparition should apply with columns
+
 F datamodel should be aggreatable
 F numeric condition expression support (e.g. field > 5.6)
 

@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 
 from node import Node, ProxyNode
-from datamodel import Valueable
 
 
 class Aggregatable(object):
+    """ set_function should impl methods below """
 
-    def create(self, v):
-        return self.arg(v)
+    def create(self, r):
+        return r
 
     def merge(self, v1, v2):
         return v1
 
     def result(self, v):
         return v
-
-    def arg(self, r):
-        return r
 
 
 class Argument(ProxyNode):
@@ -33,7 +30,7 @@ class SetFunctionType(Node):
         return funcs[func]
         
 
-class SetFunctionSpec(Node, Valueable):
+class SetFunctionSpec(Node):
 
     @classmethod
     def parse(cls, tokens):
@@ -59,12 +56,10 @@ class SetFunctionSpec(Node, Valueable):
 
 class CountFunction(SetFunctionSpec, Aggregatable):
 
-    @property
-    def name(self):
-        return "count"
+    name = "count"
 
     def create(self, r):
-        v = self.argument.arg(r)
+        v = self.argument.rvalue(r)
         return v is not None and 1 or 0
 
     def merge(self, v1, v2):
@@ -76,12 +71,10 @@ class CountFunction(SetFunctionSpec, Aggregatable):
 
 class SumFunction(SetFunctionSpec, Aggregatable):
 
-    @property
-    def name(self):
-        return "sum"
+    name = "sum"
 
     def create(self, r):
-        v = self.argument.arg(r)
+        v = self.argument.rvalue(r)
         return v
 
     def merge(self, v1, v2):
@@ -93,12 +86,10 @@ class SumFunction(SetFunctionSpec, Aggregatable):
 
 class AverageFunction(SetFunctionSpec, Aggregatable):
 
-    @property
-    def name(self):
-        return "avg"
+    name = "avg"
 
     def create(self, r):
-        v = self.argument.arg(r)
+        v = self.argument.rvalue(r)
         return (1, v)
 
     def merge(self, (c1, s1), (c2, s2)):
