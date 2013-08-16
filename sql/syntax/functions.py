@@ -50,6 +50,10 @@ class SetFunctionSpec(Node):
     def value(self, r=None):
         return self.argument.value(r)
 
+    def create(self, r):
+        v = self.argument.value(r)
+        return v
+
     def visit(self, ctx):
         Node.visit(self, ctx)
         self.tb = ctx.table
@@ -71,23 +75,13 @@ class CountFunction(SetFunctionSpec, Aggregatable):
     def merge(self, v1, v2):
         return v1 + v2
 
-    def result(self, v):
-        return v
-
 
 class SumFunction(SetFunctionSpec, Aggregatable):
 
     func_name = "sum"
 
-    def create(self, r):
-        v = self.argument.value(r)
-        return v
-
     def merge(self, v1, v2):
         return v1 + v2
-
-    def result(self, v):
-        return v
 
 
 class AverageFunction(SetFunctionSpec, Aggregatable):
@@ -101,18 +95,13 @@ class AverageFunction(SetFunctionSpec, Aggregatable):
     def merge(self, (c1, s1), (c2, s2)):
         return (c1 + c2, s1 + s2)
 
-    def result(self, v):
-        cnt, sum = v
+    def result(self, (cnt, sum)):
         return float(sum) / cnt
 
 
 class MaxFunction(SetFunctionSpec, Aggregatable):
 
     func_name = "max"
-
-    def create(self, r):
-        v = self.argument.value(r)
-        return v
 
     def merge(self, v1, v2):
         return max(v1, v2)
@@ -121,10 +110,6 @@ class MaxFunction(SetFunctionSpec, Aggregatable):
 class MinFunction(SetFunctionSpec, Aggregatable):
 
     func_name = "min"
-
-    def create(self, r):
-        v = self.argument.value(r)
-        return v
 
     def merge(self, v1, v2):
         return min(v1, v2)

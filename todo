@@ -1,18 +1,14 @@
 TODO
 ----
+R better test data 
 
-F max, min function
-
-F datamodel should be aggreatable
 F numeric condition expression support (e.g. field > 5.6)
 
 F column alias
 F table alias
 
+F post pull python -c "import dive" to compile sqlparser
 F README
-
-R better test data 
-F add fab cmd for compile parser cache
 
 
 ## features
@@ -20,8 +16,11 @@ F add fab cmd for compile parser cache
 - normal multiple table support (like mysql)
 
 
+
 DONE
 ----
+F add fab cmd for compile parser cache
+F max, min function
 R count(id)'s table field name?
 R column table ref
 R refactor value()  (F comparition should apply with columns)
