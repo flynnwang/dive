@@ -1,5 +1,6 @@
 TODO
 ----
+F use value or visit ?
 
 F datamodel should be aggreatable
 F numeric condition expression support (e.g. field > 5.6)

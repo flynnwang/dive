@@ -43,7 +43,7 @@ class DiveTestBase(unittest.TestCase):
         return rows
 
     def _execute_query(self, sql):
-        return Query(sql, self.schema).execute()
+        return Query(sql, self.schema).execute().collect()
 
     def _tokenize(self, s):
         return [i.getstr() for i in lex(s)]

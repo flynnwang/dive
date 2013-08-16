@@ -20,7 +20,7 @@ class SelectExpr(Node):
         groupby = p[6] and p[6].first or EmptyGroupbyClause()
         having = p[7] and p[7].first or EmptyClause()
         orderby = p[8] and p[8].first or EmptyOrderByClause()
-        limit = p[9] and p[9].first
+        limit = p[9] and p[9].first or EmptyClause()
         return cls(p[1], outfile, table_name, where, groupby,
                    having, orderby, limit)
 
@@ -81,6 +81,7 @@ class SelectExpr(Node):
         else:
             self._apply_groupby(ctx)
 
+        self.limit.visit(ctx)
         self.orderby.visit(ctx)
         return ctx.rdd
 

@@ -126,6 +126,9 @@ class LimitClause(Clause):
     def __init__(self, limit):
         self.value = limit
 
+    def visit(self, ctx):
+        ctx.rdd = ctx.dpark.makeRDD(ctx.rdd.take(self.value))
+
 
 class OutfileClause(Clause):
 

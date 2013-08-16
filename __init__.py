@@ -29,24 +29,15 @@ class Table(object):
         if self.query:
             return self.query.rdd
 
+        if dpark is None:
+            # should not happen
+            return
+
         def coercion(r):
             return [m.cast(r[i]) for i, m
                     in enumerate(self.columns.values())]
         return dpark.union([dpark.csvFile(p, dialect=self.dialect)
                            for p in self.paths]).map(coercion)
-
-    def collect(self):
-        rdd = self.query.rdd
-
-        limit = self.query.select.limit
-        if limit:
-            rdd = self.query.dpark.makeRDD(rdd.take(limit.value))
-
-        outfile = self.query.select.outfile
-        if outfile:
-            rdd.saveAsCSVFile(outfile.filedir)
-            return outfile.filedir
-        return tuple(rdd.collect())
 
 
 class Schema(object):
@@ -79,5 +70,12 @@ class Query(object):
         self.result_table = Table(name, columns=columns, query=self)
 
         self.select.visit(self)
+        return self
 
-        return self.result_table.collect()
+    def collect(self):
+        # pylint: disable=E1101
+        outfile = self.select.outfile
+        if outfile:
+            self.rdd.saveAsCSVFile(outfile.filedir)
+            return outfile.filedir
+        return tuple(self.rdd.collect())

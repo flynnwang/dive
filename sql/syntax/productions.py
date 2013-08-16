@@ -98,7 +98,6 @@ select_bnf = """
 
     argument: column | asterisk;
 
-
     asterisk: ASTERISK;
 
     string: STRING;

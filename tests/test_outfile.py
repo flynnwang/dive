@@ -23,7 +23,7 @@ class OutfileTest(DiveTestBase):
     def test_outfile(self):
         assert os.path.exists(self.outfile)
 
-        Query(self.sql, self.schema).execute()
+        Query(self.sql, self.schema).execute().collect()
 
         results = [self._read_csv(os.path.join(self.outfile, f))
                    for f in os.listdir(self.outfile)]
