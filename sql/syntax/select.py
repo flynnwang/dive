@@ -7,6 +7,7 @@ from clauses import (GroupByClause, WhereClause, EmptyGroupbyClause,
                      EmptyOrderByClause, EmptyClause)
 from functions import Aggregatable
 from itertools import izip
+from clauses import HavingClause
 
 
 class SelectExpr(Node):
@@ -23,6 +24,7 @@ class SelectExpr(Node):
 
     def __init__(self,  select_list, outfile, table_name,
                  where, groupby, having, orderby, limit):
+        Node.__init__(self)
         self.select_list = select_list
         self.table_name = table_name
         self.where = where
@@ -45,22 +47,21 @@ class SelectExpr(Node):
     def _apply_groupby(self, ctx):
         self.groupby.visit(ctx)
 
-        tb = ctx.table
-        selected = self.select_list.selected
+        columns = self.select_list.columns
 
         def create_combiner(r):
             return tuple(f.create(r)
-                         for f, v in izip(selected, r))
+                         for f, v in izip(columns, r))
 
         def merge_value(c, v):
             return merge_combiner(c, create_combiner(v))
 
         def merge_combiner(c1, c2):
             return tuple(f.merge(v1, v2)
-                         for f, v1, v2 in izip(selected, c1, c2))
+                         for f, v1, v2 in izip(columns, c1, c2))
 
         def make_result((k, r)):
-            return tuple(f.result(v) for f, v in izip(selected, r))
+            return tuple(f.result(v) for f, v in izip(columns, r))
 
         agg = Aggregator(create_combiner, merge_value, merge_combiner)
         ctx.rdd = ctx.rdd.combineByKey(agg).map(make_result)
@@ -106,9 +107,19 @@ class Column(TokenNode, Aggregatable):
     def create(self, r):
         return self.value(r)
 
+    def _get_table(self, ctx):
+        # pylint: disable=E1101
+        node = self.parent
+        while node:
+            if isinstance(node, HavingClause):
+                return ctx.result_table
+            node = node.parent
+        # WhereClause, SelectList
+        return ctx.table
+
     def visit(self, ctx):
-        # TODO really?
-        self.tb_index = ctx.table.index(self.name)
+        tb = self._get_table(ctx)
+        self.tb_index = tb.index(self.name)
 
 
 class Selectable(object):
@@ -139,7 +150,7 @@ class Asterisk(TokenNode, Selectable, Aggregatable):
         return tb.columns.copy()
 
     @property
-    def selected(self):
+    def columns(self):
         # TODO bad design
         columns = [Column(Token('column', c)) for c in self.tb.columns.keys()]
         for c in columns:
@@ -154,7 +165,6 @@ class Asterisk(TokenNode, Selectable, Aggregatable):
         return r
 
 
-# TODO: assume only column or agg func
 class SelectSublist(NodeList, Selectable):
 
     @property
@@ -163,20 +173,16 @@ class SelectSublist(NodeList, Selectable):
 
     @property
     def column_indexes(self):
-        return [self.tb.index(c.value()) for c in self]
+        return [c.tb_index for c in self]
 
     def column_defs(self, tb):
         _type = lambda x: x
-        return [(c.value(), (tb.columns[c.value()]
-                if c.value() in tb.columns else _type)) for c in self]
+        return [(c.name, (tb.columns[c.name]
+                if c.name in tb.columns else _type)) for c in self]
 
     @property
-    def selected(self):
+    def columns(self):
         return self
-
-    def visit(self, ctx):
-        NodeList.visit(self, ctx)
-        self.tb = ctx.table
 
 
 class TableName(TokenNode):

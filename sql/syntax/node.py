@@ -15,6 +15,9 @@ class Node(object):
                 t.parent = node
         return node
 
+    def __init__(self):
+        self.parent = None
+
     def visit(self, ctx):
         pass
 
@@ -80,8 +83,7 @@ class ProxyNode(Node):
             return self.node.__getattribute__(name)
 
     def __repr__(self):
-        return "<proxy %s of: %s>" % (self.__class__.__name__,
-                                      self.node.__class__.__name__)
+        return "<proxy %s of: %s>" % (self.__class__.__name__)
 
 
 class OptionalNode(ProxyNode):

@@ -6,19 +6,10 @@ from clauses import WhereClause, HavingClause
 
 
 class Predicate(ProxyNode):
-
-    def _get_table_by_clause(self, ctx):
-        node = self
-        while True:
-            # pylint: disable=E1101
-            node = node.parent
-            if isinstance(node, HavingClause):
-                return ctx.result_table
-            elif isinstance(node, WhereClause):
-                return ctx.table
+    pass
 
 
-class LikePredicate(Predicate):
+class LikePredicate(Node):
 
     @classmethod
     def parse(cls, tokens):
@@ -31,16 +22,15 @@ class LikePredicate(Predicate):
         self.pattern = re.compile(pattern.value())
 
     def visit(self, ctx):
-        tb = self._get_table_by_clause(ctx)
-        idx = tb.index(self.column.value())
+        self.column.visit(ctx)
 
         def like_(r):
-            v = self.pattern.match(r[idx])
+            v = self.pattern.match(self.column.value(r))
             return not v if self.not_ else v
         return like_
 
 
-class InPredicate(Predicate):
+class InPredicate(Node):
 
     @classmethod
     def parse(cls, tokens):
@@ -53,11 +43,10 @@ class InPredicate(Predicate):
         self.predicate_value = predicate_value
 
     def visit(self, ctx):
-        tb = self._get_table_by_clause(ctx)
-        idx = tb.index(self.column.value())
+        self.column.visit(ctx)
 
         def in_(r):
-            v = r[idx] in self.predicate_value.value()
+            v = self.column.value(r) in self.predicate_value.value()
             return not v if self.not_ else v
         return in_
 
@@ -71,7 +60,7 @@ class InValueList(NodeList):
     pass
 
 
-class ComparisonPredicate(Predicate):
+class ComparisonPredicate(Node):
 
     @classmethod
     def parse(cls, tokens):
@@ -81,10 +70,9 @@ class ComparisonPredicate(Predicate):
         self.left, self.op, self.right = args
 
     def visit(self, ctx):
-        # TODO comparition should apply with columns
-        tb = self._get_table_by_clause(ctx)
-        idx = tb.index(self.left.value())
+        self.left.visit(ctx)
+        self.right.visit(ctx)
 
         def check(r):
-            return self.op(r[idx], self.right.value())
+            return self.op(self.left.value(r), self.right.value(r))
         return check
